@@ -1,0 +1,184 @@
+/**
+ * background.css - 全站液态流体动态背景
+ * 用途：纯 CSS 实现的 4 光斑飘移背景，无 Canvas / WebGL
+ * 性能策略：radial-gradient + filter:blur，仅 4 个模糊元素，will-change 优化
+ */
+
+/* ============================================================
+   容器：固定全屏，覆盖最底层
+   ============================================================ */
+
+.fluid-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--bg-primary);
+}
+
+/* ============================================================
+   光斑基础样式（4 个光斑共享）
+   ============================================================ */
+
+.fluid-bg__blob {
+  position: absolute;
+  border-radius: 50%;
+  will-change: transform;
+  contain: paint;
+}
+
+/* ============================================================
+   光斑 1 — 雾蓝
+   尺寸 500px，模糊 100px，周期 18s
+   初始位置：左上区域
+   ============================================================ */
+
+.fluid-bg__blob--1 {
+  width: 500px;
+  height: 500px;
+  top: -10%;
+  left: -5%;
+  background: radial-gradient(
+    circle,
+    rgba(110, 143, 173, 0.12) 0%,
+    rgba(110, 143, 173, 0.04) 40%,
+    transparent 70%
+  );
+  filter: blur(100px);
+  animation: blobMove1 18s ease-in-out infinite;
+}
+
+/* ============================================================
+   光斑 2 — 烟紫
+   尺寸 600px，模糊 120px，周期 22s
+   初始位置：右上区域
+   ============================================================ */
+
+.fluid-bg__blob--2 {
+  width: 600px;
+  height: 600px;
+  top: -15%;
+  right: -10%;
+  background: radial-gradient(
+    circle,
+    rgba(136, 120, 168, 0.10) 0%,
+    rgba(136, 120, 168, 0.03) 40%,
+    transparent 70%
+  );
+  filter: blur(120px);
+  animation: blobMove2 22s ease-in-out infinite;
+}
+
+/* ============================================================
+   光斑 3 — 墨青
+   尺寸 450px，模糊 80px，周期 26s
+   初始位置：左下区域
+   ============================================================ */
+
+.fluid-bg__blob--3 {
+  width: 450px;
+  height: 450px;
+  bottom: -10%;
+  left: 10%;
+  background: radial-gradient(
+    circle,
+    rgba(93, 138, 135, 0.08) 0%,
+    rgba(93, 138, 135, 0.03) 40%,
+    transparent 70%
+  );
+  filter: blur(80px);
+  animation: blobMove3 26s ease-in-out infinite;
+}
+
+/* ============================================================
+   光斑 4 — 雾玫
+   尺寸 550px，模糊 110px，周期 30s
+   初始位置：右下区域
+   ============================================================ */
+
+.fluid-bg__blob--4 {
+  width: 550px;
+  height: 550px;
+  bottom: -5%;
+  right: 5%;
+  background: radial-gradient(
+    circle,
+    rgba(151, 120, 138, 0.06) 0%,
+    rgba(151, 120, 138, 0.02) 40%,
+    transparent 70%
+  );
+  filter: blur(110px);
+  animation: blobMove4 30s ease-in-out infinite;
+}
+
+/* ============================================================
+   4 个独立的位移动画（不同路径、不同周期、错开避免同步）
+   ============================================================ */
+
+/* 光斑 1 动画 — 18s，左上 ↔ 右下对角飘移 */
+@keyframes blobMove1 {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(200px, 150px);
+  }
+  50% {
+    transform: translate(80px, 250px);
+  }
+  75% {
+    transform: translate(-100px, 100px);
+  }
+}
+
+/* 光斑 2 动画 — 22s，右上 ↔ 左中飘移 */
+@keyframes blobMove2 {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-180px, 120px);
+  }
+  50% {
+    transform: translate(-250px, 200px);
+  }
+  75% {
+    transform: translate(-80px, 80px);
+  }
+}
+
+/* 光斑 3 动画 — 26s，左下 ↔ 右上飘移 */
+@keyframes blobMove3 {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(150px, -180px);
+  }
+  50% {
+    transform: translate(250px, -100px);
+  }
+  75% {
+    transform: translate(100px, -200px);
+  }
+}
+
+/* 光斑 4 动画 — 30s，右下 ↔ 左上飘移 */
+@keyframes blobMove4 {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-200px, -120px);
+  }
+  50% {
+    transform: translate(-150px, -220px);
+  }
+  75% {
+    transform: translate(-250px, -80px);
+  }
+}

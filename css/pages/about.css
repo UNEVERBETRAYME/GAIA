@@ -1,0 +1,248 @@
+/**
+ * about.css - 关于页专属样式
+ * 用途：极简个人介绍、头像、兴趣标签、联系方式、时间线
+ * 整体居中排布，大量留白，视觉安静
+ */
+
+/* ============================================================
+   页面 Hero 区（约 35vh，极简）
+   ============================================================ */
+
+.page-hero--about {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 35vh;
+  text-align: center;
+  padding: var(--sp-xl) var(--sp-md);
+}
+
+.page-hero__title {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  letter-spacing: var(--ls-hero);
+  text-shadow: var(--ts-hero);
+  color: var(--text-primary);
+}
+
+/* ============================================================
+   区域标题
+   ============================================================ */
+
+.about-section-title {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: 1.25rem;
+  letter-spacing: var(--ls-title);
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: var(--sp-lg);
+}
+
+/* ============================================================
+   区域 A：个人简介
+   ============================================================ */
+
+.about-intro {
+  margin-bottom: var(--sp-2xl);
+  display: flex;
+  justify-content: center;
+}
+
+.about-intro__card {
+  max-width: 700px;
+  width: 100%;
+  padding: var(--sp-xl);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-xl);
+}
+
+/* 头像 */
+.about-intro__avatar {
+  flex-shrink: 0;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+}
+
+.about-intro__body {
+  flex: 1;
+}
+
+.about-intro__name {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: 1.35rem;
+  letter-spacing: var(--ls-title);
+  color: var(--text-primary);
+  margin-bottom: var(--sp-sm);
+}
+
+.about-intro__bio {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 2;
+}
+
+/* ============================================================
+   区域 B：兴趣标签
+   ============================================================ */
+
+.about-tags {
+  margin-bottom: var(--sp-2xl);
+  text-align: center;
+}
+
+.about-tags__list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-xs);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ============================================================
+   区域 C：联系方式
+   ============================================================ */
+
+.about-contact {
+  margin-bottom: var(--sp-2xl);
+  text-align: center;
+}
+
+.about-contact__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-sm);
+}
+
+.about-contact__link {
+  font-size: 0.85rem;
+  padding: 10px 28px;
+  text-decoration: none;
+}
+
+/* ============================================================
+   区域 D：时间线
+   ============================================================ */
+
+.about-timeline {
+  margin-bottom: var(--sp-2xl);
+}
+
+.about-timeline__list {
+  position: relative;
+  max-width: 500px;
+  margin: 0 auto;
+  padding-left: 40px;
+}
+
+/* 竖线 */
+.about-timeline__list::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--glass-border) 10%,
+    var(--glass-border) 90%,
+    transparent
+  );
+}
+
+/* 时间线节点 */
+.about-timeline__item {
+  position: relative;
+  margin-bottom: var(--sp-lg);
+}
+
+.about-timeline__item:last-child {
+  margin-bottom: 0;
+}
+
+.about-timeline__dot {
+  position: absolute;
+  left: -33px;
+  top: 6px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--accent-fog-blue);
+  border: 2px solid var(--bg-primary);
+  box-shadow: 0 0 8px rgba(110, 143, 173, 0.3);
+}
+
+.about-timeline__content {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-sm);
+}
+
+.about-timeline__year {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: 0.88rem;
+  color: var(--accent-fog-blue);
+  letter-spacing: var(--ls-base);
+  flex-shrink: 0;
+}
+
+.about-timeline__event {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ============================================================
+   响应式：移动端 ≤ 768px
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .about-intro__card {
+    flex-direction: column;
+    text-align: center;
+    padding: var(--sp-lg);
+  }
+
+  .about-intro__avatar {
+    width: 100px;
+    height: 100px;
+  }
+
+  .about-contact__links {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .about-contact__link {
+    width: 200px;
+    text-align: center;
+  }
+
+  .about-timeline__list {
+    padding-left: 30px;
+  }
+
+  .about-timeline__list::before {
+    left: 10px;
+  }
+
+  .about-timeline__dot {
+    left: -28px;
+  }
+
+  .about-timeline__content {
+    flex-direction: column;
+    gap: 2px;
+  }
+}

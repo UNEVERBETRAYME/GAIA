@@ -1,0 +1,226 @@
+/**
+ * nav.css - 全站液态玻璃导航栏样式
+ * 用途：桌面端水平导航 + 移动端全屏菜单，统一引用 CSS 变量
+ */
+
+/* ============================================================
+   导航栏主体
+   使用 glass.css 中 .glass-nav 基础样式（fixed / blur / border）
+   此处补充内部布局与交互细节
+   ============================================================ */
+
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--nav-h);
+}
+
+/* ============================================================
+   Logo
+   纤细字体，安静风格，无强烈 hover 效果
+   ============================================================ */
+
+.nav-logo {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: 1.1rem;
+  letter-spacing: var(--ls-title);
+  color: var(--text-primary);
+  text-shadow: var(--ts-title);
+  flex-shrink: 0;
+  transition: color var(--dur-fast) var(--ease-smooth);
+}
+
+.nav-logo:hover {
+  color: var(--text-primary);
+}
+
+/* ============================================================
+   导航链接（桌面端）
+   水平排列，带底部伪元素指示线
+   ============================================================ */
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-lg);
+}
+
+.nav-link {
+  position: relative;
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: 0.82rem;
+  letter-spacing: var(--ls-base);
+  color: var(--text-tertiary);
+  padding: 4px 0;
+  transition:
+    color var(--dur-base) var(--ease-smooth);
+}
+
+.nav-link:hover {
+  color: var(--text-primary);
+}
+
+/* 当前页面链接 */
+.nav-link.active {
+  color: var(--accent-fog-blue);
+}
+
+/* 底部指示线（伪元素） */
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0%;
+  height: 1px;
+  background: var(--accent-fog-blue);
+  transition: width var(--dur-base) var(--ease-smooth);
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
+}
+
+/* ============================================================
+   汉堡按钮（仅移动端显示）
+   三条横线 → 点击后变为 X 形
+   ============================================================ */
+
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+.nav-hamburger span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--text-secondary);
+  border-radius: 1px;
+  transition:
+    transform var(--dur-base) var(--ease-smooth),
+    opacity var(--dur-base) var(--ease-smooth);
+}
+
+/* 汉堡按钮激活态 → X 形 */
+.nav-hamburger.active span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.nav-hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.nav-hamburger.active span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ============================================================
+   移动端全屏菜单
+   使用 glass-modal-overlay 基础样式，链接垂直居中
+   ============================================================ */
+
+.mobile-menu__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-lg);
+  width: 100%;
+  height: 100%;
+  padding: var(--sp-xl) var(--sp-md);
+}
+
+.mobile-menu__link {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: 1.2rem;
+  letter-spacing: var(--ls-title);
+  color: var(--text-secondary);
+  text-align: center;
+  opacity: 0;
+  transform: translateY(15px);
+  transition:
+    color var(--dur-base) var(--ease-smooth),
+    opacity var(--dur-base) var(--ease-smooth),
+    transform var(--dur-base) var(--ease-smooth);
+}
+
+/* 菜单激活时依次淡入 */
+.glass-modal-overlay.active .mobile-menu__link {
+  opacity: 1;
+  transform: translateY(0);
+  color: var(--text-primary);
+}
+
+.glass-modal-overlay.active .mobile-menu__link:nth-child(1) { transition-delay: 0.05s; }
+.glass-modal-overlay.active .mobile-menu__link:nth-child(2) { transition-delay: 0.10s; }
+.glass-modal-overlay.active .mobile-menu__link:nth-child(3) { transition-delay: 0.15s; }
+.glass-modal-overlay.active .mobile-menu__link:nth-child(4) { transition-delay: 0.20s; }
+.glass-modal-overlay.active .mobile-menu__link:nth-child(5) { transition-delay: 0.25s; }
+.glass-modal-overlay.active .mobile-menu__link:nth-child(6) { transition-delay: 0.30s; }
+.glass-modal-overlay.active .mobile-menu__link:nth-child(7) { transition-delay: 0.35s; }
+
+.mobile-menu__link:hover {
+  color: var(--accent-fog-blue);
+}
+
+/* 关闭按钮（右上角） */
+.mobile-menu__close {
+  position: absolute;
+  top: var(--sp-md);
+  right: var(--sp-md);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-smooth);
+}
+
+.mobile-menu__close:hover {
+  color: var(--text-primary);
+}
+
+/* ============================================================
+   滚动增强：导航栏加深
+   ============================================================ */
+
+.glass-nav.scrolled {
+  background: rgba(10, 10, 15, 0.9);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================================
+   响应式：移动端 ≤ 768px
+   隐藏桌面链接，显示汉堡按钮
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+
+  .nav-hamburger {
+    display: flex;
+  }
+}

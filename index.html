@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GAIA - 首页</title>
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/glass.css">
+  <link rel="stylesheet" href="/css/animations.css">
+  <link rel="stylesheet" href="/css/background.css">
+  <link rel="stylesheet" href="/css/nav.css">
+  <link rel="stylesheet" href="/css/pages/index.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body class="page-loading">
+  <!-- 流体背景 -->
+  <div class="fluid-bg" aria-hidden="true">
+    <div class="fluid-bg__blob fluid-bg__blob--1"></div>
+    <div class="fluid-bg__blob fluid-bg__blob--2"></div>
+    <div class="fluid-bg__blob fluid-bg__blob--3"></div>
+    <div class="fluid-bg__blob fluid-bg__blob--4"></div>
+  </div>
+
+  <!-- 导航栏 -->
+  <header class="glass-nav" id="mainNav">
+    <div class="nav-inner container">
+      <a href="/index.html" class="nav-logo">YOUR NAME</a>
+      <nav class="nav-links" id="navLinks">
+        <a href="/index.html" class="nav-link" data-page="index">首页</a>
+        <a href="/pages/ai.html" class="nav-link" data-page="ai">AI 板块</a>
+        <a href="/pages/music.html" class="nav-link" data-page="music">情绪音乐</a>
+        <a href="/pages/game-art.html" class="nav-link" data-page="game-art">第九艺术</a>
+        <a href="/pages/words.html" class="nav-link" data-page="words">伤感文字</a>
+        <a href="/pages/kook.html" class="nav-link" data-page="kook">社区</a>
+        <a href="/pages/about.html" class="nav-link" data-page="about">关于</a>
+      </nav>
+      <button class="nav-hamburger" id="navHamburger" aria-label="菜单">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 移动端全屏菜单 -->
+  <div class="mobile-menu glass-modal-overlay" id="mobileMenu">
+    <div class="mobile-menu__inner">
+      <a href="/index.html" class="mobile-menu__link">首页</a>
+      <a href="/pages/ai.html" class="mobile-menu__link">AI 板块</a>
+      <a href="/pages/music.html" class="mobile-menu__link">情绪音乐</a>
+      <a href="/pages/game-art.html" class="mobile-menu__link">第九艺术</a>
+      <a href="/pages/words.html" class="mobile-menu__link">伤感文字</a>
+      <a href="/pages/kook.html" class="mobile-menu__link">社区</a>
+      <a href="/pages/about.html" class="mobile-menu__link">关于</a>
+    </div>
+    <button class="mobile-menu__close" id="mobileMenuClose" aria-label="关闭">✕</button>
+  </div>
+
+  <!-- ============================
+       区域 1：Hero 全屏区
+       ============================ -->
+  <main class="main-content">
+    <section class="hero" id="hero">
+      <div class="hero__inner">
+        <h1 class="hero__title anim-fade-in-up">YOUR NAME</h1>
+        <p class="hero__slogan anim-fade-in-up" style="animation-delay: 0.6s">
+          在代码与情绪之间，构建属于自己的数字空间
+        </p>
+        <button class="hero__scroll-arrow" id="heroScrollArrow" aria-label="向下滚动">
+          <span class="hero__arrow-v"></span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ============================
+         区域 2：板块入口卡片区
+         ============================ -->
+    <section class="sections" id="sections">
+      <h2 class="sections__title scroll-reveal">探索空间</h2>
+
+      <div class="sections__grid">
+        <a href="/pages/ai.html" class="glass-card glass-card-hover-glow section-card scroll-reveal scroll-reveal-delay-1">
+          <div class="section-card__icon">💠</div>
+          <h3 class="section-card__name">AI 板块</h3>
+          <p class="section-card__desc">AI 创作与工具，探索智能边界</p>
+        </a>
+
+        <a href="/pages/music.html" class="glass-card glass-card-hover-glow section-card scroll-reveal scroll-reveal-delay-2">
+          <div class="section-card__icon">🎵</div>
+          <h3 class="section-card__name">情绪音乐</h3>
+          <p class="section-card__desc">深夜的旋律，情绪的容器</p>
+        </a>
+
+        <a href="/pages/game-art.html" class="glass-card glass-card-hover-glow section-card scroll-reveal scroll-reveal-delay-3">
+          <div class="section-card__icon">🎮</div>
+          <h3 class="section-card__name">第九艺术</h3>
+          <p class="section-card__desc">游戏中的孤独美学与叙事</p>
+        </a>
+
+        <a href="/pages/words.html" class="glass-card glass-card-hover-glow section-card scroll-reveal scroll-reveal-delay-4">
+          <div class="section-card__icon">✒️</div>
+          <h3 class="section-card__name">伤感文字</h3>
+          <p class="section-card__desc">落在纸面上的情绪碎片</p>
+        </a>
+
+        <a href="/pages/kook.html" class="glass-card glass-card-hover-glow section-card scroll-reveal scroll-reveal-delay-5">
+          <div class="section-card__icon">💬</div>
+          <h3 class="section-card__name">社区 (Kook)</h3>
+          <p class="section-card__desc">一起聊聊 AI、游戏与深夜心事</p>
+        </a>
+
+        <a href="/pages/about.html" class="glass-card glass-card-hover-glow section-card scroll-reveal scroll-reveal-delay-6">
+          <div class="section-card__icon">🌑</div>
+          <h3 class="section-card__name">关于我</h3>
+          <p class="section-card__desc">关于这个空间的主人</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- ============================
+         区域 3：底部 Footer
+         ============================ -->
+    <footer class="footer">
+      <div class="glass-divider"></div>
+      <div class="footer__inner">
+        <p class="footer__copy">&copy; 2025 YOUR NAME &middot; Crafted with emotion</p>
+        <nav class="footer__links">
+          <a href="/pages/ai.html">AI</a>
+          <a href="/pages/music.html">音乐</a>
+          <a href="/pages/game-art.html">游戏</a>
+          <a href="/pages/words.html">文字</a>
+          <a href="/pages/about.html">关于</a>
+        </nav>
+      </div>
+    </footer>
+  </main>
+
+  <script type="module" src="/js/main.js"></script>
+  <script type="module" src="/js/pages/index.js"></script>
+</body>
+</html>

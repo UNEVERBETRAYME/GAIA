@@ -1,0 +1,281 @@
+/**
+ * words.css - 伤感文字板块专属样式
+ * 用途：极简 Hero 打字机、短句卡片墙、随笔展开、沉浸阅读区
+ * 整个页面最"静"的页面，大量留白
+ */
+
+/* ============================================================
+   页面 Hero 区（约 30vh，极简，只有标题）
+   ============================================================ */
+
+.page-hero--words {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30vh;
+  text-align: center;
+  padding: var(--sp-xl) var(--sp-md);
+}
+
+.page-hero__title--typewriter {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  letter-spacing: var(--ls-hero);
+  text-shadow: var(--ts-hero);
+  color: var(--text-primary);
+  /* 打字机：无光标闪烁，由 JS 控制 */
+  border-right: none;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* 打字机光标 */
+.page-hero__title--typewriter.typing::after {
+  content: '|';
+  color: var(--accent-fog-blue);
+  animation: cursorBlink 1s step-end infinite;
+  margin-left: 2px;
+}
+
+/* ============================================================
+   区域标题
+   ============================================================ */
+
+.words-section-title {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: 1.25rem;
+  letter-spacing: var(--ls-title);
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: var(--sp-lg);
+}
+
+.words-section-title--light {
+  color: var(--text-tertiary);
+}
+
+/* ============================================================
+   区域 A：短句卡片墙（不规则网格）
+   ============================================================ */
+
+.words-fragments {
+  margin-bottom: var(--sp-2xl);
+}
+
+.words-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-md);
+  align-items: start;
+}
+
+/* 短句卡片 */
+.words-fragment-card {
+  padding: var(--sp-lg) var(--sp-md);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-sm);
+  /* 不同行高模拟不同高度 */
+  min-height: 120px;
+}
+
+.words-fragment-card:nth-child(3n+1) {
+  min-height: 140px;
+}
+
+.words-fragment-card:nth-child(3n+2) {
+  min-height: 100px;
+}
+
+.words-fragment-card__text {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  letter-spacing: var(--ls-base);
+}
+
+.words-fragment-card__date {
+  font-size: 0.65rem;
+  color: var(--text-tertiary);
+  letter-spacing: var(--ls-base);
+}
+
+/* ============================================================
+   区域 B：随笔
+   ============================================================ */
+
+.words-essays {
+  margin-bottom: var(--sp-2xl);
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.words-essay-card {
+  padding: var(--sp-lg) var(--sp-lg);
+  margin-bottom: var(--sp-lg);
+}
+
+.words-essay-card__date {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+  letter-spacing: var(--ls-base);
+  margin-bottom: var(--sp-sm);
+}
+
+.words-essay-card__title {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: 1.15rem;
+  color: var(--text-primary);
+  letter-spacing: var(--ls-base);
+  margin-bottom: var(--sp-md);
+}
+
+/* 正文区域：渐变遮罩 + 展开动画 */
+.words-essay-card__body {
+  max-height: 160px;
+  overflow: hidden;
+  position: relative;
+  transition: max-height 0.6s var(--ease-smooth);
+}
+
+/* 渐变遮罩（默认显示） */
+.words-essay-card__body::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(to top, rgba(10, 10, 15, 0.95), transparent);
+  pointer-events: none;
+  transition: opacity 0.4s var(--ease-smooth);
+}
+
+/* 展开后移除遮罩 */
+.words-essay-card__body.expanded {
+  max-height: 1200px;
+}
+
+.words-essay-card__body.expanded::after {
+  opacity: 0;
+}
+
+.words-essay-card__body p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 2;
+  margin-bottom: var(--sp-sm);
+}
+
+.words-essay-card__body p:last-child {
+  margin-bottom: 0;
+}
+
+.words-essay-card__btn {
+  margin-top: var(--sp-md);
+  font-size: 0.78rem;
+  padding: 6px 18px;
+}
+
+/* 展开后隐藏按钮 */
+.words-essay-card.expanded .words-essay-card__btn {
+  display: none;
+}
+
+/* ============================================================
+   区域 C：沉浸式阅读
+   纯黑背景 + 居中文字 + 打字机效果
+   ============================================================ */
+
+.words-immersive {
+  margin-bottom: var(--sp-2xl);
+}
+
+.words-immersive__stage {
+  min-height: 60vh;
+  background: #050508;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-2xl) var(--sp-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 微弱的边缘光晕 */
+.words-immersive__stage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-sm);
+  background: radial-gradient(ellipse at center, rgba(110, 143, 173, 0.03), transparent 70%);
+  pointer-events: none;
+}
+
+.words-immersive__text {
+  max-width: 600px;
+  text-align: center;
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  line-height: 2.2;
+  letter-spacing: var(--ls-base);
+  position: relative;
+  z-index: 1;
+}
+
+/* 打字机光标 */
+.words-immersive__text.typing::after {
+  content: '|';
+  color: var(--accent-fog-blue);
+  animation: cursorBlink 1s step-end infinite;
+  margin-left: 2px;
+}
+
+/* ============================================================
+   响应式：平板端 ≤ 1024px
+   ============================================================ */
+
+@media (max-width: 1024px) {
+  .words-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ============================================================
+   响应式：移动端 ≤ 768px
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .words-grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .words-essays {
+    padding: 0 var(--sp-sm);
+  }
+
+  .words-essay-card {
+    padding: var(--sp-md);
+  }
+
+  .words-immersive__stage {
+    min-height: 50vh;
+    padding: var(--sp-lg) var(--sp-md);
+  }
+
+  .words-immersive__text {
+    font-size: 1.05rem;
+    line-height: 2;
+  }
+}

@@ -1,0 +1,392 @@
+/**
+ * music.css - 情绪音乐板块专属样式
+ * 用途：页面 Hero 区、播放器区域、歌单网格、心情推荐
+ */
+
+/* ============================================================
+   页面 Hero 区（约 35vh）
+   ============================================================ */
+
+.page-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 35vh;
+  text-align: center;
+  padding: var(--sp-xl) var(--sp-md);
+}
+
+.page-hero__title {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  letter-spacing: var(--ls-hero);
+  text-shadow: var(--ts-hero);
+  color: var(--text-primary);
+  margin-bottom: var(--sp-sm);
+}
+
+.page-hero__subtitle {
+  font-size: clamp(0.85rem, 1.8vw, 1.05rem);
+  letter-spacing: var(--ls-title);
+  color: var(--text-secondary);
+}
+
+/* ============================================================
+   区域标题
+   ============================================================ */
+
+.music-section-title {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: 1.25rem;
+  letter-spacing: var(--ls-title);
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: var(--sp-lg);
+}
+
+/* ============================================================
+   区域 A：播放器
+   水平布局：左侧封面，右侧信息
+   ============================================================ */
+
+.music-player {
+  display: flex;
+  gap: var(--sp-lg);
+  padding: var(--sp-lg);
+  margin-bottom: var(--sp-2xl);
+}
+
+.music-player__art {
+  flex-shrink: 0;
+  width: 200px;
+  height: 200px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, #1a2535, #0d1520);
+}
+
+.music-player__info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.music-player__title {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: 1.5rem;
+  letter-spacing: var(--ls-title);
+  color: var(--text-primary);
+  margin-bottom: var(--sp-xs);
+}
+
+.music-player__artist {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--sp-xs);
+}
+
+.music-player__mood {
+  font-size: 0.78rem;
+  color: var(--text-tertiary);
+  margin-bottom: var(--sp-md);
+}
+
+/* 进度条 */
+.music-player__progress {
+  margin-bottom: var(--sp-md);
+}
+
+.music-player__progress-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.music-player__progress-fill {
+  width: 0%;
+  height: 100%;
+  background: var(--accent-fog-blue);
+  border-radius: 2px;
+  transition: width 0.3s var(--ease-smooth);
+}
+
+.music-player__time {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+  margin-top: var(--sp-xs);
+}
+
+/* 播放按钮 */
+.music-player__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-sm);
+}
+
+.music-player__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--accent-fog-blue-alpha);
+  border: 1px solid var(--accent-fog-blue-alpha);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-smooth);
+}
+
+.music-player__btn:hover {
+  background: rgba(110, 143, 173, 0.25);
+  transform: scale(1.05);
+}
+
+.music-player__btn-icon {
+  font-size: 1.1rem;
+  color: var(--accent-fog-blue);
+  line-height: 1;
+  transition: transform 0.3s var(--ease-smooth);
+}
+
+.music-player__btn-icon.spinning {
+  transform: rotate(180deg);
+}
+
+/* ============================================================
+   区域 B：歌单网格
+   3 / 2 / 1 列响应式
+   ============================================================ */
+
+.music-playlists {
+  margin-bottom: var(--sp-2xl);
+}
+
+.music-playlists__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-md);
+}
+
+/* 歌单卡片 */
+.music-playlist-card {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.music-playlist-card__cover {
+  width: 100%;
+  height: 160px;
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--sp-sm);
+}
+
+.music-playlist-card__info {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-xs);
+  margin-bottom: var(--sp-xs);
+}
+
+.music-playlist-card__name {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: 1rem;
+  letter-spacing: var(--ls-base);
+  color: var(--text-primary);
+}
+
+.music-playlist-card__count .glass-tag {
+  font-size: 0.65rem;
+  padding: 3px 10px;
+}
+
+.music-playlist-card__desc {
+  font-size: 0.78rem;
+  color: var(--text-tertiary);
+  line-height: 1.5;
+  margin-bottom: var(--sp-sm);
+}
+
+/* 歌曲列表（展开/收起） */
+.music-playlist-card__songs {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s var(--ease-smooth);
+}
+
+.music-playlist-card.expanded .music-playlist-card__songs {
+  max-height: 500px;
+}
+
+.music-song {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px var(--sp-sm);
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-smooth);
+}
+
+.music-song:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.music-song.active {
+  background: var(--accent-fog-blue-alpha);
+}
+
+.music-song__name {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.music-song.active .music-song__name {
+  color: var(--text-primary);
+}
+
+.music-song__duration {
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   区域 C：心情推荐
+   ============================================================ */
+
+.music-moods {
+  margin-bottom: var(--sp-2xl);
+}
+
+.music-moods__tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-xs);
+  margin-bottom: var(--sp-lg);
+}
+
+.music-mood-tag {
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.music-mood-tag.active {
+  background: var(--accent-fog-blue-alpha);
+  color: var(--text-primary);
+  border-color: var(--accent-fog-blue-alpha);
+}
+
+.music-moods__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-md);
+}
+
+/* 推荐歌曲卡片 */
+.music-mood-card {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-sm);
+  padding: var(--sp-sm) var(--sp-md);
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-smooth);
+}
+
+.music-mood-card:hover {
+  transform: translateY(-2px);
+}
+
+.music-mood-card__art {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-sm);
+}
+
+.music-mood-card__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.music-mood-card__name {
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.music-mood-card__artist {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.music-mood-card__mood-tag {
+  font-size: 0.65rem;
+  padding: 2px 8px;
+}
+
+/* ============================================================
+   响应式：平板端 ≤ 1024px
+   ============================================================ */
+
+@media (max-width: 1024px) {
+  .music-playlists__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .music-moods__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ============================================================
+   响应式：移动端 ≤ 768px
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .music-player {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .music-player__art {
+    width: 180px;
+    height: 180px;
+  }
+
+  .music-playlists__grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .music-moods__grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .music-mood-card {
+    padding: var(--sp-sm);
+  }
+}

@@ -1,0 +1,450 @@
+/**
+ * game-art.css - 第九艺术板块专属样式
+ * 用途：Hero 暗化背景、瀑布流画廊、时间线布局、横向滚动角色卡
+ */
+
+/* ============================================================
+   页面 Hero 区（约 40vh，暗化背景）
+   ============================================================ */
+
+.page-hero--game-art {
+  position: relative;
+  min-height: 40vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 用渐变模拟暗化游戏截图背景 */
+  background:
+    linear-gradient(135deg, rgba(10, 10, 15, 0.7), rgba(10, 10, 15, 0.5)),
+    linear-gradient(135deg, #1a2a3a, #2d1f3d, #1a1225);
+  overflow: hidden;
+}
+
+.page-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 30%, var(--bg-primary) 100%);
+  pointer-events: none;
+}
+
+.page-hero__content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: var(--sp-xl) var(--sp-md);
+}
+
+.page-hero__title {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  letter-spacing: var(--ls-hero);
+  text-shadow: var(--ts-hero);
+  color: var(--text-primary);
+  margin-bottom: var(--sp-sm);
+}
+
+.page-hero__subtitle {
+  font-size: clamp(0.85rem, 1.8vw, 1.05rem);
+  letter-spacing: var(--ls-title);
+  color: var(--text-secondary);
+}
+
+/* ============================================================
+   区域标题
+   ============================================================ */
+
+.game-section-title {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: 1.25rem;
+  letter-spacing: var(--ls-title);
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: var(--sp-lg);
+}
+
+/* ============================================================
+   区域 A：光影收藏（瀑布流画廊）
+   ============================================================ */
+
+.game-gallery {
+  margin-bottom: var(--sp-2xl);
+}
+
+.game-masonry {
+  column-count: 3;
+  column-gap: var(--sp-md);
+}
+
+/* 画廊卡片 */
+.game-gallery-card {
+  break-inside: avoid;
+  margin-bottom: var(--sp-md);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.game-gallery-card__image {
+  width: 100%;
+  border-radius: var(--radius-sm);
+  transition: transform 0.5s var(--ease-smooth);
+}
+
+.game-gallery-card:hover .game-gallery-card__image {
+  transform: scale(1.03);
+}
+
+/* 底部悬浮层 */
+.game-gallery-card__overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--sp-md) var(--sp-sm) var(--sp-sm);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.75), transparent);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.35s var(--ease-smooth);
+}
+
+.game-gallery-card:hover .game-gallery-card__overlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.game-gallery-card__game {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  letter-spacing: var(--ls-base);
+}
+
+.game-gallery-card__scene {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  line-height: 1.4;
+}
+
+/* ============================================================
+   弹窗：大图查看
+   ============================================================ */
+
+.game-gallery-modal {
+  position: relative;
+  max-width: 900px;
+  width: 90%;
+}
+
+.game-gallery-modal__close {
+  position: absolute;
+  top: var(--sp-sm);
+  right: var(--sp-sm);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-smooth);
+  z-index: 1;
+}
+
+.game-gallery-modal__close:hover {
+  color: var(--text-primary);
+}
+
+.game-gallery-modal__image {
+  width: 100%;
+  height: 500px;
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--sp-md);
+}
+
+.game-gallery-modal__game {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  letter-spacing: var(--ls-base);
+  margin-bottom: var(--sp-xs);
+}
+
+.game-gallery-modal__scene {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* ============================================================
+   区域 B：游戏手记（时间线布局）
+   ============================================================ */
+
+.game-journal {
+  margin-bottom: var(--sp-2xl);
+}
+
+.game-timeline {
+  position: relative;
+  max-width: 700px;
+  margin: 0 auto;
+  padding-left: 40px;
+}
+
+/* 时间线竖线 */
+.game-timeline::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--glass-border) 10%,
+    var(--glass-border) 90%,
+    transparent
+  );
+}
+
+/* 时间线节点 */
+.game-timeline__item {
+  position: relative;
+  margin-bottom: var(--sp-xl);
+}
+
+.game-timeline__dot {
+  position: absolute;
+  left: -33px;
+  top: 24px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--accent-fog-blue);
+  border: 2px solid var(--bg-primary);
+  box-shadow: 0 0 8px rgba(110, 143, 173, 0.3);
+}
+
+/* 感悟卡片 */
+.game-journal-card {
+  padding: var(--sp-md);
+}
+
+.game-journal-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sp-sm);
+  flex-wrap: wrap;
+  gap: var(--sp-xs);
+}
+
+.game-journal-card__game-tag {
+  font-size: 0.7rem;
+  padding: 3px 10px;
+}
+
+.game-journal-card__date {
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+  letter-spacing: var(--ls-base);
+}
+
+.game-journal-card__title {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  letter-spacing: var(--ls-base);
+  margin-bottom: var(--sp-sm);
+}
+
+.game-journal-card__excerpt {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: var(--sp-sm);
+  /* 限制 4 行 */
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.game-journal-card__expand-btn {
+  font-size: 0.78rem;
+  padding: 6px 18px;
+}
+
+/* 展开全文 */
+.game-journal-card__full {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s var(--ease-smooth);
+}
+
+.game-journal-card__full.expanded {
+  max-height: 800px;
+}
+
+.game-journal-card__full p {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: var(--sp-sm);
+}
+
+.game-journal-card__full p:last-child {
+  margin-bottom: 0;
+}
+
+/* 展开后隐藏摘要 */
+.game-journal-card.expanded .game-journal-card__excerpt {
+  display: none;
+}
+
+.game-journal-card.expanded .game-journal-card__expand-btn {
+  display: none;
+}
+
+/* ============================================================
+   区域 C：角色回响（横向滚动）
+   ============================================================ */
+
+.game-characters {
+  margin-bottom: var(--sp-2xl);
+}
+
+.game-characters__track {
+  display: flex;
+  gap: var(--sp-md);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: var(--sp-sm);
+  cursor: grab;
+  /* 隐藏滚动条 */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.game-characters__track::-webkit-scrollbar {
+  display: none;
+}
+
+.game-characters__track:active {
+  cursor: grabbing;
+}
+
+/* 角色卡片 */
+.game-character-card {
+  flex-shrink: 0;
+  width: 260px;
+  scroll-snap-align: start;
+  overflow: hidden;
+  padding: 0;
+}
+
+.game-character-card__portrait {
+  width: 100%;
+  height: 200px;
+}
+
+.game-character-card__info {
+  padding: var(--sp-sm) var(--sp-md) var(--sp-md);
+}
+
+.game-character-card__name {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: 1rem;
+  color: var(--text-primary);
+  letter-spacing: var(--ls-base);
+  margin-bottom: var(--sp-xs);
+}
+
+.game-character-card__quote {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  line-height: 1.6;
+  margin-bottom: var(--sp-sm);
+  /* 引号装饰 */
+  position: relative;
+  padding-left: 12px;
+}
+
+.game-character-card__quote::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 2px;
+  bottom: 2px;
+  width: 2px;
+  background: var(--accent-fog-blue-alpha);
+  border-radius: 1px;
+}
+
+.game-character-card__game {
+  font-size: 0.65rem;
+  padding: 3px 10px;
+}
+
+/* ============================================================
+   响应式：平板端 ≤ 1024px
+   ============================================================ */
+
+@media (max-width: 1024px) {
+  .game-masonry {
+    column-count: 2;
+  }
+
+  .game-character-card {
+    width: 240px;
+  }
+}
+
+/* ============================================================
+   响应式：移动端 ≤ 768px
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .game-masonry {
+    column-count: 1;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .game-timeline {
+    padding-left: 30px;
+  }
+
+  .game-timeline::before {
+    left: 10px;
+  }
+
+  .game-timeline__dot {
+    left: -28px;
+  }
+
+  .game-character-card {
+    width: 220px;
+  }
+
+  .game-character-card__portrait {
+    height: 170px;
+  }
+
+  .game-gallery-modal__image {
+    height: 250px;
+  }
+}

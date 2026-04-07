@@ -1,0 +1,425 @@
+/**
+ * responsive.css — 全站响应式补丁
+ * 断点：1024px / 768px / 480px
+ * 按断点分组，每组内按页面标注注释
+ *
+ * 本文件应在所有页面专属 CSS 之后引入（在 html 中放在最后）
+ * 或追加到 global.css 末尾
+ */
+
+/* ============================================================
+   平板端 ≤ 1024px
+   ============================================================ */
+
+@media (max-width: 1024px) {
+
+  /* ---- 全局 ---- */
+  .container {
+    padding-left: var(--sp-lg);
+    padding-right: var(--sp-lg);
+  }
+
+  .nav-links {
+    gap: var(--sp-md);
+  }
+
+  /* ---- 首页 ---- */
+  /* index.css 已有 2 列处理，无需补充 */
+
+  /* ---- AI 板块 ---- */
+  /* ai.css 已有 2 列处理，无需补充 */
+
+  /* ---- 情绪音乐 ---- */
+  /* music.css 已有 2 列处理，无需补充 */
+
+  /* ---- 第九艺术 ---- */
+  /* game-art.css 已有 2 列处理，无需补充 */
+
+  /* ---- 伤感文字 ---- */
+  /* words.css 已有 2 列处理，无需补充 */
+
+  /* ---- Kook / 关于 ---- */
+  /* kook.css / about.css 无 3 列网格，无需补充 */
+}
+
+/* ============================================================
+   手机端 ≤ 768px
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+  /* ---- 全局 ---- */
+  .container {
+    padding-left: var(--sp-sm);
+    padding-right: var(--sp-sm);
+  }
+
+  /* 间距缩减 */
+  .main-content {
+    --sp-lg-gap: var(--sp-md);
+  }
+
+  /* T0 标题 clamp 下限保障 */
+  .page-hero__title,
+  .hero__title {
+    font-size: clamp(1.8rem, 8vw, 3.5rem);
+  }
+
+  /* 正文字号保障 */
+  body {
+    font-size: 0.9rem;
+  }
+
+  /* Hero 区高度保障（不低于 50vh） */
+  .hero {
+    min-height: 50vh;
+  }
+
+  /* ---- 移动端性能优化 ---- */
+  /* 降低 backdrop-filter 模糊值，减少 GPU 负担 */
+  .glass-card {
+    backdrop-filter: blur(12px) saturate(1.1);
+    -webkit-backdrop-filter: blur(12px) saturate(1.1);
+  }
+
+  .glass-card-lg {
+    backdrop-filter: blur(16px) saturate(1.1);
+    -webkit-backdrop-filter: blur(16px) saturate(1.1);
+  }
+
+  .glass-nav {
+    backdrop-filter: blur(14px) saturate(1.15);
+    -webkit-backdrop-filter: blur(14px) saturate(1.15);
+  }
+
+  /* ---- 首页 ---- */
+  .sections__grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  /* ---- AI 板块 ---- */
+  .ai-masonry {
+    column-count: 1;
+  }
+
+  .ai-tools-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Tab 按钮在小屏时全宽排列 */
+  .ai-tabs {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--sp-xs);
+    padding: 0 var(--sp-md);
+  }
+
+  .ai-tab {
+    text-align: center;
+    font-size: 0.78rem;
+    padding: 10px 16px;
+  }
+
+  /* 弹窗在手机端近全屏 */
+  .glass-modal-content {
+    max-width: 100%;
+    width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+    padding: var(--sp-md);
+  }
+
+  /* ---- 情绪音乐 ---- */
+  .music-player {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--sp-md);
+  }
+
+  .music-player__art {
+    width: 180px;
+    height: 180px;
+  }
+
+  .music-playlists__grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .music-moods__grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .music-mood-card {
+    padding: var(--sp-sm);
+  }
+
+  /* ---- 第九艺术 ---- */
+  .game-masonry {
+    column-count: 1;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  /* 时间线简化：取消左右交替，全部靠左 */
+  .game-timeline {
+    padding-left: 30px;
+  }
+
+  .game-timeline::before {
+    left: 10px;
+  }
+
+  .game-timeline__dot {
+    left: -28px;
+  }
+
+  .game-character-card {
+    width: 220px;
+  }
+
+  .game-character-card__portrait {
+    height: 170px;
+  }
+
+  .game-gallery-modal__image {
+    height: 250px;
+  }
+
+  /* ---- 伤感文字 ---- */
+  .words-grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .words-essays {
+    padding: 0 var(--sp-xs);
+  }
+
+  .words-essay-card {
+    padding: var(--sp-md);
+  }
+
+  .words-immersive__stage {
+    min-height: 50vh;
+    padding: var(--sp-lg) var(--sp-md);
+  }
+
+  .words-immersive__text {
+    font-size: 1.05rem;
+    line-height: 2;
+  }
+
+  /* ---- Kook ---- */
+  .kook-channels-grid {
+    grid-template-columns: 1fr;
+    max-width: 360px;
+  }
+
+  .kook-hero__btn {
+    font-size: 0.9rem;
+    padding: 12px 36px;
+  }
+
+  /* 底部呼吁按钮全宽 */
+  .kook-cta__btn {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .kook-rules__card {
+    padding: var(--sp-md);
+  }
+
+  /* ---- 关于我 ---- */
+  .about-intro__card {
+    flex-direction: column;
+    text-align: center;
+    padding: var(--sp-lg);
+    gap: var(--sp-md);
+  }
+
+  .about-intro__avatar {
+    width: 100px;
+    height: 100px;
+  }
+
+  .about-contact__links {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .about-contact__link {
+    width: 200px;
+    text-align: center;
+  }
+
+  .about-timeline__list {
+    padding-left: 30px;
+  }
+
+  .about-timeline__list::before {
+    left: 10px;
+  }
+
+  .about-timeline__dot {
+    left: -28px;
+  }
+
+  .about-timeline__content {
+    flex-direction: column;
+    gap: 2px;
+  }
+}
+
+/* ============================================================
+   小屏手机 ≤ 480px
+   ============================================================ */
+
+@media (max-width: 480px) {
+
+  /* ---- 全局 ---- */
+  .container {
+    padding-left: var(--sp-xs);
+    padding-right: var(--sp-xs);
+  }
+
+  /* 间距进一步缩减 */
+  .page-hero {
+    min-height: 35vh;
+    padding: var(--sp-lg) var(--sp-xs);
+  }
+
+  .page-hero__title {
+    font-size: clamp(1.6rem, 7vw, 2.5rem);
+  }
+
+  /* ---- 首页 ---- */
+  .hero__title {
+    font-size: clamp(1.6rem, 7vw, 3rem);
+  }
+
+  .sections {
+    padding: var(--sp-xl) var(--sp-xs);
+  }
+
+  .section-card {
+    padding: var(--sp-md) var(--sp-sm);
+  }
+
+  /* ---- AI 板块 ---- */
+  .ai-tab {
+    font-size: 0.72rem;
+    padding: 8px 12px;
+  }
+
+  .ai-modal__image {
+    height: 180px;
+  }
+
+  .ai-modal__title {
+    font-size: 1.2rem;
+  }
+
+  /* ---- 情绪音乐 ---- */
+  .music-player__art {
+    width: 140px;
+    height: 140px;
+  }
+
+  .music-player__title {
+    font-size: 1.2rem;
+  }
+
+  .music-playlist-card__cover {
+    height: 120px;
+  }
+
+  /* ---- 第九艺术 ---- */
+  .game-character-card {
+    width: 200px;
+  }
+
+  .game-character-card__portrait {
+    height: 150px;
+  }
+
+  .game-gallery-modal__image {
+    height: 200px;
+  }
+
+  .game-journal-card {
+    padding: var(--sp-sm);
+  }
+
+  /* ---- 伤感文字 ---- */
+  .words-fragment-card {
+    padding: var(--sp-md) var(--sp-sm);
+    min-height: 100px !important;
+  }
+
+  .words-immersive__stage {
+    min-height: 40vh;
+    padding: var(--sp-md) var(--sp-sm);
+  }
+
+  .words-immersive__text {
+    font-size: 0.95rem;
+    line-height: 1.9;
+  }
+
+  /* ---- Kook ---- */
+  .kook-hero__title {
+    font-size: clamp(1.6rem, 7vw, 2.5rem);
+  }
+
+  .kook-hero__btn {
+    width: 100%;
+    max-width: 280px;
+    font-size: 0.85rem;
+    padding: 12px var(--sp-md);
+  }
+
+  .kook-intro__desc {
+    font-size: 0.85rem;
+  }
+
+  .kook-channel-card {
+    padding: var(--sp-md) var(--sp-sm);
+  }
+
+  /* ---- 关于我 ---- */
+  .about-intro__card {
+    padding: var(--sp-md);
+  }
+
+  .about-intro__avatar {
+    width: 80px;
+    height: 80px;
+  }
+
+  .about-intro__name {
+    font-size: 1.15rem;
+  }
+
+  .about-contact__link {
+    width: 100%;
+    max-width: 260px;
+  }
+
+  /* ---- 弹窗通用 ---- */
+  .glass-modal-content {
+    padding: var(--sp-sm);
+    width: 100%;
+    max-width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+}

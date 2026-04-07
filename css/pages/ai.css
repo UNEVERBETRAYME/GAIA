@@ -1,0 +1,388 @@
+/**
+ * ai.css - AI 板块专属样式
+ * 用途：页面 Hero 区、Tab 切换、瀑布流作品展示、工具卡片网格、弹窗排版
+ */
+
+/* ============================================================
+   页面 Hero 区（非全屏，约 40vh）
+   ============================================================ */
+
+.page-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  text-align: center;
+  padding: var(--sp-xl) var(--sp-md);
+}
+
+.page-hero__title {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  letter-spacing: var(--ls-hero);
+  text-shadow: var(--ts-hero);
+  color: var(--text-primary);
+  margin-bottom: var(--sp-sm);
+}
+
+.page-hero__subtitle {
+  font-size: clamp(0.85rem, 1.8vw, 1.05rem);
+  letter-spacing: var(--ls-title);
+  color: var(--text-secondary);
+}
+
+/* ============================================================
+   Tab 切换按钮
+   ============================================================ */
+
+.ai-tabs {
+  display: flex;
+  justify-content: center;
+  gap: var(--sp-sm);
+  margin-bottom: var(--sp-lg);
+}
+
+.ai-tab {
+  position: relative;
+  font-size: 0.85rem;
+  padding: 10px 28px;
+}
+
+.ai-tab.active {
+  color: var(--text-primary);
+  border-color: var(--accent-fog-blue-alpha);
+}
+
+.ai-tab::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0%;
+  height: 2px;
+  background: var(--accent-fog-blue);
+  transition: width var(--dur-base) var(--ease-smooth);
+}
+
+.ai-tab.active::after {
+  width: 60%;
+}
+
+/* ============================================================
+   Tab 内容面板
+   ============================================================ */
+
+.ai-panel {
+  display: none;
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.ai-panel.active {
+  display: block;
+  animation: fadeIn 0.5s var(--ease-out) forwards;
+}
+
+/* ============================================================
+   分类筛选标签栏
+   ============================================================ */
+
+.ai-filter {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-xs);
+  margin-bottom: var(--sp-lg);
+}
+
+.ai-filter__tag {
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ai-filter__tag.active {
+  background: var(--accent-fog-blue-alpha);
+  color: var(--text-primary);
+  border-color: var(--accent-fog-blue-alpha);
+}
+
+/* ============================================================
+   瀑布流布局（CSS columns）
+   ============================================================ */
+
+.ai-masonry {
+  column-count: 3;
+  column-gap: var(--sp-md);
+}
+
+.ai-card {
+  break-inside: avoid;
+  margin-bottom: var(--sp-md);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.ai-card__image {
+  width: 100%;
+  height: 250px;
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--sp-sm);
+}
+
+.ai-card__title {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: 1rem;
+  letter-spacing: var(--ls-base);
+  color: var(--text-primary);
+  margin-bottom: var(--sp-xs);
+}
+
+.ai-card__desc {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  line-height: 1.6;
+  margin-bottom: var(--sp-xs);
+}
+
+.ai-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ai-card__tags .glass-tag {
+  font-size: 0.65rem;
+  padding: 3px 10px;
+}
+
+/* ============================================================
+   AI 工具卡片网格
+   ============================================================ */
+
+.ai-tools-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-md);
+}
+
+.ai-tool-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.ai-tool-card__name {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: 1.25rem;
+  letter-spacing: var(--ls-base);
+  color: var(--text-primary);
+  margin-bottom: var(--sp-xs);
+}
+
+.ai-tool-card__desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--sp-sm);
+  flex: 1;
+}
+
+.ai-tool-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: var(--sp-md);
+}
+
+.ai-tool-card__tags .glass-tag {
+  font-size: 0.65rem;
+  padding: 3px 10px;
+}
+
+.ai-tool-card__actions {
+  display: flex;
+  gap: var(--sp-xs);
+  flex-wrap: wrap;
+}
+
+.ai-tool-card__actions .glass-btn {
+  font-size: 0.78rem;
+  padding: 8px 20px;
+  flex: 1;
+  justify-content: center;
+  min-width: 0;
+}
+
+/* ============================================================
+   弹窗内容排版
+   ============================================================ */
+
+.ai-modal {
+  position: relative;
+}
+
+.ai-modal__close {
+  position: absolute;
+  top: var(--sp-sm);
+  right: var(--sp-sm);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-smooth);
+  z-index: 1;
+}
+
+.ai-modal__close:hover {
+  color: var(--text-primary);
+}
+
+.ai-modal__image {
+  width: 100%;
+  height: 300px;
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--sp-md);
+}
+
+.ai-modal__title {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: 1.5rem;
+  letter-spacing: var(--ls-title);
+  color: var(--text-primary);
+  margin-bottom: var(--sp-sm);
+}
+
+.ai-modal__desc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: var(--sp-md);
+}
+
+/* Prompt 代码块 */
+.ai-modal__prompt {
+  margin-bottom: var(--sp-md);
+}
+
+.ai-modal__prompt-label {
+  display: block;
+  font-size: 0.72rem;
+  letter-spacing: var(--ls-base);
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  margin-bottom: var(--sp-xs);
+}
+
+.ai-modal__prompt-code {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: var(--sp-sm);
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+}
+
+/* 元信息标签区 */
+.ai-modal__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ai-modal__meta .glass-tag {
+  font-size: 0.68rem;
+}
+
+/* 工具弹窗步骤 */
+.ai-modal__steps {
+  margin-bottom: var(--sp-md);
+}
+
+.ai-modal__step {
+  display: flex;
+  gap: var(--sp-sm);
+  margin-bottom: var(--sp-sm);
+}
+
+.ai-modal__step-num {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--accent-fog-blue-alpha);
+  color: var(--accent-fog-blue);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight);
+}
+
+.ai-modal__step-text {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  padding-top: 3px;
+}
+
+.ai-modal__link {
+  display: inline-flex;
+  text-decoration: none;
+}
+
+/* ============================================================
+   响应式：平板端 ≤ 1024px
+   ============================================================ */
+
+@media (max-width: 1024px) {
+  .ai-masonry {
+    column-count: 2;
+  }
+
+  .ai-tools-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ============================================================
+   响应式：移动端 ≤ 768px
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .ai-masonry {
+    column-count: 1;
+  }
+
+  .ai-tools-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ai-tabs {
+    gap: var(--sp-xs);
+  }
+
+  .ai-tab {
+    font-size: 0.78rem;
+    padding: 8px 20px;
+  }
+
+  .ai-modal__image {
+    height: 200px;
+  }
+}

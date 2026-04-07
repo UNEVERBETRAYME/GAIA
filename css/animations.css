@@ -1,0 +1,251 @@
+/**
+ * animations.css - 全局动画样式库
+ * 用途：所有可复用的 @keyframes 动画、工具类、滚动触发动画、页面过渡
+ * 动画风格：全部偏慢柔和，与深色液态玻璃视觉系统配合
+ */
+
+/* ============================================================
+   一、@keyframes 动画定义
+   ============================================================ */
+
+/* ---- ① breathe — 呼吸缩放 ---- */
+/* 用途：背景元素、装饰性图形的缓慢呼吸效果 */
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.015);
+    opacity: 0.92;
+  }
+}
+
+/* ---- ② fadeInUp — 淡入上移 ---- */
+/* 用途：内容区块从下方滑入，最常用的入场动画 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---- ③ fadeIn — 纯淡入 ---- */
+/* 用途：简单的内容显现 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---- ④ fadeInScale — 淡入 + 微放大 ---- */
+/* 用途：卡片、图片等元素的温和入场 */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ---- ⑤ slideInLeft — 左侧滑入 ---- */
+/* 用途：从左侧进入的内容 */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ---- ⑥ slideInRight — 右侧滑入 ---- */
+/* 用途：从右侧进入的内容 */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ---- ⑦ floatGentle — 轻柔悬浮 ---- */
+/* 用途：装饰元素的缓慢上下浮动 */
+@keyframes floatGentle {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* ---- ⑧ glowPulse — 光晕脉冲呼吸 ---- */
+/* 用途：按钮、图标等元素的雾蓝光晕呼吸 */
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(110, 143, 173, 0.06);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(110, 143, 173, 0.12);
+  }
+}
+
+/* ---- ⑨ typewriter — 打字机文字 ---- */
+/* 用途：配合 overflow:hidden + white-space:nowrap 实现逐字展开 */
+@keyframes typewriter {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+/* ---- ⑩ cursorBlink — 打字机光标闪烁 ---- */
+/* 用途：配合 typewriter 使用，模拟光标闪烁 */
+@keyframes cursorBlink {
+  0%, 100% {
+    border-right-color: transparent;
+  }
+  50% {
+    border-right-color: var(--text-primary);
+  }
+}
+
+/* ---- ⑪ liquidShift — 液态流动 ---- */
+/* 用途：背景渐变的缓慢位移，营造流动感 */
+@keyframes liquidShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* ---- ⑫ hueRotate — 色相缓旋 ---- */
+/* 用途：背景滤镜的缓慢色相旋转，营造微妙色彩变化 */
+@keyframes hueRotate {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    filter: hue-rotate(360deg);
+  }
+}
+
+/* ============================================================
+   二、工具类（直接添加到 HTML 元素 class 上即可生效）
+   ============================================================ */
+
+/* 呼吸缩放 — 用于背景装饰元素 */
+.anim-breathe {
+  animation: breathe 8s ease-in-out infinite;
+}
+
+/* 轻柔悬浮 — 用于浮动装饰 */
+.anim-float {
+  animation: floatGentle 6s ease-in-out infinite;
+}
+
+/* 光晕脉冲 — 用于按钮、图标 */
+.anim-glow {
+  animation: glowPulse 4s ease-in-out infinite;
+}
+
+/* 纯淡入 — 一次性入场 */
+.anim-fade-in {
+  animation: fadeIn 0.6s var(--ease-out) forwards;
+}
+
+/* 淡入上移 — 一次性入场 */
+.anim-fade-in-up {
+  animation: fadeInUp 0.8s var(--ease-out) forwards;
+}
+
+/* ============================================================
+   三、滚动触发动画类
+   通过 JS 添加 .revealed 类来触发
+   ============================================================ */
+
+/* 初始隐藏状态 */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(25px);
+  transition:
+    opacity var(--dur-slow) var(--ease-out),
+    transform var(--dur-slow) var(--ease-out);
+}
+
+/* 触发后显示 */
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 延迟级联（用于列表、网格等连续元素） */
+.scroll-reveal-delay-1 {
+  transition-delay: 0.1s;
+}
+
+.scroll-reveal-delay-2 {
+  transition-delay: 0.2s;
+}
+
+.scroll-reveal-delay-3 {
+  transition-delay: 0.3s;
+}
+
+.scroll-reveal-delay-4 {
+  transition-delay: 0.4s;
+}
+
+.scroll-reveal-delay-5 {
+  transition-delay: 0.5s;
+}
+
+/* ============================================================
+   四、页面级过渡
+   用于页面切换时的整体淡入效果
+   ============================================================ */
+
+.page-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity var(--dur-glacial) var(--ease-out),
+    transform var(--dur-glacial) var(--ease-out);
+}
+
+/* ============================================================
+   五、页面加载初始状态
+   防止页面加载时的白屏闪烁
+   ============================================================ */
+
+.page-loading {
+  opacity: 0;
+}

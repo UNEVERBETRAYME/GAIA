@@ -1,0 +1,280 @@
+/**
+ * global.css - 全局样式
+ * 用途：整个网站的视觉基础层
+ * 包含：CSS 变量系统、样式重置、字体引入、全局基础样式
+ */
+
+/* ============================================================
+   一、CSS 重置（现代方案）
+   所有元素统一盒模型，清除默认边距与装饰
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 列表无默认圆点 */
+ul,
+ol {
+  list-style: none;
+}
+
+/* 链接无默认下划线，颜色继承 */
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: color var(--dur-base) var(--ease-smooth);
+}
+
+/* 图片基础重置 */
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* 按钮重置 */
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* 强制全站禁止粗体 */
+* {
+  font-weight: inherit;
+}
+
+b,
+strong {
+  font-weight: 300;
+}
+
+/* ============================================================
+   二、CSS 变量（全部定义在 :root 中）
+   颜色 / 字体 / 间距 / 动画时间 四大系统
+   ============================================================ */
+
+:root {
+  /* ---- 颜色系统（深色低饱和主调） ---- */
+
+  /* 背景色层级 */
+  --bg-primary: #0a0a0f;                     /* 深空黑 - 最深底色 */
+  --bg-secondary: #0f0f17;                   /* 次级背景 */
+  --bg-tertiary: #161625;                    /* 卡片区域底色 */
+
+  /* 液态玻璃 */
+  --glass-bg: rgba(255, 255, 255, 0.04);     /* 玻璃默认背景 */
+  --glass-bg-hover: rgba(255, 255, 255, 0.08); /* 玻璃悬浮背景 */
+  --glass-border: rgba(255, 255, 255, 0.08); /* 玻璃边框 */
+  --glass-border-hover: rgba(255, 255, 255, 0.16); /* 玻璃悬浮边框 */
+
+  /* 文字色彩层级 */
+  --text-primary: rgba(255, 255, 255, 0.87);   /* 主文字 */
+  --text-secondary: rgba(255, 255, 255, 0.58); /* 副文字 */
+  --text-tertiary: rgba(255, 255, 255, 0.32);  /* 弱文字 / 标签 */
+
+  /* 强调色（低饱和雾感色系） */
+  --accent-fog-blue: #6e8fad;               /* 雾蓝 - 主强调色 */
+  --accent-smoke-purple: #8878a8;           /* 烟紫 */
+  --accent-ink-cyan: #5d8a87;               /* 墨青 */
+  --accent-mist-rose: #97788a;              /* 雾玫 */
+  --accent-fog-blue-alpha: rgba(110, 143, 173, 0.25); /* 雾蓝半透明 */
+
+  /* 阴影系统 */
+  --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.35);
+  --shadow-glow: 0 0 24px rgba(110, 143, 173, 0.08);
+  --shadow-elevated: 0 16px 48px rgba(0, 0, 0, 0.4);
+
+  /* ---- 字体系统 ---- */
+
+  --font-en: 'Josefin Sans', sans-serif;
+  --font-cn: 'Noto Sans SC', sans-serif;
+  --font-weight: 300;                        /* 全站统一字重 */
+
+  /* 字间距 */
+  --ls-base: 2px;                            /* 正文字间距 */
+  --ls-title: 5px;                           /* 标题字间距 */
+  --ls-hero: 10px;                           /* 首页大标题字间距 */
+
+  /* 文字阴影 */
+  --ts-base: 0 0 8px rgba(255, 255, 255, 0.08);                 /* 正文阴影 */
+  --ts-title: 0 0 16px rgba(110, 143, 173, 0.15);               /* 标题阴影 */
+  --ts-hero: 0 0 30px rgba(110, 143, 173, 0.2),
+             0 0 60px rgba(110, 143, 173, 0.1);                  /* 大标题阴影 */
+
+  /* ---- 间距系统 ---- */
+
+  --nav-h: 64px;                             /* 导航栏高度 */
+  --max-w: 1200px;                           /* 内容最大宽度 */
+  --radius: 16px;                            /* 基础圆角 */
+  --radius-lg: 24px;                         /* 大圆角 */
+
+  /* 间距阶梯 */
+  --sp-xs: 8px;
+  --sp-sm: 16px;
+  --sp-md: 24px;
+  --sp-lg: 40px;
+  --sp-xl: 64px;
+  --sp-2xl: 96px;
+
+  /* ---- 动画时间系统 ---- */
+
+  /* 缓动函数 */
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* 持续时间 */
+  --dur-fast: 0.2s;
+  --dur-base: 0.4s;
+  --dur-slow: 0.8s;
+  --dur-glacial: 1.2s;
+}
+
+/* ============================================================
+   三、字体引入
+   通过 @import 从 Google Fonts 加载指定字重
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300&family=Noto+Sans+SC:wght@300&display=swap');
+
+/*
+ * 国内 CDN 镜像备选（如 Google Fonts 访问缓慢时启用）：
+ * @import url('https://fonts.loli.net/css2?family=Josefin+Sans:wght@300&family=Noto+Sans+SC:wght@300&display=swap');
+ * 或
+ * @import url('https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc@300/index.css');
+ */
+
+/* ============================================================
+   四、全局基础样式
+   body 基础属性 / 滚动条 / 选中色 / 容器 / 段落
+   ============================================================ */
+
+body {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  letter-spacing: var(--ls-base);
+  color: var(--text-primary);
+  text-shadow: var(--ts-base);
+  background-color: var(--bg-primary);
+}
+
+/* ---- 自定义滚动条（Webkit） ---- */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* ---- Firefox 滚动条 ---- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+/* ---- 选中文字样式 ---- */
+::selection {
+  background: var(--accent-fog-blue-alpha);
+  color: #fff;
+}
+
+/* ---- 焦点可见样式（键盘导航） ---- */
+*:focus-visible {
+  outline: 2px solid var(--accent-fog-blue);
+  outline-offset: 2px;
+}
+
+/* ---- 通用内容容器 ---- */
+.container {
+  max-width: var(--max-w);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--sp-md);
+  padding-right: var(--sp-md);
+}
+
+/* ---- 标题基础 ---- */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: 1.2;
+  letter-spacing: var(--ls-title);
+  text-shadow: var(--ts-title);
+}
+
+h1 {
+  font-size: 2.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+h4 {
+  font-size: 1.25rem;
+}
+
+/* ---- 段落基础 ---- */
+p {
+  line-height: 1.8;
+  margin-bottom: var(--sp-sm);
+  color: var(--text-secondary);
+}
+
+/* ---- 主内容区域（导航栏下方） ---- */
+.main-content {
+  position: relative;
+  z-index: 1;
+  padding-top: var(--nav-h);
+  min-height: 100vh;
+}
+
+/* ---- 页面通用头部 ---- */
+.page-header {
+  text-align: center;
+  padding: var(--sp-xl) var(--sp-md) var(--sp-md);
+}
+
+.page-title {
+  margin-bottom: var(--sp-xs);
+  letter-spacing: var(--ls-title);
+}
+
+.page-subtitle {
+  color: var(--text-tertiary);
+  font-size: 1.1rem;
+}

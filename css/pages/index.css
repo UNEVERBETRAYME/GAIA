@@ -1,0 +1,206 @@
+/**
+ * index.css - 首页专属样式
+ * 用途：Hero 全屏区、板块入口卡片网格、底部 Footer
+ * 不重复全局组件样式，仅定义首页布局与排版
+ */
+
+/* ============================================================
+   区域 1：Hero 全屏区
+   垂直水平居中，占满视口高度
+   ============================================================ */
+
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  text-align: center;
+  padding: var(--sp-xl) var(--sp-md);
+}
+
+.hero__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-md);
+}
+
+/* 主标题 — T0 级 */
+.hero__title {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  letter-spacing: var(--ls-hero);
+  text-shadow: var(--ts-hero);
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+/* 副标题 / Slogan */
+.hero__slogan {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: clamp(0.85rem, 2vw, 1.1rem);
+  letter-spacing: var(--ls-title);
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* 向下引导箭头 */
+.hero__scroll-arrow {
+  margin-top: var(--sp-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.hero__arrow-v {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-right: 1px solid var(--text-tertiary);
+  border-bottom: 1px solid var(--text-tertiary);
+  transform: rotate(45deg);
+  animation: floatGentle 3s ease-in-out infinite;
+}
+
+/* ============================================================
+   区域 2：板块入口卡片区
+   标题 + 网格布局
+   ============================================================ */
+
+.sections {
+  padding: var(--sp-2xl) var(--sp-md);
+  max-width: var(--max-w);
+  margin: 0 auto;
+}
+
+.sections__title {
+  text-align: center;
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: 1.5rem;
+  letter-spacing: var(--ls-title);
+  color: var(--text-secondary);
+  margin-bottom: var(--sp-xl);
+}
+
+/* 卡片网格 */
+.sections__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-md);
+}
+
+/* 单张卡片 */
+.section-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--sp-lg) var(--sp-md);
+  text-decoration: none;
+  color: inherit;
+}
+
+.section-card__icon {
+  font-size: 2.5rem;
+  margin-bottom: var(--sp-sm);
+  line-height: 1;
+}
+
+.section-card__name {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: 1.1rem;
+  letter-spacing: var(--ls-base);
+  color: var(--text-primary);
+  margin-bottom: var(--sp-xs);
+}
+
+.section-card__desc {
+  font-size: 0.8rem;
+  letter-spacing: var(--ls-base);
+  color: var(--text-tertiary);
+  line-height: 1.6;
+  /* 限制两行 */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ============================================================
+   区域 3：底部 Footer
+   极简居中
+   ============================================================ */
+
+.footer {
+  padding: var(--sp-xl) var(--sp-md);
+  text-align: center;
+}
+
+.footer__inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-sm);
+}
+
+.footer__copy {
+  font-size: 0.8rem;
+  letter-spacing: var(--ls-base);
+  color: var(--text-tertiary);
+}
+
+.footer__links {
+  display: flex;
+  gap: var(--sp-md);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.footer__links a {
+  font-size: 0.78rem;
+  letter-spacing: var(--ls-base);
+  color: var(--text-tertiary);
+  transition: color var(--dur-fast) var(--ease-smooth);
+}
+
+.footer__links a:hover {
+  color: var(--accent-fog-blue);
+}
+
+/* ============================================================
+   响应式：平板端 ≤ 1024px
+   ============================================================ */
+
+@media (max-width: 1024px) {
+  .sections__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ============================================================
+   响应式：移动端 ≤ 768px
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .sections__grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .sections__title {
+    font-size: 1.25rem;
+  }
+}

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GAIA - 社区</title>
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/glass.css">
+  <link rel="stylesheet" href="/css/animations.css">
+  <link rel="stylesheet" href="/css/background.css">
+  <link rel="stylesheet" href="/css/nav.css">
+  <link rel="stylesheet" href="/css/pages/kook.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body class="page-loading">
+  <!-- 流体背景 -->
+  <div class="fluid-bg" aria-hidden="true">
+    <div class="fluid-bg__blob fluid-bg__blob--1"></div>
+    <div class="fluid-bg__blob fluid-bg__blob--2"></div>
+    <div class="fluid-bg__blob fluid-bg__blob--3"></div>
+    <div class="fluid-bg__blob fluid-bg__blob--4"></div>
+  </div>
+
+  <!-- 导航栏 -->
+  <header class="glass-nav" id="mainNav">
+    <div class="nav-inner container">
+      <a href="/index.html" class="nav-logo">YOUR NAME</a>
+      <nav class="nav-links" id="navLinks">
+        <a href="/index.html" class="nav-link" data-page="index">首页</a>
+        <a href="/pages/ai.html" class="nav-link" data-page="ai">AI 板块</a>
+        <a href="/pages/music.html" class="nav-link" data-page="music">情绪音乐</a>
+        <a href="/pages/game-art.html" class="nav-link" data-page="game-art">第九艺术</a>
+        <a href="/pages/words.html" class="nav-link" data-page="words">伤感文字</a>
+        <a href="/pages/kook.html" class="nav-link" data-page="kook">社区</a>
+        <a href="/pages/about.html" class="nav-link" data-page="about">关于</a>
+      </nav>
+      <button class="nav-hamburger" id="navHamburger" aria-label="菜单">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 移动端全屏菜单 -->
+  <div class="mobile-menu glass-modal-overlay" id="mobileMenu">
+    <div class="mobile-menu__inner">
+      <a href="/index.html" class="mobile-menu__link">首页</a>
+      <a href="/pages/ai.html" class="mobile-menu__link">AI 板块</a>
+      <a href="/pages/music.html" class="mobile-menu__link">情绪音乐</a>
+      <a href="/pages/game-art.html" class="mobile-menu__link">第九艺术</a>
+      <a href="/pages/words.html" class="mobile-menu__link">伤感文字</a>
+      <a href="/pages/kook.html" class="mobile-menu__link">社区</a>
+      <a href="/pages/about.html" class="mobile-menu__link">关于</a>
+    </div>
+    <button class="mobile-menu__close" id="mobileMenuClose" aria-label="关闭">✕</button>
+  </div>
+
+  <!-- ============================
+       页面内容
+       ============================ -->
+  <main class="main-content">
+
+    <!-- 页面 Hero 区（约 50vh） -->
+    <section class="kook-hero">
+      <div class="kook-hero__content">
+        <h1 class="kook-hero__title anim-fade-in-up">一起聊聊</h1>
+        <p class="kook-hero__subtitle anim-fade-in-up" style="animation-delay: 0.2s">
+          关于 AI、游戏、深夜心事，这里都可以说
+        </p>
+        <!-- 此处替换为真实 Kook 邀请链接 -->
+        <a href="#KOOK_INVITE_LINK" class="glass-btn glass-btn-accent kook-hero__btn anim-fade-in-up" style="animation-delay: 0.4s">
+          加入社区
+        </a>
+      </div>
+    </section>
+
+    <div class="kook-content container">
+
+      <!-- ============================
+           区域 A：社区介绍
+           ============================ -->
+      <section class="kook-intro scroll-reveal">
+        <h2 class="kook-section-title">这里是什么</h2>
+        <p class="kook-intro__desc">
+          一个安静的角落，聚集着同样在深夜里醒着的人。<br>
+          我们聊 AI 的可能性，聊游戏里的光影与孤独，也聊那些白天说不出口的心事。<br>
+          没有压力，没有评判，只是坐在一起。
+        </p>
+
+        <div class="kook-channels-grid">
+
+          <!-- 频道 1：情绪交流 -->
+          <div class="glass-card kook-channel-card kook-channel-card--fog-blue scroll-reveal">
+            <span class="kook-channel-card__icon">💬</span>
+            <h3 class="kook-channel-card__name">情绪交流</h3>
+            <p class="kook-channel-card__desc">凌晨的情绪，在这里落地</p>
+          </div>
+
+          <!-- 频道 2：AI 讨论 -->
+          <div class="glass-card kook-channel-card kook-channel-card--smoke-purple scroll-reveal">
+            <span class="kook-channel-card__icon">🤖</span>
+            <h3 class="kook-channel-card__name">AI 讨论</h3>
+            <p class="kook-channel-card__desc">聊聊 Prompt、工具与 AI 新知</p>
+          </div>
+
+          <!-- 频道 3：游戏频道 -->
+          <div class="glass-card kook-channel-card kook-channel-card--ink-cyan scroll-reveal">
+            <span class="kook-channel-card__icon">🎮</span>
+            <h3 class="kook-channel-card__name">游戏频道</h3>
+            <p class="kook-channel-card__desc">分享游戏中的光影与感悟</p>
+          </div>
+
+          <!-- 频道 4：文案分享 -->
+          <div class="glass-card kook-channel-card kook-channel-card--mist-rose scroll-reveal">
+            <span class="kook-channel-card__icon">✒️</span>
+            <h3 class="kook-channel-card__name">文案分享</h3>
+            <p class="kook-channel-card__desc">你写的每一句话，都有人在听</p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============================
+           区域 B：社区守则
+           ============================ -->
+      <section class="kook-rules scroll-reveal">
+        <h2 class="kook-section-title">氛围</h2>
+        <div class="glass-card kook-rules__card">
+          <div class="kook-rules__item">
+            <span class="kook-rules__bullet"></span>
+            <p>保持友善，尊重每一个人的表达</p>
+          </div>
+          <div class="kook-rules__item">
+            <span class="kook-rules__bullet"></span>
+            <p>允许沉默，不强制活跃</p>
+          </div>
+          <div class="kook-rules__item">
+            <span class="kook-rules__bullet"></span>
+            <p>禁止广告与无关内容</p>
+          </div>
+          <div class="kook-rules__item">
+            <span class="kook-rules__bullet"></span>
+            <p>深夜频道，请保持安静与温柔</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================
+           区域 C：底部呼吁
+           ============================ -->
+      <section class="kook-cta scroll-reveal">
+        <p class="kook-cta__text">
+          如果你也习惯了在深夜独处，不妨来这里坐坐。
+        </p>
+        <!-- 此处替换为真实 Kook 邀请链接 -->
+        <a href="#KOOK_INVITE_LINK" class="glass-btn glass-btn-accent kook-cta__btn">
+          加入社区
+        </a>
+        <p class="kook-cta__note">邀请链接长期有效 &middot; 无需审核</p>
+      </section>
+
+    </div>
+
+    <!-- ============================
+         底部 Footer
+         ============================ -->
+    <footer class="footer">
+      <div class="glass-divider"></div>
+      <div class="footer__inner">
+        <p class="footer__copy">&copy; 2025 YOUR NAME &middot; Crafted with emotion</p>
+        <nav class="footer__links">
+          <a href="/pages/ai.html">AI</a>
+          <a href="/pages/music.html">音乐</a>
+          <a href="/pages/game-art.html">游戏</a>
+          <a href="/pages/words.html">文字</a>
+          <a href="/pages/about.html">关于</a>
+        </nav>
+      </div>
+    </footer>
+  </main>
+
+  <script type="module" src="/js/main.js"></script>
+  <script type="module" src="/js/pages/kook.js"></script>
+</body>
+</html>

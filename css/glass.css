@@ -1,0 +1,301 @@
+/**
+ * glass.css - 液态玻璃组件库
+ * 用途：网站最核心的视觉系统，所有组件严格引用 global.css 中定义的 CSS 变量
+ * 包含：卡片、导航、按钮、输入框、标签、分割线、弹窗等 10 个组件
+ */
+
+/* ============================================================
+   1. .glass-card — 标准玻璃卡片
+   最基础的玻璃态容器，用于内容区块包裹
+   ============================================================ */
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(18px) saturate(1.15);
+  -webkit-backdrop-filter: blur(18px) saturate(1.15);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: var(--sp-lg);
+  box-shadow: var(--shadow-soft);
+  transition:
+    transform var(--dur-base) var(--ease-smooth),
+    box-shadow var(--dur-base) var(--ease-smooth),
+    background var(--dur-base) var(--ease-smooth),
+    border-color var(--dur-base) var(--ease-smooth);
+}
+
+.glass-card:hover {
+  background: var(--glass-bg-hover);
+  border-color: var(--glass-border-hover);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-elevated);
+}
+
+.glass-card:active {
+  transform: scale(0.975);
+  transition-duration: 0.15s;
+}
+
+/* ============================================================
+   2. .glass-card-lg — 大卡片
+   继承 .glass-card 所有样式，增大圆角、模糊与内边距
+   用于弹窗内容区、重要展示区块
+   ============================================================ */
+
+.glass-card-lg {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px) saturate(1.15);
+  -webkit-backdrop-filter: blur(24px) saturate(1.15);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-xl);
+  box-shadow: var(--shadow-soft);
+  transition:
+    transform var(--dur-base) var(--ease-smooth),
+    box-shadow var(--dur-base) var(--ease-smooth),
+    background var(--dur-base) var(--ease-smooth),
+    border-color var(--dur-base) var(--ease-smooth);
+}
+
+.glass-card-lg:hover {
+  background: var(--glass-bg-hover);
+  border-color: var(--glass-border-hover);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-elevated);
+}
+
+.glass-card-lg:active {
+  transform: scale(0.975);
+  transition-duration: 0.15s;
+}
+
+/* ============================================================
+   3. .glass-card-hover-glow — 带光晕的卡片
+   叠加在 .glass-card / .glass-card-lg 上使用
+   hover 时增加雾蓝色微光
+   ============================================================ */
+
+.glass-card-hover-glow {
+  transition:
+    transform var(--dur-base) var(--ease-smooth),
+    box-shadow var(--dur-base) var(--ease-smooth),
+    background var(--dur-base) var(--ease-smooth),
+    border-color var(--dur-base) var(--ease-smooth);
+}
+
+.glass-card-hover-glow:hover {
+  box-shadow:
+    var(--shadow-soft),
+    var(--shadow-glow);
+}
+
+/* ============================================================
+   4. .glass-nav — 导航栏玻璃层
+   固定定位顶部，全宽，毛玻璃底栏
+   ============================================================ */
+
+.glass-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--nav-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--sp-md);
+  background: rgba(10, 10, 15, 0.65);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  border-bottom: 1px solid var(--glass-border);
+  z-index: 1000;
+}
+
+/* ============================================================
+   5. .glass-btn — 玻璃按钮
+   胶囊形玻璃态按钮，适用于所有交互场景
+   ============================================================ */
+
+.glass-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-xs);
+  padding: 10px 30px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: 0.85rem;
+  letter-spacing: var(--ls-base);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--ease-smooth),
+    border-color var(--dur-fast) var(--ease-smooth),
+    color var(--dur-fast) var(--ease-smooth),
+    transform var(--dur-fast) var(--ease-smooth),
+    box-shadow var(--dur-fast) var(--ease-smooth);
+}
+
+.glass-btn:hover {
+  background: var(--glass-bg-hover);
+  border-color: var(--accent-fog-blue-alpha);
+  color: var(--text-primary);
+}
+
+.glass-btn:active {
+  transform: scale(0.95);
+}
+
+/* ============================================================
+   6. .glass-btn-accent — 强调玻璃按钮
+   叠加在 .glass-btn 上使用，带雾蓝色调
+   ============================================================ */
+
+.glass-btn-accent {
+  background: rgba(110, 143, 173, 0.1);
+  border-color: var(--accent-fog-blue-alpha);
+  color: var(--text-primary);
+}
+
+.glass-btn-accent:hover {
+  background: rgba(110, 143, 173, 0.18);
+  border-color: var(--accent-fog-blue);
+  box-shadow: var(--shadow-glow);
+}
+
+/* ============================================================
+   7. .glass-input — 玻璃输入框
+   底部边框风格，极简设计
+   ============================================================ */
+
+.glass-input {
+  width: 100%;
+  padding: 12px 0;
+  background: rgba(255, 255, 255, 0.02);
+  border: none;
+  border-bottom: 2px solid var(--glass-border);
+  border-radius: 0;
+  outline: none;
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: 1rem;
+  letter-spacing: var(--ls-base);
+  color: var(--text-primary);
+  transition:
+    border-color var(--dur-base) var(--ease-smooth),
+    background var(--dur-base) var(--ease-smooth);
+}
+
+.glass-input:focus {
+  border-bottom-color: var(--accent-fog-blue);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.glass-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* ============================================================
+   8. .glass-tag — 玻璃标签 / 徽章
+   行内块元素，用于分类、状态、关键词标记
+   ============================================================ */
+
+.glass-tag {
+  display: inline-block;
+  padding: 5px 16px;
+  border-radius: 999px;
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: 0.72rem;
+  letter-spacing: var(--ls-base);
+  color: var(--text-tertiary);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  cursor: default;
+  transition:
+    background var(--dur-fast) var(--ease-smooth),
+    color var(--dur-fast) var(--ease-smooth);
+}
+
+.glass-tag:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-secondary);
+}
+
+/* ============================================================
+   9. .glass-divider — 玻璃分割线
+   水平渐变线，用于内容区块之间的视觉分隔
+   ============================================================ */
+
+.glass-divider {
+  height: 1px;
+  margin: var(--sp-lg) 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 100%
+  );
+  border: none;
+}
+
+/* ============================================================
+   10. .glass-modal-overlay — 弹窗遮罩层
+     全屏毛玻璃遮罩，内含居中弹窗内容
+     ============================================================ */
+
+.glass-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 2000;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition:
+    opacity var(--dur-slow) var(--ease-smooth),
+    visibility var(--dur-slow) var(--ease-smooth);
+}
+
+/* 激活态：显示遮罩与弹窗 */
+.glass-modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+/* 弹窗内容区：使用 .glass-card-lg 样式，限制最大宽度 */
+.glass-modal-content {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px) saturate(1.15);
+  -webkit-backdrop-filter: blur(24px) saturate(1.15);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-xl);
+  box-shadow: var(--shadow-elevated);
+  max-width: 600px;
+  width: calc(100% - var(--sp-lg) * 2);
+  max-height: calc(100vh - var(--sp-xl) * 2);
+  overflow-y: auto;
+  transform: scale(0.95);
+  opacity: 0;
+  transition:
+    transform var(--dur-slow) var(--ease-smooth),
+    opacity var(--dur-slow) var(--ease-smooth);
+}
+
+.glass-modal-overlay.active .glass-modal-content {
+  transform: scale(1);
+  opacity: 1;
+}
