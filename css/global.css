@@ -5,6 +5,20 @@
  */
 
 /* ============================================================
+  三、字体引入
+  通过 @import 从 Google Fonts 加载指定字重
+  ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300&family=Noto+Sans+SC:wght@300&display=swap');
+
+/*
+ * 国内 CDN 镜像备选（如 Google Fonts 访问缓慢时启用）：
+ * @import url('https://fonts.loli.net/css2?family=Josefin+Sans:wght@300&family=Noto+Sans+SC:wght@300&display=swap');
+ * 或
+ * @import url('https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc@300/index.css');
+ */
+
+/* ============================================================
    一、CSS 重置（现代方案）
    所有元素统一盒模型，清除默认边距与装饰
    ============================================================ */
@@ -146,20 +160,6 @@ strong {
   --dur-slow: 0.8s;
   --dur-glacial: 1.2s;
 }
-
-/* ============================================================
-   三、字体引入
-   通过 @import 从 Google Fonts 加载指定字重
-   ============================================================ */
-
-@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300&family=Noto+Sans+SC:wght@300&display=swap');
-
-/*
- * 国内 CDN 镜像备选（如 Google Fonts 访问缓慢时启用）：
- * @import url('https://fonts.loli.net/css2?family=Josefin+Sans:wght@300&family=Noto+Sans+SC:wght@300&display=swap');
- * 或
- * @import url('https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc@300/index.css');
- */
 
 /* ============================================================
    四、全局基础样式
