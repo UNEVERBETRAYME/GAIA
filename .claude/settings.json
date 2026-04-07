@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(npx vite:*)",
-      "Read(//d/Trae工程/0408 个人网站 GAIA/pages//**)"
-    ]
-  }
-}
