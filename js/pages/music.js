@@ -1,21 +1,16 @@
-/**
- * music.js - 情绪音乐板块专属脚本
- * 负责：歌单展开/收起、点击歌曲更新播放器、心情标签筛选、真实音频播放
- */
-
-// ============================================================
-// 歌曲数据（src 对应 public/audio/ 中的真实文件）
-// ============================================================
-
 const playlistsData = [
   {
     name: '深夜独白',
     desc: '适合一个人静静聆听的旋律',
     gradient: 'linear-gradient(135deg, #1a2535, #0d1520)',
     songs: [
-      { name: 'Tears for My Love', duration: '0:00', artist: '1CEKary', mood: 'melancholy', gradient: 'linear-gradient(135deg, #1a2535, #0d1520)', src: '/audio/Tears4MaLuv.mp3' },
-      { name: '和平分手', duration: '0:00', artist: '徐良 / Britneylee小暖', mood: 'melancholy', gradient: 'linear-gradient(135deg, #1e2a3a, #0f1923)', src: '/audio/徐良,Britneylee小暖 - 和平分手.mp3' },
-      { name: '坏女孩', duration: '0:00', artist: '徐良 / 小凌', mood: 'lonely', gradient: 'linear-gradient(135deg, #2a2a3d, #1a1a2e)', src: '/audio/徐良,小凌 - 坏女孩.mp3' },
+      { name: 'Tears for My Love', artist: '1CEKary', mood: 'melancholy', gradient: 'linear-gradient(135deg, #1a2535, #0d1520)', src: '/audio/Tears4MaLuv.mp3' },
+      { name: '和平分手', artist: '徐良 / Britneylee小暖', mood: 'melancholy', gradient: 'linear-gradient(135deg, #1e2a3a, #0f1923)', src: '/audio/徐良,Britneylee小暖 - 和平分手.mp3' },
+      { name: '坏女孩', artist: '徐良 / 小凌', mood: 'lonely', gradient: 'linear-gradient(135deg, #2a2a3d, #1a1a2e)', src: '/audio/徐良,小凌 - 坏女孩.mp3' },
+      { name: '后会无期', artist: '徐良 / 汪苏泷', mood: 'lonely', gradient: 'linear-gradient(135deg, #2d1f3d, #1a1225)', src: '/audio/徐良,汪苏泷 - 后会无期.mp3' },
+      { name: '犯贱', artist: '徐良 / 阿悄', mood: 'melancholy', gradient: 'linear-gradient(135deg, #1a2535, #0d1520)', src: '/audio/徐良,阿悄 - 犯贱.mp3' },
+      { name: '够爱', artist: '曾沛慈', mood: 'melancholy', gradient: 'linear-gradient(135deg, #2a2a3d, #1a1a2e)', src: '/audio/曾沛慈 - 够爱.mp3' },
+      { name: '落差', artist: 'JinJiBeWater_隼', mood: 'lonely', gradient: 'linear-gradient(135deg, #1e2a3a, #0f1923)', src: '/audio/JinJiBeWater_隼 - 落差.mp3' },
     ],
   },
   {
@@ -23,8 +18,11 @@ const playlistsData = [
     desc: '都市夜晚的电子氛围',
     gradient: 'linear-gradient(135deg, #2d1f3d, #1a1225)',
     songs: [
-      { name: '后会无期', duration: '0:00', artist: '徐良 / 汪苏泷', mood: 'lonely', gradient: 'linear-gradient(135deg, #2d1f3d, #1a1225)', src: '/audio/徐良,汪苏泷 - 后会无期.mp3' },
-      { name: '犯贱', duration: '0:00', artist: '徐良 / 阿悄', mood: 'melancholy', gradient: 'linear-gradient(135deg, #1a2535, #0d1520)', src: '/audio/徐良,阿悄 - 犯贱.mp3' },
+      { name: '世界不等我', artist: 'SASIOVERLXRD', mood: 'lonely', gradient: 'linear-gradient(135deg, #2d1f3d, #1a1225)', src: '/audio/SASIOVERLXRD - 世界不等我.mp3' },
+      { name: '半套', artist: 'SASIOVERLXRD', mood: 'melancholy', gradient: 'linear-gradient(135deg, #1a2535, #0d1520)', src: '/audio/SASIOVERLXRD - 半套(Prod.2FAS).mp3' },
+      { name: '脆弱', artist: 'SASIOVERLXRD', mood: 'lonely', gradient: 'linear-gradient(135deg, #1e2a3a, #0f1923)', src: '/audio/SASIOVERLXRD - 脆弱(Prod.Shot03）.mp3' },
+      { name: '信', artist: 'mac ova seas', mood: 'calm', gradient: 'linear-gradient(135deg, #2d1f3d, #1a1225)', src: '/audio/mac ova seas - 信.mp3' },
+      { name: '내일은 없어', artist: 'Trouble Maker', mood: 'melancholy', gradient: 'linear-gradient(135deg, #1a2535, #0d1520)', src: '/audio/Trouble Maker - 내일은 없어.mp3' },
     ],
   },
   {
@@ -32,22 +30,18 @@ const playlistsData = [
     desc: '温暖的旋律，抚慰疲惫的心',
     gradient: 'linear-gradient(135deg, #1a3025, #0d1a15)',
     songs: [
-      { name: 'OD妹', duration: '0:00', artist: '极品贵公子1CEKary艾斯凯瑞', mood: 'healing', gradient: 'linear-gradient(135deg, #1a3025, #0d1a15)', src: '/audio/极品贵公子1CEKary艾斯凯瑞 - OD妹.wav' },
+      { name: 'OD妹', artist: '极品贵公子1CEKary艾斯凯瑞', mood: 'healing', gradient: 'linear-gradient(135deg, #1a3025, #0d1a15)', src: '/audio/极品贵公子1CEKary艾斯凯瑞 - OD妹.wav' },
+      { name: 'Heartbreaker', artist: 'Justin Bieber', mood: 'healing', gradient: 'linear-gradient(135deg, #1a2535, #0d1520)', src: '/audio/Justin Bieber - Heartbreaker.mp3' },
     ],
   },
 ]
 
-// 扁平化所有歌曲，用于心情推荐
 const allSongs = []
 playlistsData.forEach((pl) => {
   pl.songs.forEach((song) => {
     allSongs.push({ ...song, playlistName: pl.name })
   })
 })
-
-// ============================================================
-// 音频实例与播放器状态
-// ============================================================
 
 const audio = document.getElementById('audioPlayer')
 let currentSong = null
@@ -61,21 +55,18 @@ function getMoodLabel(mood) {
 function updatePlayer(song, playlistName) {
   currentSong = song
 
-  // 更新 UI
   document.getElementById('playerArt').style.background = song.gradient
   document.getElementById('playerTitle').textContent = song.name
   document.getElementById('playerArtist').textContent = playlistName || song.artist
   document.getElementById('playerMood').textContent = getMoodLabel(song.mood)
-  document.getElementById('totalTime').textContent = song.duration
   document.getElementById('currentTime').textContent = '0:00'
   document.getElementById('progressFill').style.width = '0%'
+  document.getElementById('totalTime').textContent = '--:--'
 
-  // 高亮当前歌曲
   document.querySelectorAll('.music-song').forEach((el) => el.classList.remove('active'))
-  const songEl = document.querySelector(`.music-song[data-song="${song._key}"]`)
+  const songEl = document.querySelector(`.music-song[data-key="${song._key}"]`)
   if (songEl) songEl.classList.add('active')
 
-  // 加载并播放音频
   if (!song.src) {
     isPlaying = false
     document.getElementById('playIcon').textContent = '▶'
@@ -91,24 +82,17 @@ function updatePlayer(song, playlistName) {
     document.getElementById('playIcon').textContent = '⏸'
     document.getElementById('playIcon').classList.add('spinning')
   }).catch(() => {
-    // 自动播放被浏览器阻止
     isPlaying = false
     document.getElementById('playIcon').textContent = '▶'
     document.getElementById('playIcon').classList.remove('spinning')
   })
 }
 
-// ============================================================
-// 音频事件绑定
-// ============================================================
-
 function initAudioEvents() {
-  // 元数据加载完成
   audio.addEventListener('loadedmetadata', () => {
     document.getElementById('totalTime').textContent = formatTime(Math.round(audio.duration))
   })
 
-  // 播放进度更新
   audio.addEventListener('timeupdate', () => {
     if (!audio.duration) return
     const percent = (audio.currentTime / audio.duration) * 100
@@ -116,14 +100,12 @@ function initAudioEvents() {
     document.getElementById('currentTime').textContent = formatTime(Math.round(audio.currentTime))
   })
 
-  // 播放结束
   audio.addEventListener('ended', () => {
     isPlaying = false
     document.getElementById('playIcon').textContent = '▶'
     document.getElementById('playIcon').classList.remove('spinning')
   })
 
-  // 播放出错
   audio.addEventListener('error', () => {
     isPlaying = false
     document.getElementById('playIcon').textContent = '▶'
@@ -132,44 +114,54 @@ function initAudioEvents() {
   })
 }
 
-// ============================================================
-// 歌单展开/收起
-// ============================================================
+function renderPlaylists() {
+  const grid = document.getElementById('playlistsGrid')
+  if (!grid) return
+  grid.innerHTML = ''
 
-function initPlaylists() {
-  const cards = document.querySelectorAll('.music-playlist-card')
+  playlistsData.forEach((pl, plIdx) => {
+    const card = document.createElement('div')
+    card.className = 'glass-card music-playlist-card'
+    card.dataset.playlist = plIdx
 
-  cards.forEach((card) => {
-    card.addEventListener('click', (e) => {
-      if (e.target.closest('.music-song')) return
+    const songsHtml = pl.songs.map((song, songIdx) => {
+      const key = `${plIdx}-${songIdx}`
+      song._key = key
+      return `<div class="music-song" data-key="${key}"><span class="music-song__name">${song.name}</span><span class="music-song__duration">--:--</span></div>`
+    }).join('')
 
-      const isExpanded = card.classList.contains('expanded')
-      cards.forEach((c) => c.classList.remove('expanded'))
+    card.innerHTML = `
+      <div class="music-playlist-card__cover" style="background: ${pl.gradient}"></div>
+      <div class="music-playlist-card__info">
+        <h3 class="music-playlist-card__name">${pl.name}</h3>
+        <span class="glass-tag music-playlist-card__count">${pl.songs.length} 首</span>
+      </div>
+      <p class="music-playlist-card__desc">${pl.desc}</p>
+      <div class="music-playlist-card__songs">${songsHtml}</div>
+    `
 
-      if (!isExpanded) {
-        card.classList.add('expanded')
-      }
-    })
+    grid.appendChild(card)
   })
 
-  // 点击歌曲 → 更新播放器
-  const songs = document.querySelectorAll('.music-song')
-  songs.forEach((songEl) => {
-    const key = songEl.dataset.song
-    const [plIdx, songIdx] = key.split('-').map(Number)
-    const song = playlistsData[plIdx].songs[songIdx]
-    song._key = key
-
-    songEl.addEventListener('click', (e) => {
+  grid.addEventListener('click', (e) => {
+    const songEl = e.target.closest('.music-song')
+    if (songEl) {
       e.stopPropagation()
+      const key = songEl.dataset.key
+      const [plIdx, songIdx] = key.split('-').map(Number)
+      const song = playlistsData[plIdx].songs[songIdx]
       updatePlayer(song, playlistsData[plIdx].name)
-    })
+      return
+    }
+
+    const card = e.target.closest('.music-playlist-card')
+    if (card) {
+      const isExpanded = card.classList.contains('expanded')
+      grid.querySelectorAll('.music-playlist-card').forEach((c) => c.classList.remove('expanded'))
+      if (!isExpanded) card.classList.add('expanded')
+    }
   })
 }
-
-// ============================================================
-// 播放控制
-// ============================================================
 
 function initPlayerControls() {
   const playBtn = document.getElementById('playBtn')
@@ -192,30 +184,20 @@ function initPlayerControls() {
     }
   })
 
-  // 进度条点击 → 跳转
   const progressBar = document.querySelector('.music-player__progress-bar')
   progressBar.addEventListener('click', (e) => {
     if (!currentSong || !audio.duration) return
-
     const rect = progressBar.getBoundingClientRect()
     const percent = (e.clientX - rect.left) / rect.width
     audio.currentTime = percent * audio.duration
   })
 }
 
-// ============================================================
-// 时间工具
-// ============================================================
-
 function formatTime(seconds) {
   const min = Math.floor(seconds / 60)
   const sec = Math.round(seconds % 60)
   return `${min}:${sec.toString().padStart(2, '0')}`
 }
-
-// ============================================================
-// 心情推荐
-// ============================================================
 
 function initMoodTags() {
   const tags = document.querySelectorAll('.music-mood-tag')
@@ -256,13 +238,9 @@ function initMoodTags() {
   renderMoodCards('all')
 }
 
-// ============================================================
-// 初始化
-// ============================================================
-
 function initMusicPage() {
   initAudioEvents()
-  initPlaylists()
+  renderPlaylists()
   initPlayerControls()
   initMoodTags()
 }
