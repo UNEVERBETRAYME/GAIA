@@ -63,6 +63,7 @@ function initGalleryModal() {
 // 感悟展开/收起
 // ============================================================
 
+function initJournalExpand() {
   // 事件委托：展开/收起按钮
   const journalSection = document.querySelector('.game-journal')
   if (!journalSection) return
@@ -90,6 +91,7 @@ function initGalleryModal() {
       btn.textContent = '收起'
     }
   })
+}
 
 // ============================================================
 // 横向拖拽滚动（角色卡片区）
