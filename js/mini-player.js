@@ -307,26 +307,38 @@ function initDrag() {
     const distLeft = rect.left
     const distRight = vw - rect.right
 
-    let snap = { dock: 'none', x: rect.left }
+    let targetDock = 'none'
     if (distLeft <= EDGE_SNAP_PX) {
-      snap = { dock: 'left', x: margin }
+      targetDock = 'left'
     } else if (distRight <= EDGE_SNAP_PX) {
-      snap = { dock: 'right', x: vw - rect.width - margin }
+      targetDock = 'right'
     }
 
-    const final = clampToViewport(snap.x, rect.top)
-
-    currentDock = snap.dock
+    currentDock = targetDock
     applyDockClass(currentDock)
 
-    playerEl.style.transition = 'left 0.28s cubic-bezier(0.22, 0.61, 0.36, 1), top 0.18s ease, opacity var(--dur-base) var(--ease-smooth)'
-    applyPosition(final.x, final.y)
-    savePos(final.x, final.y, currentDock)
+    requestAnimationFrame(() => {
+      const newRect = playerEl.getBoundingClientRect()
+      const { vw: vw2, margin: margin2 } = getLayoutBounds()
 
-    setTimeout(() => {
-      playerEl.style.transition = 'opacity var(--dur-base) var(--ease-smooth)'
-      scheduleCollapse()
-    }, 320)
+      let finalX = newRect.left
+      if (targetDock === 'left') {
+        finalX = margin2
+      } else if (targetDock === 'right') {
+        finalX = vw2 - newRect.width - margin2
+      }
+
+      const final = clampToViewport(finalX, newRect.top)
+
+      playerEl.style.transition = 'left 0.28s cubic-bezier(0.22, 0.61, 0.36, 1), top 0.18s ease, opacity var(--dur-base) var(--ease-smooth)'
+      applyPosition(final.x, final.y)
+      savePos(final.x, final.y, currentDock)
+
+      setTimeout(() => {
+        playerEl.style.transition = 'opacity var(--dur-base) var(--ease-smooth)'
+        scheduleCollapse()
+      }, 320)
+    })
 
     e.preventDefault()
   }

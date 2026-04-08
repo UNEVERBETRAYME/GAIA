@@ -33,6 +33,7 @@
   text-shadow: var(--ts-title);
   flex-shrink: 0;
   min-width: 80px;
+  margin-left: -12px;
   transition: color var(--dur-fast) var(--ease-smooth);
 }
 

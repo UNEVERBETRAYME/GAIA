@@ -453,22 +453,18 @@ p {
   width: clamp(56px, 5.5vw, 70px);
 }
 
+.mini-player.collapsed .mini-player__art,
 .mini-player.collapsed .mini-player__info,
 .mini-player.collapsed .mini-player__link,
 .mini-player.collapsed .mini-player__volume,
 .mini-player.collapsed .mini-player__btn:not(.player-btn--primary) {
-  opacity: 0;
-  width: 0;
-  margin: 0;
-  overflow: hidden;
-  pointer-events: none;
+  display: none;
 }
 
 .mini-player.collapsed .mini-player__inner {
   justify-content: center;
   gap: 0;
-  padding-left: clamp(6px, 0.8vw, 8px);
-  padding-right: clamp(6px, 0.8vw, 8px);
+  padding: clamp(8px, 1vw, 10px);
 }
 
 .mini-player.expanded .mini-player__info,
