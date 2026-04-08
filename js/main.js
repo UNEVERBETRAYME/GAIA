@@ -21,23 +21,39 @@ const PAGE_CSS_MAP = {
   'about': '/css/pages/about.css',
 }
 
-function swapPageCSS(key) {
-  // Remove previous page's dynamic CSS link
-  const prev = document.querySelector('link[data-page-style]')
-  if (prev) prev.remove()
+let currentStyleEl = null
 
-  const href = PAGE_CSS_MAP[key]
-  if (!href) return
+function loadPageCSS(key) {
+  return new Promise((resolve) => {
+    const href = PAGE_CSS_MAP[key]
+    if (!href) { resolve(); return }
 
-  // Check if this CSS is already loaded statically (direct load / refresh case)
-  const existing = document.querySelector(`link[href="${href}"]`)
-  if (existing) return
+    const existing = document.querySelector(`link[data-page-style="${key}"]`)
+    if (existing) { currentStyleEl = existing; resolve(); return }
 
-  const link = document.createElement('link')
-  link.rel = 'stylesheet'
-  link.href = href
-  link.dataset.pageStyle = key
-  document.head.appendChild(link)
+    const link = document.createElement('link')
+    link.rel = 'stylesheet'
+    link.href = href
+    link.dataset.pageStyle = key
+
+    let settled = false
+    function finish() {
+      if (settled) return
+      settled = true
+
+      if (currentStyleEl && currentStyleEl !== link) {
+        currentStyleEl.remove()
+      }
+      currentStyleEl = link
+      resolve()
+    }
+
+    link.onload = finish
+    link.onerror = finish
+    setTimeout(finish, 3000)
+
+    document.head.appendChild(link)
+  })
 }
 
 function initPageTransition() {
@@ -163,9 +179,9 @@ async function loadPage(path, scroll) {
     const pageKey = getPageKey()
     document.querySelectorAll(`.nav-link[data-page="${pageKey}"]`).forEach((el) => el.classList.add('active'))
 
+    await loadPageCSS(pageKey)
     initPageTransition()
     initScrollReveal()
-    swapPageCSS(pageKey)
     runPageInit(pageKey)
 
     window.scrollTo(0, 0)
@@ -175,12 +191,14 @@ async function loadPage(path, scroll) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  initPageTransition()
   initNav()
-  initScrollReveal()
   initMiniPlayer()
   interceptLinks()
-  // No need to call swapPageCSS here — page CSS is already loaded via static <link> in HTML
-  restoreState()
-  runPageInit(getPageKey())
+
+  loadPageCSS(getPageKey()).then(() => {
+    initPageTransition()
+    initScrollReveal()
+    restoreState()
+    runPageInit(getPageKey())
+  })
 })
