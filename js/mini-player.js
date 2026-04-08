@@ -12,6 +12,12 @@ let nameEl = null
 let artistEl = null
 let iconEl = null
 
+const ICONS = {
+  prev: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M18 7l-8 5 8 5V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>`,
+  next: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M6 7l8 5-8 5V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>`,
+  play: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7l10 5-10 5V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>`,
+  pause: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7v10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M15 7v10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+}
 let currentDock = 'none'
 let collapseTimer = null
 let touchExpanded = false
@@ -165,6 +171,13 @@ function applyCover(state) {
   }
 }
 
+function setButtonIcon(el, iconMarkup) {
+  if (!el) return
+  if (el.innerHTML !== iconMarkup) {
+    el.innerHTML = iconMarkup
+  }
+}
+
 function initExpandBehavior() {
   const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches
 
@@ -212,6 +225,7 @@ function initDrag() {
 
   function onPointerDown(e) {
     if (e.button && e.button !== 0) return
+    if (e.target.closest('button, a')) return
 
     clearCollapseTimer()
 
@@ -314,12 +328,30 @@ export function initMiniPlayer() {
         <div class="mini-player__name" id="miniPlayerName">未播放</div>
         <div class="mini-player__artist" id="miniPlayerArtist"></div>
       </div>
-      <button class="mini-player__ctrl" id="miniPlayerPrev" aria-label="上一首">⏮</button>
-      <button class="mini-player__play" id="miniPlayerPlay" aria-label="播放">
-        <span class="mini-player__play-icon" id="miniPlayerPlayIcon">▶</span>
+      <button class="player-btn mini-player__btn" id="miniPlayerPrev" aria-label="上一首">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 6v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M18 7l-8 5 8 5V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
       </button>
-      <button class="mini-player__ctrl" id="miniPlayerNext" aria-label="下一首">⏭</button>
-      <a href="/pages/music.html" class="mini-player__link" id="miniPlayerLink" aria-label="音乐页">🎵</a>
+      <button class="player-btn player-btn--primary mini-player__btn" id="miniPlayerPlay" aria-label="播放">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 7l10 5-10 5V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="player-btn mini-player__btn" id="miniPlayerNext" aria-label="下一首">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M18 6v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M6 7l8 5-8 5V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <a href="/pages/music.html" class="mini-player__link" id="miniPlayerLink" aria-label="音乐页">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18V6l10-2v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="7" cy="18" r="2" fill="none" stroke="currentColor" stroke-width="2"/>
+          <circle cx="17" cy="16" r="2" fill="none" stroke="currentColor" stroke-width="2"/>
+        </svg>
+      </a>
     </div>
   `
   document.body.appendChild(wrapper)
@@ -329,7 +361,9 @@ export function initMiniPlayer() {
   artEl = document.getElementById('miniPlayerArt')
   nameEl = document.getElementById('miniPlayerName')
   artistEl = document.getElementById('miniPlayerArtist')
-  iconEl = document.getElementById('miniPlayerPlayIcon')
+  iconEl = document.getElementById('miniPlayerPlay')
+  setButtonIcon(document.getElementById('miniPlayerPrev'), ICONS.prev)
+  setButtonIcon(document.getElementById('miniPlayerNext'), ICONS.next)
 
   const saved = loadSavedPos()
   requestAnimationFrame(() => {
@@ -372,7 +406,8 @@ export function initMiniPlayer() {
       applyCover(state)
       nameEl.textContent = state.song.name
       artistEl.textContent = state.playlistName || state.song.artist
-      iconEl.textContent = state.isPlaying ? '⏸' : '▶'
+      setButtonIcon(iconEl, state.isPlaying ? ICONS.pause : ICONS.play)
+      document.getElementById('miniPlayerPlay').setAttribute('aria-label', state.isPlaying ? '暂停' : '播放')
     } else {
       playerEl.classList.remove('visible')
     }

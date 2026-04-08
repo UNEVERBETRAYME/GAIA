@@ -328,6 +328,63 @@ p {
 }
 
 /* ============================================================
+   播放器按钮（全站统一）
+   ============================================================ */
+
+.player-btn {
+  --player-btn-size: 48px;
+  --player-btn-icon-size: 22px;
+  width: var(--player-btn-size);
+  height: var(--player-btn-size);
+  min-width: var(--player-btn-size);
+  min-height: var(--player-btn-size);
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  display: grid;
+  place-items: center;
+  backdrop-filter: blur(16px) saturate(1.15);
+  -webkit-backdrop-filter: blur(16px) saturate(1.15);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.26);
+  transition: color var(--dur-fast) var(--ease-smooth), background var(--dur-fast) var(--ease-smooth), border-color var(--dur-fast) var(--ease-smooth), transform var(--dur-fast) var(--ease-smooth), box-shadow var(--dur-fast) var(--ease-smooth);
+}
+
+.player-btn svg {
+  width: var(--player-btn-icon-size);
+  height: var(--player-btn-icon-size);
+  display: block;
+  overflow: visible;
+}
+
+.player-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.28);
+}
+
+.player-btn:active {
+  transform: translateY(1px);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.player-btn--primary {
+  --player-btn-size: 56px;
+  --player-btn-icon-size: 24px;
+  color: var(--text-primary);
+  background: rgba(110, 143, 173, 0.2);
+  border-color: rgba(110, 143, 173, 0.28);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.32), 0 0 22px rgba(110, 143, 173, 0.18);
+}
+
+.player-btn--active {
+  color: var(--text-primary);
+  background: rgba(110, 143, 173, 0.24);
+  border-color: rgba(110, 143, 173, 0.34);
+}
+
+/* ============================================================
    迷你播放器（全局悬浮）
    ============================================================ */
 
@@ -390,7 +447,7 @@ p {
 
 .mini-player.collapsed .mini-player__info,
 .mini-player.collapsed .mini-player__link,
-.mini-player.collapsed .mini-player__ctrl {
+.mini-player.collapsed .mini-player__btn {
   opacity: 0;
   width: 0;
   margin: 0;
@@ -407,14 +464,14 @@ p {
 
 .mini-player.expanded .mini-player__info,
 .mini-player.expanded .mini-player__link,
-.mini-player.expanded .mini-player__ctrl {
+.mini-player.expanded .mini-player__btn {
   opacity: 1;
   pointer-events: auto;
 }
 
 .mini-player__info,
 .mini-player__link,
-.mini-player__ctrl {
+.mini-player__btn {
   transition: opacity var(--dur-fast) var(--ease-smooth), width var(--dur-fast) var(--ease-smooth), margin var(--dur-fast) var(--ease-smooth);
 }
 
@@ -448,50 +505,15 @@ p {
   text-overflow: ellipsis;
 }
 
-.mini-player__ctrl {
+.mini-player__btn {
+  --player-btn-size: clamp(28px, 3vw, 34px);
+  --player-btn-icon-size: clamp(16px, 1.8vw, 18px);
   flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: clamp(28px, 3vw, 34px);
-  height: clamp(28px, 3vw, 34px);
-  border-radius: 50%;
-  border: 1px solid rgba(110, 143, 173, 0.16);
-  background: rgba(110, 143, 173, 0.08);
-  color: var(--text-secondary);
-  font-size: clamp(0.72rem, 0.85vw, 0.82rem);
-  transition: all var(--dur-fast) var(--ease-smooth);
 }
 
-.mini-player__ctrl:hover {
-  color: var(--text-primary);
-  background: rgba(110, 143, 173, 0.18);
-  border-color: rgba(110, 143, 173, 0.3);
-}
-
-.mini-player__play {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: clamp(34px, 3.6vw, 44px);
-  height: clamp(34px, 3.6vw, 44px);
-  border-radius: 50%;
-  background: var(--accent-fog-blue-alpha);
-  border: 1px solid rgba(110, 143, 173, 0.2);
-  cursor: pointer;
-  transition: all var(--dur-fast) var(--ease-smooth);
-}
-
-.mini-player__play:hover {
-  background: rgba(110, 143, 173, 0.25);
-  transform: scale(1.05);
-}
-
-.mini-player__play-icon {
-  font-size: clamp(0.85rem, 1vw, 1.05rem);
-  color: var(--accent-fog-blue);
-  line-height: 1;
+.mini-player__btn.player-btn--primary {
+  --player-btn-size: clamp(34px, 3.6vw, 44px);
+  --player-btn-icon-size: clamp(18px, 2vw, 20px);
 }
 
 .mini-player__link {

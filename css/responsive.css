@@ -147,9 +147,18 @@
     padding: var(--sp-md);
   }
 
-  .music-player__art {
-    width: 180px;
-    height: 180px;
+  .music-player__controls {
+    gap: clamp(8px, 2.4vw, 14px);
+  }
+
+  .mini-player__btn {
+    --player-btn-size: 36px;
+    --player-btn-icon-size: 18px;
+  }
+
+  .mini-player__btn.player-btn--primary {
+    --player-btn-size: 40px;
+    --player-btn-icon-size: 20px;
   }
 
   .music-playlists__grid {
@@ -346,8 +355,18 @@
     height: 140px;
   }
 
-  .music-player__title {
-    font-size: 1.2rem;
+  .music-player__controls {
+    gap: clamp(6px, 2.2vw, 10px);
+  }
+
+  .music-player__controls .player-btn {
+    --player-btn-size: 36px;
+    --player-btn-icon-size: 18px;
+  }
+
+  .music-player__controls .player-btn--primary {
+    --player-btn-size: 42px;
+    --player-btn-icon-size: 20px;
   }
 
   .music-playlist-card__cover {
@@ -459,19 +478,14 @@
     width: 60px;
   }
 
-  .mini-player__ctrl {
-    width: 26px;
-    height: 26px;
-    font-size: 0.72rem;
+  .mini-player__btn {
+    --player-btn-size: 36px;
+    --player-btn-icon-size: 18px;
   }
 
-  .mini-player__play {
-    width: 36px;
-    height: 36px;
-  }
-
-  .mini-player__play-icon {
-    font-size: 0.9rem;
+  .mini-player__btn.player-btn--primary {
+    --player-btn-size: 40px;
+    --player-btn-icon-size: 20px;
   }
 
   .mini-player__link {

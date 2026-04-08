@@ -1,7 +1,22 @@
 import { playlistsData, allSongs, getMoodLabel, findSongByKey } from '../music-data.js'
-import { getState, subscribe, playSong, togglePlay, seekTo, formatTime, prevTrack, nextTrack, toggleShuffle } from '../music-player.js'
+import { audio, getState, subscribe, playSong, togglePlay, seekTo, formatTime, prevTrack, nextTrack, toggleShuffle } from '../music-player.js'
 
 let unsubscribe = null
+
+const ICONS = {
+  play: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7l10 5-10 5V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>`,
+  pause: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7v10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M15 7v10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+  repeat: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10a3 3 0 0 1 3 3v2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M17 17H7a3 3 0 0 1-3-3v-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M17 5l2 2-2 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 19l-2-2 2-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  repeatOne: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10a3 3 0 0 1 3 3v2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M17 17H7a3 3 0 0 1-3-3v-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M17 5l2 2-2 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 19l-2-2 2-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.5 9.5h-1.5l-1 1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 10.5v4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+}
+
+const REPEAT_MODE = {
+  off: 'off',
+  all: 'all',
+  one: 'one',
+}
+
+let repeatMode = REPEAT_MODE.off
 
 function renderPlaylists() {
   const grid = document.getElementById('playlistsGrid')
@@ -66,13 +81,66 @@ function applyCover(artEl, state) {
   }
 }
 
-function syncPlayerUI(state) {
+function setButtonIcon(btn, iconMarkup) {
+  if (!btn) return
+  if (btn.innerHTML !== iconMarkup) {
+    btn.innerHTML = iconMarkup
+  }
+}
+
+function syncControlButtons(state) {
+  const playBtn = document.getElementById('playBtn')
   const shuffleBtn = document.getElementById('shuffleBtn')
-  if (shuffleBtn) {
-    shuffleBtn.classList.toggle('active', !!state.shuffle)
+  const repeatBtn = document.getElementById('repeatBtn')
+
+  if (playBtn) {
+    setButtonIcon(playBtn, state.isPlaying ? ICONS.pause : ICONS.play)
+    playBtn.setAttribute('aria-label', state.isPlaying ? '暂停' : '播放')
   }
 
-  if (!state.song) return
+  if (shuffleBtn) {
+    shuffleBtn.classList.toggle('player-btn--active', !!state.shuffle)
+  }
+
+  if (repeatBtn) {
+    repeatBtn.classList.toggle('player-btn--active', repeatMode !== REPEAT_MODE.off)
+    setButtonIcon(repeatBtn, repeatMode === REPEAT_MODE.one ? ICONS.repeatOne : ICONS.repeat)
+    if (repeatMode === REPEAT_MODE.one) {
+      repeatBtn.setAttribute('aria-label', '单曲循环')
+    } else if (repeatMode === REPEAT_MODE.all) {
+      repeatBtn.setAttribute('aria-label', '列表循环')
+    } else {
+      repeatBtn.setAttribute('aria-label', '循环播放')
+    }
+  }
+}
+
+function applyRepeatMode() {
+  audio.loop = repeatMode === REPEAT_MODE.one
+  syncControlButtons(getState())
+}
+
+function cycleRepeatMode() {
+  if (repeatMode === REPEAT_MODE.off) {
+    repeatMode = REPEAT_MODE.all
+  } else if (repeatMode === REPEAT_MODE.all) {
+    repeatMode = REPEAT_MODE.one
+  } else {
+    repeatMode = REPEAT_MODE.off
+  }
+
+  applyRepeatMode()
+}
+
+function syncPlayerUI(state) {
+  syncControlButtons(state)
+
+  if (!state.song) {
+    document.getElementById('currentTime').textContent = '0:00'
+    document.getElementById('totalTime').textContent = '0:00'
+    document.getElementById('progressFill').style.width = '0%'
+    return
+  }
 
   applyCover(document.getElementById('playerArt'), state)
   document.getElementById('playerTitle').textContent = state.song.name
@@ -83,20 +151,9 @@ function syncPlayerUI(state) {
     document.getElementById('totalTime').textContent = formatTime(state.duration)
   }
 
-  if (state.currentTime > 0) {
-    document.getElementById('currentTime').textContent = formatTime(state.currentTime)
-    const percent = (state.currentTime / state.duration) * 100
-    document.getElementById('progressFill').style.width = `${percent}%`
-  }
-
-  const playIcon = document.getElementById('playIcon')
-  if (state.isPlaying) {
-    playIcon.textContent = '⏸'
-    playIcon.classList.add('spinning')
-  } else {
-    playIcon.textContent = '▶'
-    playIcon.classList.remove('spinning')
-  }
+  document.getElementById('currentTime').textContent = formatTime(state.currentTime)
+  const percent = state.duration > 0 ? (state.currentTime / state.duration) * 100 : 0
+  document.getElementById('progressFill').style.width = `${percent}%`
 
   document.querySelectorAll('.music-song').forEach((el) => el.classList.remove('active'))
 
@@ -115,6 +172,7 @@ function initPlayerControls() {
   const prevBtn = document.getElementById('prevBtn')
   const nextBtn = document.getElementById('nextBtn')
   const shuffleBtn = document.getElementById('shuffleBtn')
+  const repeatBtn = document.getElementById('repeatBtn')
 
   playBtn.addEventListener('click', () => {
     togglePlay()
@@ -130,6 +188,10 @@ function initPlayerControls() {
 
   shuffleBtn.addEventListener('click', () => {
     toggleShuffle()
+  })
+
+  repeatBtn.addEventListener('click', () => {
+    cycleRepeatMode()
   })
 
   const progressBar = document.querySelector('.music-player__progress-bar')
@@ -182,6 +244,9 @@ function initMoodTags() {
 }
 
 export function initMusicPage() {
+  repeatMode = REPEAT_MODE.off
+  applyRepeatMode()
+
   renderPlaylists()
   initPlayerControls()
   initMoodTags()
@@ -195,6 +260,9 @@ export function initMusicPage() {
 }
 
 export function teardownMusicPage() {
+  audio.loop = false
+  repeatMode = REPEAT_MODE.off
+
   if (unsubscribe) {
     unsubscribe()
     unsubscribe = null
