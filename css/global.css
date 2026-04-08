@@ -281,11 +281,13 @@ p {
 
 .footer {
   position: fixed;
-  left: 0;
-  right: 0;
+  left: 50%;
   bottom: 0;
+  width: min(calc(var(--max-w) + var(--sp-xl) * 2), 100vw);
   z-index: 850;
-  padding: var(--sp-sm) var(--sp-md) calc(var(--sp-sm) + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  transform: translateX(-50%);
+  padding: var(--sp-sm) var(--sp-xl) calc(var(--sp-sm) + env(safe-area-inset-bottom));
   min-height: var(--footer-h);
   text-align: center;
   background: rgba(10, 10, 15, 0.75);

@@ -23,6 +23,12 @@
     padding: 0 var(--sp-lg);
   }
 
+  .footer {
+    width: min(calc(var(--max-w) + var(--sp-lg) * 2), 100vw);
+    padding-left: var(--sp-lg);
+    padding-right: var(--sp-lg);
+  }
+
   .nav-links {
     gap: var(--sp-md);
   }
@@ -65,6 +71,12 @@
 
   .nav-inner {
     padding: 0 var(--sp-sm);
+  }
+
+  .footer {
+    width: 100vw;
+    padding-left: var(--sp-sm);
+    padding-right: var(--sp-sm);
   }
 
   /* T0 标题 clamp 下限保障 */
