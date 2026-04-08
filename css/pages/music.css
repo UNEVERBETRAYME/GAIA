@@ -148,6 +148,60 @@
   --player-btn-icon-size: clamp(22px, 2.3vw, 26px);
 }
 
+.music-player__volume {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 12px;
+}
+
+.music-player__volume-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.music-player__volume-slider {
+  width: 100px;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.music-player__volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent-fog-blue);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.music-player__volume-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.music-player__volume-slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: none;
+  border-radius: 50%;
+  background: var(--accent-fog-blue);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.music-player__volume-slider::-moz-range-thumb:hover {
+  transform: scale(1.2);
+}
+
 /* ============================================================
    区域 B：歌单网格
    3 / 2 / 1 列响应式

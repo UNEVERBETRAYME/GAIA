@@ -1,4 +1,4 @@
-import { getState, togglePlay, subscribe, prevTrack, nextTrack } from './music-player.js'
+import { getState, togglePlay, subscribe, prevTrack, nextTrack, setVolume } from './music-player.js'
 
 const STORAGE_KEY = 'gaia-mini-player-pos'
 const EDGE_SNAP_PX = 28
@@ -12,6 +12,7 @@ let artEl = null
 let nameEl = null
 let artistEl = null
 let iconEl = null
+let volumeSliderEl = null
 
 const ICONS = {
   prev: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M18 7l-8 5 8 5V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>`,
@@ -257,7 +258,7 @@ function initDrag() {
 
   function onPointerDown(e) {
     if (e.button && e.button !== 0) return
-    if (e.target.closest('button, a')) return
+    if (e.target.closest('button, a, input')) return
 
     clearCollapseTimer()
 
@@ -389,6 +390,9 @@ export function initMiniPlayer() {
           <path d="M6 7l8 5-8 5V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
         </svg>
       </button>
+      <div class="mini-player__volume">
+        <input type="range" class="mini-player__volume-slider" id="miniPlayerVolumeSlider" min="0" max="100" value="80" aria-label="音量">
+      </div>
       <a href="/pages/music.html" class="mini-player__link" id="miniPlayerLink" aria-label="音乐页">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M9 18V6l10-2v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -406,6 +410,7 @@ export function initMiniPlayer() {
   nameEl = document.getElementById('miniPlayerName')
   artistEl = document.getElementById('miniPlayerArtist')
   iconEl = document.getElementById('miniPlayerPlay')
+  volumeSliderEl = document.getElementById('miniPlayerVolumeSlider')
   setButtonIcon(document.getElementById('miniPlayerPrev'), ICONS.prev)
   setButtonIcon(document.getElementById('miniPlayerNext'), ICONS.next)
 
@@ -456,6 +461,13 @@ export function initMiniPlayer() {
     }
   })
 
+  if (volumeSliderEl) {
+    volumeSliderEl.addEventListener('input', (e) => {
+      const value = parseInt(e.target.value, 10) / 100
+      setVolume(value)
+    })
+  }
+
   subscribe((state) => {
     if (state.song) {
       applyCover(state)
@@ -463,6 +475,10 @@ export function initMiniPlayer() {
       artistEl.textContent = state.playlistName || state.song.artist
       setButtonIcon(iconEl, state.isPlaying ? ICONS.pause : ICONS.play)
       document.getElementById('miniPlayerPlay').setAttribute('aria-label', state.isPlaying ? '暂停' : '播放')
+    }
+
+    if (volumeSliderEl) {
+      volumeSliderEl.value = Math.round(state.volume * 100)
     }
 
     syncMiniPlayerVisibility(state)

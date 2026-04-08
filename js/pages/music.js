@@ -1,5 +1,5 @@
 import { playlistsData, allSongs, getMoodLabel, findSongByKey } from '../music-data.js'
-import { audio, getState, subscribe, playSong, togglePlay, seekTo, formatTime, prevTrack, nextTrack, toggleShuffle } from '../music-player.js'
+import { audio, getState, subscribe, playSong, togglePlay, seekTo, formatTime, prevTrack, nextTrack, toggleShuffle, setVolume } from '../music-player.js'
 import { loadAudioManifest, buildLibrarySongs, groupByPlaylist, loadSongMetadata } from '../audio-library.js'
 
 let unsubscribe = null
@@ -222,6 +222,11 @@ function syncPlayerUI(state) {
   const percent = state.duration > 0 ? (state.currentTime / state.duration) * 100 : 0
   document.getElementById('progressFill').style.width = `${percent}%`
 
+  const volumeSlider = document.getElementById('volumeSlider')
+  if (volumeSlider) {
+    volumeSlider.value = Math.round(state.volume * 100)
+  }
+
   document.querySelectorAll('.music-song').forEach((el) => el.classList.remove('active'))
 
   const idx = allSongs.findIndex((s) => s.src === state.song.src)
@@ -240,6 +245,7 @@ function initPlayerControls() {
   const nextBtn = document.getElementById('nextBtn')
   const shuffleBtn = document.getElementById('shuffleBtn')
   const repeatBtn = document.getElementById('repeatBtn')
+  const volumeSlider = document.getElementById('volumeSlider')
 
   playBtn.addEventListener('click', () => {
     togglePlay()
@@ -260,6 +266,13 @@ function initPlayerControls() {
   repeatBtn.addEventListener('click', () => {
     cycleRepeatMode()
   })
+
+  if (volumeSlider) {
+    volumeSlider.addEventListener('input', (e) => {
+      const value = parseInt(e.target.value, 10) / 100
+      setVolume(value)
+    })
+  }
 
   const progressBar = document.querySelector('.music-player__progress-bar')
   progressBar.addEventListener('click', (e) => {
