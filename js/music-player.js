@@ -3,9 +3,11 @@ import { getAudioMetadata } from './audio-art.js'
 
 const STORAGE_KEY = 'gaia-music-state'
 const DEFAULT_SONG_SRC = '/audio/Tears4MaLuv.mp3'
+const DEFAULT_VOLUME = 0.8
 
 const audio = new Audio()
 audio.preload = 'metadata'
+audio.volume = DEFAULT_VOLUME
 
 let currentSong = null
 let playlistName = ''
@@ -13,6 +15,7 @@ let currentIndex = -1
 let shuffle = false
 let shuffleHistory = []
 let coverUrl = ''
+let volume = DEFAULT_VOLUME
 const listeners = new Set()
 
 function getState() {
@@ -28,6 +31,7 @@ function getState() {
     hasPrev: currentIndex !== -1,
     hasNext: currentIndex !== -1,
     coverUrl,
+    volume,
   }
 }
 
@@ -113,6 +117,7 @@ function saveState() {
       shuffle,
       currentIndex,
       shuffleHistory,
+      volume,
     }))
   } catch {}
 }
@@ -174,6 +179,11 @@ function restoreState() {
     shuffleHistory = Array.isArray(data.shuffleHistory)
       ? data.shuffleHistory.filter((n) => Number.isInteger(n) && n >= 0 && n < allSongs.length)
       : []
+
+    if (typeof data.volume === 'number' && data.volume >= 0 && data.volume <= 1) {
+      volume = data.volume
+      audio.volume = volume
+    }
 
     coverUrl = ''
     audio.src = song.src
@@ -368,6 +378,18 @@ function formatTime(seconds) {
   return `${min}:${sec.toString().padStart(2, '0')}`
 }
 
+function setVolume(value) {
+  const clamped = Math.max(0, Math.min(1, value))
+  volume = clamped
+  audio.volume = clamped
+  saveState()
+  notify()
+}
+
+function getVolume() {
+  return volume
+}
+
 export {
   audio,
   getState,
@@ -382,4 +404,6 @@ export {
   seekToTime,
   formatTime,
   restoreState,
+  setVolume,
+  getVolume,
 }
