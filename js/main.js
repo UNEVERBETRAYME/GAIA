@@ -229,6 +229,7 @@ async function loadPage(path, scroll) {
     document.querySelectorAll('[data-page]').forEach((el) => el.classList.remove('active'))
     document.querySelectorAll(`.nav-link[data-page="${pageKey}"]`).forEach((el) => el.classList.add('active'))
 
+    document.documentElement.dataset.page = pageKey
     initPageTransition()
     initScrollReveal()
     runPageInit(pageKey)
@@ -243,6 +244,8 @@ async function loadPage(path, scroll) {
 const initialPageCssPromise = loadPageCSS(getPageKey())
 
 document.addEventListener('DOMContentLoaded', () => {
+  document.documentElement.dataset.page = getPageKey()
+
   initNav()
   initMiniPlayer()
   interceptLinks()

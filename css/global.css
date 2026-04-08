@@ -427,6 +427,11 @@ p {
   pointer-events: auto;
 }
 
+.mini-player.mini-player--hidden-on-music {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .mini-player.visible .mini-player__inner {
   transform: translateY(0);
 }
@@ -448,7 +453,7 @@ p {
 
 .mini-player.collapsed .mini-player__info,
 .mini-player.collapsed .mini-player__link,
-.mini-player.collapsed .mini-player__btn {
+.mini-player.collapsed .mini-player__btn:not(.player-btn--primary) {
   opacity: 0;
   width: 0;
   margin: 0;

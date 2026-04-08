@@ -1,7 +1,10 @@
 import { playlistsData, allSongs, getMoodLabel, findSongByKey } from '../music-data.js'
 import { audio, getState, subscribe, playSong, togglePlay, seekTo, formatTime, prevTrack, nextTrack, toggleShuffle } from '../music-player.js'
+import { loadAudioManifest, buildLibrarySongs, groupByPlaylist, loadSongMetadata } from '../audio-library.js'
 
 let unsubscribe = null
+let librarySongs = []
+let currentLibraryMood = 'all'
 
 const ICONS = {
   play: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7l10 5-10 5V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>`,
@@ -99,7 +102,7 @@ function syncControlButtons(state) {
   }
 
   if (shuffleBtn) {
-    shuffleBtn.classList.toggle('player-btn--active', !!state.shuffle)
+    shuffleBtn.classList.toggle('player-btn--active', !!state.shuffleEnabled)
   }
 
   if (repeatBtn) {
@@ -243,6 +246,132 @@ function initMoodTags() {
   renderMoodCards('all')
 }
 
+// ============================================================
+// 本地音乐库功能
+// ============================================================
+
+async function initLibrary() {
+  try {
+    const files = await loadAudioManifest()
+    if (files.length === 0) {
+      console.log('本地音乐库为空')
+      return
+    }
+
+    librarySongs = buildLibrarySongs(files)
+
+    // 显示音乐库区块
+    const librarySection = document.getElementById('librarySection')
+    if (librarySection) {
+      librarySection.style.display = 'block'
+    }
+
+    // 初始化过滤标签
+    initLibraryMoodTags()
+
+    // 渲染音乐库
+    renderLibrary(currentLibraryMood)
+  } catch (error) {
+    console.error('加载本地音乐库失败:', error)
+  }
+}
+
+function initLibraryMoodTags() {
+  const tags = document.querySelectorAll('.music-library-mood-tag')
+
+  tags.forEach(tag => {
+    tag.addEventListener('click', () => {
+      tags.forEach(t => t.classList.remove('active'))
+      tag.classList.add('active')
+      currentLibraryMood = tag.dataset.mood
+      renderLibrary(currentLibraryMood)
+    })
+  })
+}
+
+function renderLibrary(mood) {
+  const content = document.getElementById('libraryContent')
+  if (!content) return
+
+  // 过滤歌曲
+  const filtered = mood === 'all'
+    ? librarySongs
+    : librarySongs.filter(s => s.mood === mood)
+
+  if (filtered.length === 0) {
+    content.innerHTML = '<div class="music-library__empty">暂无符合条件的歌曲</div>'
+    return
+  }
+
+  // 按歌单分组
+  const grouped = groupByPlaylist(filtered)
+
+  content.innerHTML = ''
+
+  Object.entries(grouped).forEach(([playlistName, songs]) => {
+    const group = document.createElement('div')
+    group.className = 'music-library__group'
+
+    const title = document.createElement('h3')
+    title.className = 'music-library__group-title'
+    title.textContent = `${playlistName} (${songs.length})`
+
+    const songsList = document.createElement('div')
+    songsList.className = 'music-library__songs-list'
+
+    songs.forEach(song => {
+      const songEl = createLibrarySongElement(song)
+      songsList.appendChild(songEl)
+    })
+
+    group.appendChild(title)
+    group.appendChild(songsList)
+    content.appendChild(group)
+  })
+}
+
+function createLibrarySongElement(song) {
+  const el = document.createElement('div')
+  el.className = 'music-library-song'
+
+  const coverStyle = song.coverUrl
+    ? `background-image: url(${song.coverUrl}); background-size: cover; background-position: center;`
+    : `background: ${song.gradient};`
+
+  const moodLabel = song.moodLabel || '未知'
+
+  el.innerHTML = `
+    <div class="music-library-song__cover" style="${coverStyle}"></div>
+    <div class="music-library-song__info">
+      <div class="music-library-song__name">${song.name}</div>
+      <div class="music-library-song__artist">${song.artist}</div>
+    </div>
+    <div class="music-library-song__meta">
+      <span class="music-library-song__mood">${moodLabel}</span>
+    </div>
+  `
+
+  el.addEventListener('click', async () => {
+    // 懒加载 ID3 元数据
+    await loadSongMetadata(song)
+
+    // 播放歌曲
+    playSong(song, song.playlistName)
+
+    // 更新封面（如果加载到了）
+    if (song.coverUrl) {
+      const coverEl = el.querySelector('.music-library-song__cover')
+      if (coverEl) {
+        coverEl.style.backgroundImage = `url(${song.coverUrl})`
+        coverEl.style.backgroundSize = 'cover'
+        coverEl.style.backgroundPosition = 'center'
+      }
+    }
+  })
+
+  return el
+}
+
 export function initMusicPage() {
   repeatMode = REPEAT_MODE.off
   applyRepeatMode()
@@ -250,6 +379,9 @@ export function initMusicPage() {
   renderPlaylists()
   initPlayerControls()
   initMoodTags()
+
+  // 初始化本地音乐库
+  initLibrary()
 
   const state = getState()
   syncPlayerUI(state)

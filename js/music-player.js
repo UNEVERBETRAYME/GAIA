@@ -1,7 +1,8 @@
 import { allSongs, findSongBySrc } from './music-data.js'
-import { getAudioArt } from './audio-art.js'
+import { getAudioMetadata } from './audio-art.js'
 
 const STORAGE_KEY = 'gaia-music-state'
+const DEFAULT_SONG_SRC = '/audio/Tears4MaLuv.mp3'
 
 const audio = new Audio()
 audio.preload = 'metadata'
@@ -23,6 +24,7 @@ function getState() {
     duration: audio.duration || 0,
     src: audio.src || '',
     shuffle,
+    shuffleEnabled: shuffle,
     hasPrev: currentIndex !== -1,
     hasNext: currentIndex !== -1,
     coverUrl,
@@ -51,19 +53,48 @@ function hydrateSong(song) {
   return song
 }
 
+function getDefaultSong() {
+  return findSongBySrc(DEFAULT_SONG_SRC)
+}
+
 function setCover(art) {
   coverUrl = art || ''
   notify()
 }
 
-async function resolveCoverForSong(song) {
+async function resolveMetadataForSong(song) {
   if (!song || !song.src) {
     setCover('')
     return
   }
-  const art = await getAudioArt(song.src)
-  if (currentSong && currentSong.src === song.src) {
-    setCover(art || '')
+
+  try {
+    const metadata = await getAudioMetadata(song.src)
+
+    // 确保仍然是当前歌曲（避免快速切歌时覆盖错误）
+    if (currentSong && currentSong.src === song.src) {
+      // 更新 ID3 信息
+      if (metadata) {
+        if (metadata.title) {
+          currentSong.name = metadata.title
+        }
+        if (metadata.artist) {
+          currentSong.artist = metadata.artist
+        }
+        if (metadata.coverUrl) {
+          setCover(metadata.coverUrl)
+        } else {
+          setCover('')
+        }
+      } else {
+        setCover('')
+      }
+
+      notify()
+    }
+  } catch (error) {
+    console.warn('加载 ID3 元数据失败:', error)
+    setCover('')
   }
 }
 
@@ -95,11 +126,11 @@ function setCurrentByIndex(index, shouldPlay = true) {
   coverUrl = ''
   audio.src = currentSong.src
   audio.load()
-  resolveCoverForSong(currentSong)
+  resolveMetadataForSong(currentSong)
+  notify()
 
   if (!shouldPlay) {
     saveState()
-    notify()
     return Promise.resolve(true)
   }
 
@@ -146,7 +177,7 @@ function restoreState() {
 
     coverUrl = ''
     audio.src = song.src
-    resolveCoverForSong(song)
+    resolveMetadataForSong(song)
 
     if (data.currentTime > 0) {
       audio.currentTime = data.currentTime
@@ -195,6 +226,8 @@ audio.addEventListener('pause', () => {
 
 function playSong(song, plName) {
   const hydrated = hydrateSong(song)
+  if (!hydrated) return Promise.resolve(false)
+
   const idx = findIndexBySong(hydrated)
   if (idx !== -1) {
     currentIndex = idx
@@ -207,20 +240,31 @@ function playSong(song, plName) {
   }
 
   coverUrl = ''
-  resolveCoverForSong(currentSong)
+  resolveMetadataForSong(currentSong)
 
   audio.src = hydrated.src
   audio.load()
-  audio.play().then(() => {
+  notify()
+
+  return audio.play().then(() => {
     saveState()
     notify()
+    return true
   }).catch(() => {
     notify()
+    return false
   })
 }
 
 function togglePlay() {
-  if (!currentSong) return
+  if (!currentSong) {
+    const defaultSong = getDefaultSong()
+    if (!defaultSong) return
+    setShuffle(true)
+    playSong(defaultSong, defaultSong.playlistName || '').catch(() => {})
+    return
+  }
+
   if (audio.paused) {
     audio.play().catch(() => {})
   } else {
@@ -245,7 +289,8 @@ function nextTrack() {
   if (allSongs.length === 0) return Promise.resolve(false)
 
   if (currentIndex === -1) {
-    const fallback = currentSong ? findIndexBySong(currentSong) : 0
+    const fallbackSong = currentSong || getDefaultSong()
+    const fallback = fallbackSong ? findIndexBySong(fallbackSong) : 0
     currentIndex = fallback === -1 ? 0 : fallback
   }
 
@@ -264,7 +309,21 @@ function nextTrack() {
     nextIndex = (currentIndex + 1) % allSongs.length
   }
 
-  return setCurrentByIndex(nextIndex, true)
+  return setCurrentByIndex(nextIndex, true).then((ok) => {
+    if (ok) return true
+
+    if (shuffle && allSongs.length > 1) {
+      let fallbackIndex = currentIndex
+      do {
+        fallbackIndex = Math.floor(Math.random() * allSongs.length)
+      } while (fallbackIndex === currentIndex)
+      return setCurrentByIndex(fallbackIndex, true)
+    }
+
+    const defaultSong = getDefaultSong()
+    if (!defaultSong) return false
+    return playSong(defaultSong, defaultSong.playlistName || '')
+  })
 }
 
 function prevTrack() {

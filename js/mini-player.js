@@ -1,9 +1,10 @@
-import { togglePlay, subscribe, prevTrack, nextTrack } from './music-player.js'
+import { getState, togglePlay, subscribe, prevTrack, nextTrack } from './music-player.js'
 
 const STORAGE_KEY = 'gaia-mini-player-pos'
-const EDGE_SNAP_PX = 24
+const EDGE_SNAP_PX = 28
 const MOVE_THRESHOLD = 5
 const COLLAPSE_DELAY = 1500
+const TOUCH_COLLAPSE_DELAY = 2000
 
 let playerEl = null
 let innerEl = null
@@ -21,6 +22,15 @@ const ICONS = {
 let currentDock = 'none'
 let collapseTimer = null
 let touchExpanded = false
+let didDragMove = false
+let supportsHoverInput = false
+
+function readCssPxVar(varName) {
+  const raw = getComputedStyle(document.documentElement).getPropertyValue(varName).trim()
+  if (!raw) return null
+  const parsed = parseFloat(raw)
+  return Number.isFinite(parsed) ? parsed : null
+}
 
 function getLayoutBounds() {
   const margin = 8
@@ -29,15 +39,22 @@ function getLayoutBounds() {
   const nav = document.getElementById('mainNav')
   const footer = document.querySelector('.footer')
 
-  const navHeight = nav ? nav.getBoundingClientRect().height : 72
-  const footerHeight = footer ? footer.getBoundingClientRect().height : 92
+  const navHeight = readCssPxVar('--nav-h')
+    ?? (nav ? nav.getBoundingClientRect().height : 0)
+
+  const footerHeight = readCssPxVar('--footer-space')
+    ?? readCssPxVar('--footer-h')
+    ?? (footer ? footer.getBoundingClientRect().height : 0)
+
+  const safeAreaBottom = readCssPxVar('--safe-area-bottom') ?? 0
 
   return {
     vw,
     vh,
     margin,
-    minY: navHeight + margin,
-    maxYBase: vh - footerHeight - margin,
+    navHeight,
+    footerHeight,
+    safeAreaBottom,
   }
 }
 
@@ -64,29 +81,16 @@ function savePos(x, y, dock) {
 
 function clampToViewport(x, y) {
   const rect = playerEl.getBoundingClientRect()
-  const { vw, minY, maxYBase, margin } = getLayoutBounds()
+  const { vw, vh, margin, navHeight, footerHeight, safeAreaBottom } = getLayoutBounds()
 
+  const minY = navHeight + margin
+  const maxY = vh - footerHeight - rect.height - margin - safeAreaBottom
   const maxX = vw - rect.width - margin
-  const maxY = maxYBase - rect.height
 
   return {
-    x: Math.max(margin, Math.min(x, maxX)),
-    y: Math.max(minY, Math.min(y, maxY)),
+    x: Math.max(margin, Math.min(x, Math.max(margin, maxX))),
+    y: Math.max(minY, Math.min(y, Math.max(minY, maxY))),
   }
-}
-
-function resolveDockTarget(rect) {
-  const { vw, margin } = getLayoutBounds()
-  const distLeft = rect.left
-  const distRight = vw - rect.right
-
-  if (distLeft <= EDGE_SNAP_PX) {
-    return { dock: 'left', x: margin }
-  }
-  if (distRight <= EDGE_SNAP_PX) {
-    return { dock: 'right', x: vw - rect.width - margin }
-  }
-  return { dock: 'none', x: rect.left }
 }
 
 function clearCollapseTimer() {
@@ -106,7 +110,7 @@ function canAutoCollapse() {
   return currentDock !== 'none' && !playerEl.classList.contains('dragging')
 }
 
-function scheduleCollapse() {
+function scheduleCollapse(delay = COLLAPSE_DELAY) {
   clearCollapseTimer()
   if (!canAutoCollapse()) return
   collapseTimer = setTimeout(() => {
@@ -114,18 +118,21 @@ function scheduleCollapse() {
       setExpanded(false)
       touchExpanded = false
     }
-  }, COLLAPSE_DELAY)
+  }, delay)
 }
 
 function applyDockClass(dock) {
   playerEl.classList.remove('dock-left', 'dock-right', 'dock-none')
   playerEl.classList.add(`dock-${dock}`)
 
+  clearCollapseTimer()
+
   if (dock === 'none') {
+    touchExpanded = false
     setExpanded(true)
   } else {
+    touchExpanded = false
     setExpanded(false)
-    scheduleCollapse()
   }
 }
 
@@ -136,10 +143,10 @@ function applyPosition(x, y) {
 
 function getDefaultPosition() {
   const rect = playerEl.getBoundingClientRect()
-  const { vw, maxYBase } = getLayoutBounds()
+  const { vw, vh, margin, footerHeight, safeAreaBottom } = getLayoutBounds()
 
   const x = (vw - rect.width) / 2
-  const y = maxYBase - rect.height
+  const y = vh - footerHeight - rect.height - margin - safeAreaBottom
 
   return clampToViewport(x, y)
 }
@@ -178,10 +185,25 @@ function setButtonIcon(el, iconMarkup) {
   }
 }
 
-function initExpandBehavior() {
-  const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches
+function isMusicPage() {
+  return document.documentElement.dataset.page === 'music'
+}
 
-  if (supportsHover) {
+function syncMiniPlayerVisibility(state) {
+  const hideOnMusicPage = isMusicPage()
+  playerEl.classList.toggle('mini-player--hidden-on-music', hideOnMusicPage)
+
+  if (state.song && !hideOnMusicPage) {
+    playerEl.classList.add('visible')
+  } else {
+    playerEl.classList.remove('visible')
+  }
+}
+
+function initExpandBehavior() {
+  supportsHoverInput = window.matchMedia('(hover: hover) and (pointer: fine)').matches
+
+  if (supportsHoverInput) {
     playerEl.addEventListener('pointerenter', () => {
       if (currentDock === 'none') return
       clearCollapseTimer()
@@ -190,20 +212,30 @@ function initExpandBehavior() {
 
     playerEl.addEventListener('pointerleave', () => {
       if (currentDock === 'none') return
-      scheduleCollapse()
+      scheduleCollapse(COLLAPSE_DELAY)
     })
     return
   }
 
   playerEl.addEventListener('pointerup', (e) => {
-    if (playerEl.classList.contains('dragging')) return
     if (currentDock === 'none') return
+    if (e.target.closest('button, a')) return
+    if (didDragMove) {
+      didDragMove = false
+      return
+    }
+
+    clearCollapseTimer()
 
     if (!touchExpanded) {
       touchExpanded = true
       setExpanded(true)
-      scheduleCollapse()
+      scheduleCollapse(TOUCH_COLLAPSE_DELAY)
+      return
     }
+
+    touchExpanded = false
+    setExpanded(false)
   })
 
   document.addEventListener('pointerdown', (e) => {
@@ -235,6 +267,7 @@ function initDrag() {
     originX = rect.left
     originY = rect.top
     didMove = false
+    didDragMove = false
 
     playerEl.setPointerCapture(e.pointerId)
     playerEl.classList.add('dragging')
@@ -248,6 +281,7 @@ function initDrag() {
 
     if (!didMove && (Math.abs(dx) > MOVE_THRESHOLD || Math.abs(dy) > MOVE_THRESHOLD)) {
       didMove = true
+      didDragMove = true
       currentDock = 'none'
       applyDockClass(currentDock)
       clearCollapseTimer()
@@ -268,7 +302,17 @@ function initDrag() {
     if (!didMove) return
 
     const rect = playerEl.getBoundingClientRect()
-    const snap = resolveDockTarget(rect)
+    const { vw, margin } = getLayoutBounds()
+    const distLeft = rect.left
+    const distRight = vw - rect.right
+
+    let snap = { dock: 'none', x: rect.left }
+    if (distLeft <= EDGE_SNAP_PX) {
+      snap = { dock: 'left', x: margin }
+    } else if (distRight <= EDGE_SNAP_PX) {
+      snap = { dock: 'right', x: vw - rect.width - margin }
+    }
+
     const final = clampToViewport(snap.x, rect.top)
 
     currentDock = snap.dock
@@ -383,18 +427,30 @@ export function initMiniPlayer() {
   })
 
   document.getElementById('miniPlayerPrev').addEventListener('click', () => {
+    clearCollapseTimer()
+    if (!supportsHoverInput && currentDock !== 'none' && playerEl.classList.contains('expanded')) {
+      scheduleCollapse(TOUCH_COLLAPSE_DELAY)
+    }
     if (!playerEl.classList.contains('dragging')) {
       prevTrack()
     }
   })
 
   document.getElementById('miniPlayerPlay').addEventListener('click', () => {
+    clearCollapseTimer()
+    if (!supportsHoverInput && currentDock !== 'none' && playerEl.classList.contains('expanded')) {
+      scheduleCollapse(TOUCH_COLLAPSE_DELAY)
+    }
     if (!playerEl.classList.contains('dragging')) {
       togglePlay()
     }
   })
 
   document.getElementById('miniPlayerNext').addEventListener('click', () => {
+    clearCollapseTimer()
+    if (!supportsHoverInput && currentDock !== 'none' && playerEl.classList.contains('expanded')) {
+      scheduleCollapse(TOUCH_COLLAPSE_DELAY)
+    }
     if (!playerEl.classList.contains('dragging')) {
       nextTrack()
     }
@@ -402,16 +458,27 @@ export function initMiniPlayer() {
 
   subscribe((state) => {
     if (state.song) {
-      playerEl.classList.add('visible')
       applyCover(state)
       nameEl.textContent = state.song.name
       artistEl.textContent = state.playlistName || state.song.artist
       setButtonIcon(iconEl, state.isPlaying ? ICONS.pause : ICONS.play)
       document.getElementById('miniPlayerPlay').setAttribute('aria-label', state.isPlaying ? '暂停' : '播放')
-    } else {
-      playerEl.classList.remove('visible')
+    }
+
+    syncMiniPlayerVisibility(state)
+  })
+
+  const pageAttrObserver = new MutationObserver((mutations) => {
+    if (mutations.some((m) => m.type === 'attributes' && m.attributeName === 'data-page')) {
+      syncMiniPlayerVisibility(getState())
     }
   })
+  pageAttrObserver.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-page'],
+  })
+
+  syncMiniPlayerVisibility(getState())
 
   initExpandBehavior()
   initDrag()

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>音频库解析测试</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #0a0a0a;
+      color: #e0e0e0;
+    }
+    h1 { color: #fff; }
+    .test-case {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    .test-case h3 {
+      margin-top: 0;
+      color: #4a9eff;
+    }
+    .input {
+      background: #0a0a0a;
+      padding: 10px;
+      border-radius: 4px;
+      margin: 10px 0;
+      font-family: 'Courier New', monospace;
+      color: #ffa500;
+    }
+    .output {
+      background: #0a0a0a;
+      padding: 10px;
+      border-radius: 4px;
+      margin: 10px 0;
+      font-family: 'Courier New', monospace;
+    }
+    .label {
+      font-weight: bold;
+      color: #888;
+      margin-top: 10px;
+    }
+    .success { color: #4ade80; }
+    .error { color: #f87171; }
+  </style>
+</head>
+<body>
+  <h1>音频库标签解析测试</h1>
+  <div id="results"></div>
+
+  <script type="module">
+    import { parseFileTags, buildLibrarySongs } from './js/audio-library.js'
+
+    const testCases = [
+      {
+        name: '测试 1: lonely 标签 + 默认歌单',
+        input: 'A - B [lonely].mp3',
+        expected: {
+          mood: 'lonely',
+          playlistName: '孤独之海',
+          name: 'B',
+          artist: 'A'
+        }
+      },
+      {
+        name: '测试 2: 自定义歌单 + calm 标签',
+        input: 'A - B [pl:城市迷雾][calm].mp3',
+        expected: {
+          mood: 'calm',
+          playlistName: '城市迷雾',
+          name: 'B',
+          artist: 'A'
+        }
+      },
+      {
+        name: '测试 3: 无标签',
+        input: 'A - B.mp3',
+        expected: {
+          mood: 'unknown',
+          playlistName: '未分类',
+          name: 'B',
+          artist: 'A'
+        }
+      },
+      {
+        name: '测试 4: 大小写不敏感',
+        input: 'Artist - Song [Lonely][PL:MyPlaylist].mp3',
+        expected: {
+          mood: 'lonely',
+          playlistName: 'MyPlaylist',
+          name: 'Song',
+          artist: 'Artist'
+        }
+      },
+      {
+        name: '测试 5: melancholy + 默认歌单',
+        input: 'Jay - 夜曲 [melancholy].mp3',
+        expected: {
+          mood: 'melancholy',
+          playlistName: '深夜独白',
+          name: '夜曲',
+          artist: 'Jay'
+        }
+      },
+      {
+        name: '测试 6: 无艺术家分隔符',
+        input: 'Just A Song Name [healing].mp3',
+        expected: {
+          mood: 'healing',
+          playlistName: '温柔治愈',
+          name: 'Just A Song Name',
+          artist: '未知艺术家'
+        }
+      }
+    ]
+
+    const resultsDiv = document.getElementById('results')
+
+    testCases.forEach(test => {
+      const result = parseFileTags(test.input)
+      const songs = buildLibrarySongs([test.input])
+      const song = songs[0]
+
+      const moodMatch = result.mood === test.expected.mood
+      const playlistMatch = result.playlistName === test.expected.playlistName
+      const nameMatch = song.name === test.expected.name
+      const artistMatch = song.artist === test.expected.artist
+      const allMatch = moodMatch && playlistMatch && nameMatch && artistMatch
+
+      const testDiv = document.createElement('div')
+      testDiv.className = 'test-case'
+      testDiv.innerHTML = `
+        <h3>${allMatch ? '✅' : '❌'} ${test.name}</h3>
+        <div class="label">输入:</div>
+        <div class="input">${test.input}</div>
+
+        <div class="label">解析结果:</div>
+        <div class="output">
+          <div class="${moodMatch ? 'success' : 'error'}">mood: ${result.mood} ${moodMatch ? '✓' : '✗ (期望: ' + test.expected.mood + ')'}</div>
+          <div class="${playlistMatch ? 'success' : 'error'}">playlistName: ${result.playlistName} ${playlistMatch ? '✓' : '✗ (期望: ' + test.expected.playlistName + ')'}</div>
+          <div class="${nameMatch ? 'success' : 'error'}">name: ${song.name} ${nameMatch ? '✓' : '✗ (期望: ' + test.expected.name + ')'}</div>
+          <div class="${artistMatch ? 'success' : 'error'}">artist: ${song.artist} ${artistMatch ? '✓' : '✗ (期望: ' + test.expected.artist + ')'}</div>
+        </div>
+
+        <div class="label">完整歌曲对象:</div>
+        <div class="output">
+          <pre>${JSON.stringify(song, null, 2)}</pre>
+        </div>
+      `
+      resultsDiv.appendChild(testDiv)
+    })
+  </script>
+</body>
+</html>
