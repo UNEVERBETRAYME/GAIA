@@ -108,11 +108,14 @@ const pageModules = {
   'about': initAboutPage,
 }
 
+function getPageKeyFromPath(p) {
+  if (p === '/' || p.endsWith('/index.html')) return 'index'
+  const m = p.match(/\/pages\/([^.]+)\.html/)
+  return m ? m[1] : 'index'
+}
+
 function getPageKey() {
-  const path = window.location.pathname
-  if (path === '/' || path === '/index.html') return 'index'
-  const match = path.match(/\/pages\/([^.]+)\.html/)
-  return match ? match[1] : 'index'
+  return getPageKeyFromPath(window.location.pathname)
 }
 
 let currentPageKey = null
@@ -167,6 +170,10 @@ async function loadPage(path, scroll) {
   teardownMusicPage()
 
   try {
+    const pageKey = getPageKeyFromPath(path)
+
+    await loadPageCSS(pageKey)
+
     const resp = await fetch(path)
     if (!resp.ok) throw new Error(resp.status)
     const html = await resp.text()
@@ -184,10 +191,8 @@ async function loadPage(path, scroll) {
     if (newTitle) document.title = newTitle.textContent
 
     document.querySelectorAll('[data-page]').forEach((el) => el.classList.remove('active'))
-    const pageKey = getPageKey()
     document.querySelectorAll(`.nav-link[data-page="${pageKey}"]`).forEach((el) => el.classList.add('active'))
 
-    await loadPageCSS(pageKey)
     initPageTransition()
     initScrollReveal()
     runPageInit(pageKey)
