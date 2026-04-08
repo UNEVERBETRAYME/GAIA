@@ -14,6 +14,9 @@
   align-items: center;
   justify-content: space-between;
   height: var(--nav-h);
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 var(--sp-md);
 }
 
 /* ============================================================

@@ -1,13 +1,3 @@
-/**
- * ai.js - AI 板块专属脚本
- * 负责：Tab 切换、分类筛选、弹窗打开/关闭
- */
-
-// ============================================================
-// 占位数据
-// ============================================================
-
-// 5 个占位作品数据
 const aigcData = [
   {
     title: '雾中灯塔',
@@ -56,7 +46,6 @@ const aigcData = [
   },
 ]
 
-// 3 个占位工具数据
 const toolsData = [
   {
     name: 'Midjourney',
@@ -102,10 +91,6 @@ const toolsData = [
   },
 ]
 
-// ============================================================
-// Tab 切换
-// ============================================================
-
 function initTabs() {
   const tabs = document.querySelectorAll('.ai-tab')
   const panels = document.querySelectorAll('.ai-panel')
@@ -113,12 +98,9 @@ function initTabs() {
   tabs.forEach((tab) => {
     tab.addEventListener('click', () => {
       const target = tab.dataset.tab
-
-      // 更新按钮状态
       tabs.forEach((t) => t.classList.remove('active'))
       tab.classList.add('active')
 
-      // 切换面板
       panels.forEach((panel) => {
         panel.classList.remove('active')
         if (panel.id === `panel${target.charAt(0).toUpperCase() + target.slice(1)}`) {
@@ -129,10 +111,6 @@ function initTabs() {
   })
 }
 
-// ============================================================
-// 分类筛选
-// ============================================================
-
 function initFilter() {
   const filterTags = document.querySelectorAll('.ai-filter__tag')
   const cards = document.querySelectorAll('.ai-card')
@@ -140,12 +118,9 @@ function initFilter() {
   filterTags.forEach((tag) => {
     tag.addEventListener('click', () => {
       const filter = tag.dataset.filter
-
-      // 更新标签状态
       filterTags.forEach((t) => t.classList.remove('active'))
       tag.classList.add('active')
 
-      // 筛选卡片
       cards.forEach((card) => {
         const category = card.dataset.category
         if (filter === 'all' || category === filter) {
@@ -158,17 +133,12 @@ function initFilter() {
   })
 }
 
-// ============================================================
-// 弹窗：作品详情
-// ============================================================
-
 function initAigcModal() {
   const modal = document.getElementById('aigcModal')
   const closeBtn = document.getElementById('aigcModalClose')
   const cards = document.querySelectorAll('.ai-card')
   if (!modal) return
 
-  // 打开弹窗
   cards.forEach((card) => {
     card.addEventListener('click', () => {
       const index = parseInt(card.dataset.index, 10)
@@ -180,7 +150,6 @@ function initAigcModal() {
       document.getElementById('modalDesc').textContent = data.desc
       document.getElementById('modalPromptCode').textContent = data.prompt
 
-      // 元信息标签
       const metaEl = document.getElementById('modalMeta')
       metaEl.innerHTML = ''
       const modelTag = document.createElement('span')
@@ -199,7 +168,6 @@ function initAigcModal() {
     })
   })
 
-  // 关闭弹窗
   function closeModal() {
     modal.classList.remove('active')
     document.body.style.overflow = ''
@@ -214,17 +182,12 @@ function initAigcModal() {
   })
 }
 
-// ============================================================
-// 弹窗：工具详情
-// ============================================================
-
 function initToolModal() {
   const modal = document.getElementById('toolModal')
   const closeBtn = document.getElementById('toolModalClose')
   const detailBtns = document.querySelectorAll('.ai-tool-detail-btn')
   if (!modal) return
 
-  // 打开弹窗
   detailBtns.forEach((btn) => {
     btn.addEventListener('click', (e) => {
       e.preventDefault()
@@ -236,7 +199,6 @@ function initToolModal() {
       document.getElementById('toolModalDesc').textContent = data.fullDesc
       document.getElementById('toolModalLink').href = data.link
 
-      // 步骤列表
       const stepsEl = document.getElementById('toolModalSteps')
       stepsEl.innerHTML = ''
       data.steps.forEach((step, i) => {
@@ -254,7 +216,6 @@ function initToolModal() {
     })
   })
 
-  // 关闭弹窗
   function closeModal() {
     modal.classList.remove('active')
     document.body.style.overflow = ''
@@ -269,15 +230,9 @@ function initToolModal() {
   })
 }
 
-// ============================================================
-// 初始化
-// ============================================================
-
-function initAIPage() {
+export function initAIPage() {
   initTabs()
   initFilter()
   initAigcModal()
   initToolModal()
 }
-
-document.addEventListener('DOMContentLoaded', initAIPage)

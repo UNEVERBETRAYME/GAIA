@@ -1,12 +1,3 @@
-/**
- * words.js - 伤感文字板块专属脚本
- * 负责：Hero 打字机效果、随笔展开/收起、沉浸区随机内容 + 打字机
- */
-
-// ============================================================
-// 打字机效果
-// ============================================================
-
 function typewriter(element, text, speed = 100) {
   return new Promise((resolve) => {
     element.textContent = ''
@@ -19,7 +10,6 @@ function typewriter(element, text, speed = 100) {
         i++
         setTimeout(type, speed)
       } else {
-        // 打字完成后移除光标
         setTimeout(() => {
           element.classList.remove('typing')
           resolve()
@@ -31,15 +21,10 @@ function typewriter(element, text, speed = 100) {
   })
 }
 
-// ============================================================
-// Hero 打字机标题
-// ============================================================
-
 function initHeroTypewriter() {
   const heroTitle = document.getElementById('heroTitle')
   if (!heroTitle) return
 
-  // 使用 IntersectionObserver，进入视口后才开始打字
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -54,10 +39,6 @@ function initHeroTypewriter() {
 
   observer.observe(heroTitle)
 }
-
-// ============================================================
-// 随笔展开/收起
-// ============================================================
 
 function initEssayExpand() {
   const essaysSection = document.querySelector('.words-essays')
@@ -86,10 +67,6 @@ function initEssayExpand() {
     }
   })
 }
-
-// ============================================================
-// 沉浸式阅读区
-// ============================================================
 
 const immersiveTexts = [
   `亲爱的陌生人：
@@ -140,16 +117,13 @@ function initImmersive() {
   const textEl = document.getElementById('immersiveText')
   if (!stage || !textEl) return
 
-  // 随机选择一段内容
   const randomIndex = Math.floor(Math.random() * immersiveTexts.length)
   const selectedText = immersiveTexts[randomIndex]
 
-  // 使用 IntersectionObserver，进入视口后才开始打字
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          // 延迟一点开始，让滚动动画先完成
           setTimeout(() => {
             typewriter(textEl, selectedText, 50)
           }, 600)
@@ -163,14 +137,8 @@ function initImmersive() {
   observer.observe(stage)
 }
 
-// ============================================================
-// 初始化
-// ============================================================
-
-function initWordsPage() {
+export function initWordsPage() {
   initHeroTypewriter()
   initEssayExpand()
   initImmersive()
 }
-
-document.addEventListener('DOMContentLoaded', initWordsPage)

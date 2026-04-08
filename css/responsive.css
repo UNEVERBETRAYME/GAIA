@@ -422,4 +422,35 @@
     max-height: 100vh;
     border-radius: 0;
   }
+
+  /* ---- 迷你播放器 ---- */
+  .mini-player {
+    left: var(--sp-xs);
+    right: var(--sp-xs);
+    bottom: var(--sp-xs);
+    border-radius: var(--radius);
+    padding: var(--sp-xs) var(--sp-sm);
+  }
+
+  .mini-player__art {
+    width: 40px;
+    height: 40px;
+  }
+
+  .mini-player__name {
+    font-size: 0.78rem;
+  }
+
+  .mini-player__artist {
+    font-size: 0.68rem;
+  }
+
+  .mini-player__play {
+    width: 36px;
+    height: 36px;
+  }
+
+  .mini-player__play-icon {
+    font-size: 0.9rem;
+  }
 }

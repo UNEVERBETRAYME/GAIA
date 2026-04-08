@@ -1,12 +1,3 @@
-/**
- * game-art.js - 第九艺术板块专属脚本
- * 负责：图片弹窗、感悟展开、横向拖拽滚动
- */
-
-// ============================================================
-// 占位数据
-// ============================================================
-
 const galleryData = [
   { game: '荒野大镖客：救赎 2', scene: '黄昏时分的瓦伦丁小镇', gradient: 'linear-gradient(135deg, #1a2a3a, #0d1520)' },
   { game: '赛博朋克 2077', scene: '夜之城的霓虹天际线', gradient: 'linear-gradient(135deg, #2d1f3d, #1a1225)' },
@@ -18,17 +9,12 @@ const galleryData = [
   { game: '空洞骑士', scene: '泪水之城的幽暗雨夜', gradient: 'linear-gradient(135deg, #2d1f3d, #1a1225)' },
 ]
 
-// ============================================================
-// 图片弹窗
-// ============================================================
-
 function initGalleryModal() {
   const modal = document.getElementById('galleryModal')
   const closeBtn = document.getElementById('galleryModalClose')
   const grid = document.getElementById('galleryGrid')
   if (!modal || !grid) return
 
-  // 事件委托：点击画廊网格内的任意卡片
   grid.addEventListener('click', (e) => {
     const card = e.target.closest('.game-gallery-card')
     if (!card) return
@@ -59,12 +45,7 @@ function initGalleryModal() {
   })
 }
 
-// ============================================================
-// 感悟展开/收起
-// ============================================================
-
 function initJournalExpand() {
-  // 事件委托：展开/收起按钮
   const journalSection = document.querySelector('.game-journal')
   if (!journalSection) return
 
@@ -92,10 +73,6 @@ function initJournalExpand() {
     }
   })
 }
-
-// ============================================================
-// 横向拖拽滚动（角色卡片区）
-// ============================================================
 
 function initDragScroll() {
   const track = document.getElementById('charactersTrack')
@@ -126,11 +103,10 @@ function initDragScroll() {
     if (!isDown) return
     e.preventDefault()
     const x = e.pageX - track.offsetLeft
-    const walk = (x - startX) * 1.5 // 滚动速度倍率
+    const walk = (x - startX) * 1.5
     track.scrollLeft = scrollLeft - walk
   })
 
-  // 触摸设备支持
   let touchStartX = 0
   let touchScrollLeft = 0
 
@@ -146,14 +122,8 @@ function initDragScroll() {
   }, { passive: true })
 }
 
-// ============================================================
-// 初始化
-// ============================================================
-
-function initGameArtPage() {
+export function initGameArtPage() {
   initGalleryModal()
   initJournalExpand()
   initDragScroll()
 }
-
-document.addEventListener('DOMContentLoaded', initGameArtPage)
