@@ -21,11 +21,12 @@ const REPEAT_MODE = {
 
 let repeatMode = REPEAT_MODE.off
 
-function renderPlaylists() {
+async function renderPlaylists() {
   const grid = document.getElementById('playlistsGrid')
   if (!grid) return
   grid.innerHTML = ''
 
+  // 1. 渲染精选歌单
   playlistsData.forEach((pl, plIdx) => {
     const card = document.createElement('div')
     card.className = 'glass-card music-playlist-card'
@@ -50,16 +51,79 @@ function renderPlaylists() {
     grid.appendChild(card)
   })
 
+  // 2. 加载并渲染本地音乐库歌单
+  try {
+    const files = await loadAudioManifest()
+    if (files.length > 0) {
+      librarySongs = buildLibrarySongs(files)
+      const grouped = groupByPlaylist(librarySongs)
+
+      Object.entries(grouped).forEach(([playlistName, songs]) => {
+        const card = document.createElement('div')
+        card.className = 'glass-card music-playlist-card music-playlist-card--library'
+        card.dataset.playlistLibrary = playlistName
+
+        const songsHtml = songs.map((song, idx) => {
+          const key = `library-${playlistName}-${idx}`
+          song._key = key
+          return `<div class="music-song music-song--library" data-library-key="${key}"><span class="music-song__name">${song.name}</span><span class="music-song__artist-inline">${song.artist}</span></div>`
+        }).join('')
+
+        // 使用第一首歌的渐变色作为封面
+        const gradient = songs[0]?.gradient || 'linear-gradient(135deg, #1a2535, #0d1520)'
+
+        card.innerHTML = `
+          <div class="music-playlist-card__cover" style="background: ${gradient}"></div>
+          <div class="music-playlist-card__info">
+            <h3 class="music-playlist-card__name">${playlistName}</h3>
+            <span class="glass-tag music-playlist-card__count">${songs.length} 首</span>
+          </div>
+          <p class="music-playlist-card__desc">本地音乐库</p>
+          <div class="music-playlist-card__songs">${songsHtml}</div>
+        `
+
+        grid.appendChild(card)
+      })
+    }
+  } catch (error) {
+    console.error('加载本地音乐库失败:', error)
+  }
+
+  // 3. 绑定点击事件
   grid.addEventListener('click', (e) => {
+    // 处理本地库歌曲点击
+    const librarySongEl = e.target.closest('.music-song--library')
+    if (librarySongEl) {
+      e.stopPropagation()
+      const key = librarySongEl.dataset.libraryKey
+      const [, playlistName, idx] = key.split('-')
+      const grouped = groupByPlaylist(librarySongs)
+      const song = grouped[playlistName]?.[parseInt(idx)]
+      if (song) {
+        loadSongMetadata(song).then(() => {
+          playSong(song, song.playlistName)
+          // 播放后自动折叠所有歌单
+          grid.querySelectorAll('.music-playlist-card').forEach((c) => c.classList.remove('expanded'))
+        })
+      }
+      return
+    }
+
+    // 处理精选歌单歌曲点击
     const songEl = e.target.closest('.music-song')
     if (songEl) {
       e.stopPropagation()
       const key = songEl.dataset.key
       const result = findSongByKey(key)
-      if (result) playSong(result.song, result.playlistName)
+      if (result) {
+        playSong(result.song, result.playlistName)
+        // 播放后自动折叠所有歌单
+        grid.querySelectorAll('.music-playlist-card').forEach((c) => c.classList.remove('expanded'))
+      }
       return
     }
 
+    // 处理卡片展开/收起
     const card = e.target.closest('.music-playlist-card')
     if (card) {
       const isExpanded = card.classList.contains('expanded')
@@ -212,7 +276,7 @@ function initMoodTags() {
   const grid = document.getElementById('moodsGrid')
 
   function renderMoodCards(mood) {
-    const filtered = mood === 'all' ? allSongs : allSongs.filter((s) => s.mood === mood)
+    const filtered = allSongs.filter((s) => s.mood === mood)
     grid.innerHTML = ''
 
     filtered.forEach((song) => {
@@ -243,145 +307,26 @@ function initMoodTags() {
     })
   })
 
-  renderMoodCards('all')
+  // 默认显示第一个心情（忧郁）
+  renderMoodCards('melancholy')
 }
 
 // ============================================================
-// 本地音乐库功能
+// 本地音乐库功能（已整合到精选歌单，此处保留空函数）
 // ============================================================
 
 async function initLibrary() {
-  try {
-    const files = await loadAudioManifest()
-    if (files.length === 0) {
-      console.log('本地音乐库为空')
-      return
-    }
-
-    librarySongs = buildLibrarySongs(files)
-
-    // 显示音乐库区块
-    const librarySection = document.getElementById('librarySection')
-    if (librarySection) {
-      librarySection.style.display = 'block'
-    }
-
-    // 初始化过滤标签
-    initLibraryMoodTags()
-
-    // 渲染音乐库
-    renderLibrary(currentLibraryMood)
-  } catch (error) {
-    console.error('加载本地音乐库失败:', error)
-  }
+  // 本地音乐库已整合到 renderPlaylists() 中
+  // 此函数保留为空，避免破坏现有调用
 }
 
-function initLibraryMoodTags() {
-  const tags = document.querySelectorAll('.music-library-mood-tag')
-
-  tags.forEach(tag => {
-    tag.addEventListener('click', () => {
-      tags.forEach(t => t.classList.remove('active'))
-      tag.classList.add('active')
-      currentLibraryMood = tag.dataset.mood
-      renderLibrary(currentLibraryMood)
-    })
-  })
-}
-
-function renderLibrary(mood) {
-  const content = document.getElementById('libraryContent')
-  if (!content) return
-
-  // 过滤歌曲
-  const filtered = mood === 'all'
-    ? librarySongs
-    : librarySongs.filter(s => s.mood === mood)
-
-  if (filtered.length === 0) {
-    content.innerHTML = '<div class="music-library__empty">暂无符合条件的歌曲</div>'
-    return
-  }
-
-  // 按歌单分组
-  const grouped = groupByPlaylist(filtered)
-
-  content.innerHTML = ''
-
-  Object.entries(grouped).forEach(([playlistName, songs]) => {
-    const group = document.createElement('div')
-    group.className = 'music-library__group'
-
-    const title = document.createElement('h3')
-    title.className = 'music-library__group-title'
-    title.textContent = `${playlistName} (${songs.length})`
-
-    const songsList = document.createElement('div')
-    songsList.className = 'music-library__songs-list'
-
-    songs.forEach(song => {
-      const songEl = createLibrarySongElement(song)
-      songsList.appendChild(songEl)
-    })
-
-    group.appendChild(title)
-    group.appendChild(songsList)
-    content.appendChild(group)
-  })
-}
-
-function createLibrarySongElement(song) {
-  const el = document.createElement('div')
-  el.className = 'music-library-song'
-
-  const coverStyle = song.coverUrl
-    ? `background-image: url(${song.coverUrl}); background-size: cover; background-position: center;`
-    : `background: ${song.gradient};`
-
-  const moodLabel = song.moodLabel || '未知'
-
-  el.innerHTML = `
-    <div class="music-library-song__cover" style="${coverStyle}"></div>
-    <div class="music-library-song__info">
-      <div class="music-library-song__name">${song.name}</div>
-      <div class="music-library-song__artist">${song.artist}</div>
-    </div>
-    <div class="music-library-song__meta">
-      <span class="music-library-song__mood">${moodLabel}</span>
-    </div>
-  `
-
-  el.addEventListener('click', async () => {
-    // 懒加载 ID3 元数据
-    await loadSongMetadata(song)
-
-    // 播放歌曲
-    playSong(song, song.playlistName)
-
-    // 更新封面（如果加载到了）
-    if (song.coverUrl) {
-      const coverEl = el.querySelector('.music-library-song__cover')
-      if (coverEl) {
-        coverEl.style.backgroundImage = `url(${song.coverUrl})`
-        coverEl.style.backgroundSize = 'cover'
-        coverEl.style.backgroundPosition = 'center'
-      }
-    }
-  })
-
-  return el
-}
-
-export function initMusicPage() {
+export async function initMusicPage() {
   repeatMode = REPEAT_MODE.off
   applyRepeatMode()
 
-  renderPlaylists()
+  await renderPlaylists()
   initPlayerControls()
   initMoodTags()
-
-  // 初始化本地音乐库
-  initLibrary()
 
   const state = getState()
   syncPlayerUI(state)

@@ -332,134 +332,23 @@
 }
 
 /* ============================================================
-   区域 B：本地音乐库
+   本地音乐库样式（已整合到歌单卡片）
    ============================================================ */
 
-.music-library {
-  padding: var(--sp-lg) 0;
+.music-playlist-card--library {
+  border: 1px solid rgba(74, 158, 255, 0.15);
 }
 
-.music-library__controls {
-  margin-bottom: var(--sp-xl);
-}
-
-.music-library__mood-tags {
-  display: flex;
-  gap: var(--sp-md);
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-bottom: var(--sp-lg);
-}
-
-.music-library-mood-tag {
-  font-size: 0.88rem;
-  padding: 6px 12px;
-  transition: all 0.3s ease;
-}
-
-.music-library-mood-tag.active {
-  background: rgba(74, 158, 255, 0.2);
-  border-color: rgba(74, 158, 255, 0.8);
-}
-
-.music-library__content {
+.music-song--library {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-xl);
+  align-items: flex-start;
+  gap: 2px;
 }
 
-.music-library__group {
-  padding: var(--sp-lg);
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-md);
-  backdrop-filter: blur(10px);
-}
-
-.music-library__group-title {
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  margin-bottom: var(--sp-md);
-  padding-bottom: var(--sp-md);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.music-library__songs-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-sm);
-}
-
-.music-library-song {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-md);
-  padding: var(--sp-md);
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.music-library-song:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
-}
-
-.music-library-song__cover {
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-xs);
-  background: linear-gradient(135deg, #1a2535, #0d1520);
-  background-size: cover;
-  background-position: center;
-}
-
-.music-library-song__info {
-  flex: 1;
-  min-width: 0;
-}
-
-.music-library-song__name {
-  font-size: 0.95rem;
-  color: var(--text-primary);
-  margin-bottom: 2px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.music-library-song__artist {
-  font-size: 0.8rem;
+.music-song__artist-inline {
+  font-size: 0.72rem;
   color: var(--text-tertiary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.music-library-song__meta {
-  display: flex;
-  gap: var(--sp-sm);
-  align-items: center;
-}
-
-.music-library-song__mood {
-  font-size: 0.7rem;
-  padding: 2px 6px;
-  background: rgba(74, 158, 255, 0.15);
-  border: 1px solid rgba(74, 158, 255, 0.3);
-  border-radius: 2px;
-  color: rgba(74, 158, 255, 0.9);
-}
-
-.music-library__empty {
-  text-align: center;
-  padding: var(--sp-xl);
-  color: var(--text-tertiary);
-  font-size: 0.95rem;
 }
 
 /* ============================================================

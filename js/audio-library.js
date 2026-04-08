@@ -28,6 +28,29 @@ const MOOD_GRADIENTS = {
 
 const FALLBACK_PLAYLIST = '未分类'
 
+// 可用的心情类型（用于随机分配）
+const AVAILABLE_MOODS = ['melancholy', 'lonely', 'healing', 'calm']
+
+/**
+ * 为文件名生成稳定的随机 mood
+ * 使用简单哈希确保同一文件名总是得到相同的 mood
+ * @param {string} filename - 文件名
+ * @returns {string} mood 类型
+ */
+function getRandomMoodForFile(filename) {
+  // 简单哈希函数
+  let hash = 0
+  for (let i = 0; i < filename.length; i++) {
+    const char = filename.charCodeAt(i)
+    hash = ((hash << 5) - hash) + char
+    hash = hash & hash // 转换为 32 位整数
+  }
+
+  // 使用哈希值选择 mood
+  const index = Math.abs(hash) % AVAILABLE_MOODS.length
+  return AVAILABLE_MOODS[index]
+}
+
 /**
  * 从文件名中解析标签信息
  * @param {string} filename - 文件名（含扩展名）
@@ -57,9 +80,10 @@ export function parseFileTags(filename) {
     }
   }
 
-  // 如果没有 mood，设为 unknown
+  // 如果没有 mood，随机分配一个（基于文件名哈希，保证稳定）
   if (!mood) {
-    mood = 'unknown'
+    mood = getRandomMoodForFile(filename)
+    moodLabel = MOOD_TAGS[mood]
   }
 
   // 解析 playlist（优先 pl:xxx 格式）
@@ -72,13 +96,8 @@ export function parseFileTags(filename) {
   }
 
   // 如果没有 pl 标签，按 mood 自动归类
-  if (!playlistName && mood !== 'unknown') {
-    playlistName = MOOD_DEFAULT_PLAYLISTS[mood]
-  }
-
-  // 如果都没有，归入未分类
   if (!playlistName) {
-    playlistName = FALLBACK_PLAYLIST
+    playlistName = MOOD_DEFAULT_PLAYLISTS[mood]
   }
 
   // 生成展示名称（移除所有标签）
