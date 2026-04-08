@@ -30,7 +30,7 @@ export const playlistsData = [
     desc: '温暖的旋律，抚慰疲惫的心',
     gradient: 'linear-gradient(135deg, #1a3025, #0d1a15)',
     songs: [
-      { name: 'OD妹', artist: '极品贵公子1CEKary艾斯凯瑞', mood: 'healing', gradient: 'linear-gradient(135deg, #1a3025, #0d1a15)', src: '/audio/极品贵公子1CEKary艾斯凯瑞 - OD妹.wav' },
+      { name: 'OD妹', artist: '极品贵公子1CEKary艾斯凯瑞', mood: 'healing', gradient: 'linear-gradient(135deg, #1a3025, #0d1a15)', src: '/audio/极品贵公子1CEKary艾斯凯瑞 - OD妹.mp3' },
       { name: 'Heartbreaker', artist: 'Justin Bieber', mood: 'healing', gradient: 'linear-gradient(135deg, #1a2535, #0d1520)', src: '/audio/Justin Bieber - Heartbreaker.mp3' },
     ],
   },
