@@ -220,11 +220,13 @@ function initExpandBehavior() {
 
   playerEl.addEventListener('pointerup', (e) => {
     if (currentDock === 'none') return
-    if (e.target.closest('button, a')) return
     if (didDragMove) {
       didDragMove = false
       return
     }
+
+    // 如果点击的是按钮或链接，不处理展开/折叠逻辑
+    if (e.target.closest('button, a')) return
 
     clearCollapseTimer()
 
