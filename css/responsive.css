@@ -437,9 +437,8 @@
 
   /* ---- 迷你播放器 ---- */
   .mini-player {
-    left: var(--sp-xs);
-    right: var(--sp-xs);
-    bottom: var(--sp-xs);
+    width: calc(100vw - 2 * var(--sp-xs));
+    bottom: calc(var(--sp-xs) + env(safe-area-inset-bottom, 0px));
     border-radius: var(--radius);
     padding: var(--sp-xs) var(--sp-sm);
   }
@@ -464,5 +463,10 @@
 
   .mini-player__play-icon {
     font-size: 0.9rem;
+  }
+
+  .mini-player__link {
+    width: 28px;
+    height: 28px;
   }
 }
