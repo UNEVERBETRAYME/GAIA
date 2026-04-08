@@ -30,6 +30,42 @@ const PAGE_CSS_MAP = {
 }
 
 let currentStyleEl = null
+let footerResizeObserver = null
+let observedFooter = null
+
+function syncFooterSpace() {
+  const footer = document.querySelector('.footer')
+  if (!footer) return
+
+  const h = Math.ceil(footer.getBoundingClientRect().height)
+  document.documentElement.style.setProperty('--footer-space', `${h}px`)
+}
+
+function ensureFooterObserver() {
+  const footer = document.querySelector('.footer')
+  if (!footer) return
+
+  if (typeof ResizeObserver !== 'undefined') {
+    if (!footerResizeObserver) {
+      footerResizeObserver = new ResizeObserver(() => {
+        syncFooterSpace()
+      })
+    }
+
+    if (observedFooter !== footer) {
+      if (observedFooter) {
+        footerResizeObserver.unobserve(observedFooter)
+      }
+      observedFooter = footer
+      footerResizeObserver.observe(footer)
+    }
+  }
+}
+
+function refreshFooterSpace() {
+  syncFooterSpace()
+  ensureFooterObserver()
+}
 
 function loadPageCSS(key) {
   return new Promise((resolve) => {
@@ -196,6 +232,7 @@ async function loadPage(path, scroll) {
     initPageTransition()
     initScrollReveal()
     runPageInit(pageKey)
+    refreshFooterSpace()
 
     window.scrollTo(0, 0)
   } catch {
@@ -210,10 +247,21 @@ document.addEventListener('DOMContentLoaded', () => {
   initMiniPlayer()
   interceptLinks()
 
+  let resizeTimer = null
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer)
+    resizeTimer = setTimeout(() => {
+      refreshFooterSpace()
+    }, 140)
+  }, { passive: true })
+
+  refreshFooterSpace()
+
   initialPageCssPromise.then(() => {
     initPageTransition()
     initScrollReveal()
     restoreState()
     runPageInit(getPageKey())
+    refreshFooterSpace()
   })
 })
