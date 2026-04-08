@@ -11,14 +11,22 @@ import { initWordsPage } from './pages/words.js'
 import { initKookPage } from './pages/kook.js'
 import { initAboutPage } from './pages/about.js'
 
+import indexPageCssUrl from '../css/pages/index.css?url'
+import aiPageCssUrl from '../css/pages/ai.css?url'
+import musicPageCssUrl from '../css/pages/music.css?url'
+import gameArtPageCssUrl from '../css/pages/game-art.css?url'
+import wordsPageCssUrl from '../css/pages/words.css?url'
+import kookPageCssUrl from '../css/pages/kook.css?url'
+import aboutPageCssUrl from '../css/pages/about.css?url'
+
 const PAGE_CSS_MAP = {
-  'index': '/css/pages/index.css',
-  'ai': '/css/pages/ai.css',
-  'music': '/css/pages/music.css',
-  'game-art': '/css/pages/game-art.css',
-  'words': '/css/pages/words.css',
-  'kook': '/css/pages/kook.css',
-  'about': '/css/pages/about.css',
+  'index': indexPageCssUrl,
+  'ai': aiPageCssUrl,
+  'music': musicPageCssUrl,
+  'game-art': gameArtPageCssUrl,
+  'words': wordsPageCssUrl,
+  'kook': kookPageCssUrl,
+  'about': aboutPageCssUrl,
 }
 
 let currentStyleEl = null
@@ -190,12 +198,14 @@ async function loadPage(path, scroll) {
   }
 }
 
+const initialPageCssPromise = loadPageCSS(getPageKey())
+
 document.addEventListener('DOMContentLoaded', () => {
   initNav()
   initMiniPlayer()
   interceptLinks()
 
-  loadPageCSS(getPageKey()).then(() => {
+  initialPageCssPromise.then(() => {
     initPageTransition()
     initScrollReveal()
     restoreState()
