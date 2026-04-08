@@ -54,20 +54,22 @@ function initScrollReveal() {
   const elements = document.querySelectorAll('.scroll-reveal')
   if (elements.length === 0) return
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('revealed')
-          observer.unobserve(entry.target)
-        }
-      })
-    },
-    { threshold: 0.15 }
-  )
+  if (!window._revealObserver) {
+    window._revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed')
+            window._revealObserver.unobserve(entry.target)
+          }
+        })
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
+    )
+  }
 
   elements.forEach((el) => {
-    observer.observe(el)
+    window._revealObserver.observe(el)
   })
 }
 
@@ -117,19 +119,23 @@ function initMiniPlayer() {
   `
   document.body.appendChild(player)
 
-  document.getElementById('miniPlayerPlay').addEventListener('click', () => {
+  const playBtn = document.getElementById('miniPlayerPlay')
+  const artEl = document.getElementById('miniPlayerArt')
+  const nameEl = document.getElementById('miniPlayerName')
+  const artistEl = document.getElementById('miniPlayerArtist')
+  const iconEl = document.getElementById('miniPlayerPlayIcon')
+
+  playBtn.addEventListener('click', () => {
     togglePlay()
   })
 
   subscribe((state) => {
     if (state.song) {
       player.classList.add('visible')
-      document.getElementById('miniPlayerArt').style.background = state.song.gradient
-      document.getElementById('miniPlayerName').textContent = state.song.name
-      document.getElementById('miniPlayerArtist').textContent = state.playlistName || state.song.artist
-
-      const icon = document.getElementById('miniPlayerPlayIcon')
-      icon.textContent = state.isPlaying ? '⏸' : '▶'
+      artEl.style.background = state.song.gradient
+      nameEl.textContent = state.song.name
+      artistEl.textContent = state.playlistName || state.song.artist
+      iconEl.textContent = state.isPlaying ? '⏸' : '▶'
     } else {
       player.classList.remove('visible')
     }

@@ -139,28 +139,33 @@ function initAigcModal() {
   const cards = document.querySelectorAll('.ai-card')
   if (!modal) return
 
+  const modalImage = document.getElementById('modalImage')
+  const modalTitle = document.getElementById('modalTitle')
+  const modalDesc = document.getElementById('modalDesc')
+  const modalPromptCode = document.getElementById('modalPromptCode')
+  const modalMeta = document.getElementById('modalMeta')
+
   cards.forEach((card) => {
     card.addEventListener('click', () => {
       const index = parseInt(card.dataset.index, 10)
       const data = aigcData[index]
       if (!data) return
 
-      document.getElementById('modalImage').style.background = data.gradient
-      document.getElementById('modalTitle').textContent = data.title
-      document.getElementById('modalDesc').textContent = data.desc
-      document.getElementById('modalPromptCode').textContent = data.prompt
+      modalImage.style.background = data.gradient
+      modalTitle.textContent = data.title
+      modalDesc.textContent = data.desc
+      modalPromptCode.textContent = data.prompt
 
-      const metaEl = document.getElementById('modalMeta')
-      metaEl.innerHTML = ''
+      modalMeta.innerHTML = ''
       const modelTag = document.createElement('span')
       modelTag.className = 'glass-tag'
       modelTag.textContent = data.model
-      metaEl.appendChild(modelTag)
+      modalMeta.appendChild(modelTag)
       data.tags.forEach((tagText) => {
         const tag = document.createElement('span')
         tag.className = 'glass-tag'
         tag.textContent = tagText
-        metaEl.appendChild(tag)
+        modalMeta.appendChild(tag)
       })
 
       modal.classList.add('active')
@@ -188,6 +193,11 @@ function initToolModal() {
   const detailBtns = document.querySelectorAll('.ai-tool-detail-btn')
   if (!modal) return
 
+  const toolModalTitle = document.getElementById('toolModalTitle')
+  const toolModalDesc = document.getElementById('toolModalDesc')
+  const toolModalLink = document.getElementById('toolModalLink')
+  const toolModalSteps = document.getElementById('toolModalSteps')
+
   detailBtns.forEach((btn) => {
     btn.addEventListener('click', (e) => {
       e.preventDefault()
@@ -195,12 +205,11 @@ function initToolModal() {
       const data = toolsData[index]
       if (!data) return
 
-      document.getElementById('toolModalTitle').textContent = data.name
-      document.getElementById('toolModalDesc').textContent = data.fullDesc
-      document.getElementById('toolModalLink').href = data.link
+      toolModalTitle.textContent = data.name
+      toolModalDesc.textContent = data.fullDesc
+      toolModalLink.href = data.link
 
-      const stepsEl = document.getElementById('toolModalSteps')
-      stepsEl.innerHTML = ''
+      toolModalSteps.innerHTML = ''
       data.steps.forEach((step, i) => {
         const stepEl = document.createElement('div')
         stepEl.className = 'ai-modal__step'
@@ -208,7 +217,7 @@ function initToolModal() {
           <span class="ai-modal__step-num">${i + 1}</span>
           <span class="ai-modal__step-text">${step}</span>
         `
-        stepsEl.appendChild(stepEl)
+        toolModalSteps.appendChild(stepEl)
       })
 
       modal.classList.add('active')

@@ -67,7 +67,7 @@
 .words-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--sp-md);
+  gap: var(--sp-lg);
   align-items: start;
 }
 
@@ -117,8 +117,8 @@
 }
 
 .words-essay-card {
-  padding: var(--sp-lg) var(--sp-lg);
-  margin-bottom: var(--sp-lg);
+  padding: var(--sp-xl) var(--sp-xl);
+  margin-bottom: var(--sp-xl);
 }
 
 .words-essay-card__date {

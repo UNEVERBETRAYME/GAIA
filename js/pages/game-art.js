@@ -15,6 +15,10 @@ function initGalleryModal() {
   const grid = document.getElementById('galleryGrid')
   if (!modal || !grid) return
 
+  const modalImage = document.getElementById('galleryModalImage')
+  const modalGame = document.getElementById('galleryModalGame')
+  const modalScene = document.getElementById('galleryModalScene')
+
   grid.addEventListener('click', (e) => {
     const card = e.target.closest('.game-gallery-card')
     if (!card) return
@@ -23,9 +27,9 @@ function initGalleryModal() {
     const data = galleryData[index]
     if (!data) return
 
-    document.getElementById('galleryModalImage').style.background = data.gradient
-    document.getElementById('galleryModalGame').textContent = data.game
-    document.getElementById('galleryModalScene').textContent = data.scene
+    modalImage.style.background = data.gradient
+    modalGame.textContent = data.game
+    modalScene.textContent = data.scene
 
     modal.classList.add('active')
     document.body.style.overflow = 'hidden'

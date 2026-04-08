@@ -16,7 +16,7 @@
   height: var(--nav-h);
   max-width: var(--max-w);
   margin: 0 auto;
-  padding: 0 var(--sp-md);
+  padding: 0 var(--sp-xl);
 }
 
 /* ============================================================
@@ -27,11 +27,12 @@
 .nav-logo {
   font-family: var(--font-en), var(--font-cn), sans-serif;
   font-weight: var(--font-weight);
-  font-size: 1.1rem;
-  letter-spacing: var(--ls-title);
+  font-size: 1.2rem;
+  letter-spacing: 8px;
   color: var(--text-primary);
   text-shadow: var(--ts-title);
   flex-shrink: 0;
+  min-width: 80px;
   transition: color var(--dur-fast) var(--ease-smooth);
 }
 
@@ -54,10 +55,10 @@
   position: relative;
   font-family: var(--font-en), var(--font-cn), sans-serif;
   font-weight: var(--font-weight);
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   letter-spacing: var(--ls-base);
   color: var(--text-tertiary);
-  padding: 4px 0;
+  padding: 6px 0;
   transition:
     color var(--dur-base) var(--ease-smooth);
 }

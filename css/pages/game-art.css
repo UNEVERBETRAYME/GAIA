@@ -9,7 +9,7 @@
 
 .page-hero--game-art {
   position: relative;
-  min-height: 40vh;
+  min-height: 42vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -74,13 +74,13 @@
 
 .game-masonry {
   column-count: 3;
-  column-gap: var(--sp-md);
+  column-gap: var(--sp-lg);
 }
 
 /* 画廊卡片 */
 .game-gallery-card {
   break-inside: avoid;
-  margin-bottom: var(--sp-md);
+  margin-bottom: var(--sp-lg);
   position: relative;
   overflow: hidden;
   cursor: pointer;
@@ -326,7 +326,7 @@
 
 .game-characters__track {
   display: flex;
-  gap: var(--sp-md);
+  gap: var(--sp-lg);
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;

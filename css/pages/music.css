@@ -54,8 +54,8 @@
 
 .music-player {
   display: flex;
-  gap: var(--sp-lg);
-  padding: var(--sp-lg);
+  gap: var(--sp-xl);
+  padding: var(--sp-xl);
   margin-bottom: var(--sp-2xl);
 }
 
@@ -173,7 +173,7 @@
 .music-playlists__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--sp-md);
+  gap: var(--sp-lg);
 }
 
 /* 歌单卡片 */
@@ -293,7 +293,7 @@
 .music-moods__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--sp-md);
+  gap: var(--sp-lg);
 }
 
 /* 推荐歌曲卡片 */

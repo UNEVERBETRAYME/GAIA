@@ -22,6 +22,7 @@
     box-shadow var(--dur-base) var(--ease-smooth),
     background var(--dur-base) var(--ease-smooth),
     border-color var(--dur-base) var(--ease-smooth);
+  will-change: transform, box-shadow;
 }
 
 .glass-card:hover {
@@ -55,6 +56,7 @@
     box-shadow var(--dur-base) var(--ease-smooth),
     background var(--dur-base) var(--ease-smooth),
     border-color var(--dur-base) var(--ease-smooth);
+  will-change: transform, box-shadow;
 }
 
 .glass-card-lg:hover {

@@ -11,13 +11,6 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300&family=Noto+Sans+SC:wght@300&display=swap');
 
-/*
- * 国内 CDN 镜像备选（如 Google Fonts 访问缓慢时启用）：
- * @import url('https://fonts.loli.net/css2?family=Josefin+Sans:wght@300&family=Noto+Sans+SC:wght@300&display=swap');
- * 或
- * @import url('https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc@300/index.css');
- */
-
 /* ============================================================
    一、CSS 重置（现代方案）
    所有元素统一盒模型，清除默认边距与装饰
@@ -34,6 +27,7 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  text-rendering: optimizeLegibility;
 }
 
 body {
@@ -41,6 +35,8 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  content-visibility: auto;
+  contain: style layout;
 }
 
 /* 列表无默认圆点 */
@@ -135,18 +131,18 @@ strong {
 
   /* ---- 间距系统 ---- */
 
-  --nav-h: 64px;                             /* 导航栏高度 */
-  --max-w: 1200px;                           /* 内容最大宽度 */
-  --radius: 16px;                            /* 基础圆角 */
-  --radius-lg: 24px;                         /* 大圆角 */
+  --nav-h: 72px;
+  --max-w: 1200px;
+  --radius: 16px;
+  --radius-lg: 24px;
 
   /* 间距阶梯 */
   --sp-xs: 8px;
   --sp-sm: 16px;
-  --sp-md: 24px;
-  --sp-lg: 40px;
-  --sp-xl: 64px;
-  --sp-2xl: 96px;
+  --sp-md: 28px;
+  --sp-lg: 48px;
+  --sp-xl: 80px;
+  --sp-2xl: 120px;
 
   /* ---- 动画时间系统 ---- */
 
