@@ -1,6 +1,7 @@
 import { initNav } from './nav.js'
 import { getState, subscribe, togglePlay, formatTime, restoreState } from './music-player.js'
 import { getMoodLabel } from './music-data.js'
+import { initMiniPlayer } from './mini-player.js'
 
 import { initIndexPage } from './pages/index.js'
 import { initAIPage } from './pages/ai.js'
@@ -20,23 +21,23 @@ const PAGE_CSS_MAP = {
   'about': '/css/pages/about.css',
 }
 
-let currentPageStyle = null
-
-function loadPageCSS(key) {
-  if (currentPageStyle) {
-    currentPageStyle.remove()
-    currentPageStyle = null
-  }
+function swapPageCSS(key) {
+  // Remove previous page's dynamic CSS link
+  const prev = document.querySelector('link[data-page-style]')
+  if (prev) prev.remove()
 
   const href = PAGE_CSS_MAP[key]
   if (!href) return
+
+  // Check if this CSS is already loaded statically (direct load / refresh case)
+  const existing = document.querySelector(`link[href="${href}"]`)
+  if (existing) return
 
   const link = document.createElement('link')
   link.rel = 'stylesheet'
   link.href = href
   link.dataset.pageStyle = key
   document.head.appendChild(link)
-  currentPageStyle = link
 }
 
 function initPageTransition() {
@@ -102,46 +103,6 @@ function runPageInit(key) {
   if (initFn) initFn()
 }
 
-function initMiniPlayer() {
-  const player = document.createElement('div')
-  player.id = 'miniPlayer'
-  player.className = 'mini-player'
-  player.innerHTML = `
-    <div class="mini-player__art" id="miniPlayerArt"></div>
-    <div class="mini-player__info">
-      <div class="mini-player__name" id="miniPlayerName">未播放</div>
-      <div class="mini-player__artist" id="miniPlayerArtist"></div>
-    </div>
-    <button class="mini-player__play" id="miniPlayerPlay" aria-label="播放">
-      <span class="mini-player__play-icon" id="miniPlayerPlayIcon">▶</span>
-    </button>
-    <a href="/pages/music.html" class="mini-player__link" id="miniPlayerLink" aria-label="音乐页">🎵</a>
-  `
-  document.body.appendChild(player)
-
-  const playBtn = document.getElementById('miniPlayerPlay')
-  const artEl = document.getElementById('miniPlayerArt')
-  const nameEl = document.getElementById('miniPlayerName')
-  const artistEl = document.getElementById('miniPlayerArtist')
-  const iconEl = document.getElementById('miniPlayerPlayIcon')
-
-  playBtn.addEventListener('click', () => {
-    togglePlay()
-  })
-
-  subscribe((state) => {
-    if (state.song) {
-      player.classList.add('visible')
-      artEl.style.background = state.song.gradient
-      nameEl.textContent = state.song.name
-      artistEl.textContent = state.playlistName || state.song.artist
-      iconEl.textContent = state.isPlaying ? '⏸' : '▶'
-    } else {
-      player.classList.remove('visible')
-    }
-  })
-}
-
 function interceptLinks() {
   document.addEventListener('click', (e) => {
     const link = e.target.closest('a[href]')
@@ -204,7 +165,7 @@ async function loadPage(path, scroll) {
 
     initPageTransition()
     initScrollReveal()
-    loadPageCSS(pageKey)
+    swapPageCSS(pageKey)
     runPageInit(pageKey)
 
     window.scrollTo(0, 0)
@@ -219,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollReveal()
   initMiniPlayer()
   interceptLinks()
-  loadPageCSS(getPageKey())
+  // No need to call swapPageCSS here — page CSS is already loaded via static <link> in HTML
   restoreState()
   runPageInit(getPageKey())
 })

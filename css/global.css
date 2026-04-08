@@ -281,9 +281,8 @@ p {
 
 .mini-player {
   position: fixed;
-  bottom: var(--sp-md);
   left: 50%;
-  transform: translateX(-50%);
+  bottom: var(--sp-md);
   z-index: 900;
   display: flex;
   align-items: center;
@@ -297,7 +296,11 @@ p {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   opacity: 0;
   pointer-events: none;
-  transform: translateX(-50%) translateY(20px);
+  transform: translateY(20px);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
   transition:
     opacity var(--dur-base) var(--ease-smooth),
     transform var(--dur-base) var(--ease-smooth);
@@ -306,7 +309,13 @@ p {
 .mini-player.visible {
   opacity: 1;
   pointer-events: auto;
-  transform: translateX(-50%) translateY(0);
+  transform: translateY(0);
+}
+
+.mini-player.dragging {
+  cursor: grabbing;
+  transition: opacity var(--dur-base) var(--ease-smooth);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
 }
 
 .mini-player__art {
