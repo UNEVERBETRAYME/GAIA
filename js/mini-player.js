@@ -1,7 +1,8 @@
 import { togglePlay, subscribe } from './music-player.js'
 
 const STORAGE_KEY = 'gaia-mini-player-pos'
-const SNAP_THRESHOLD = 0.5
+const EDGE_SNAP_PX = 24
+const MOVE_THRESHOLD = 5
 
 let playerEl = null
 let innerEl = null
@@ -10,60 +11,105 @@ let nameEl = null
 let artistEl = null
 let iconEl = null
 
+let currentDock = 'none'
+
+function getLayoutBounds() {
+  const margin = 8
+  const vw = window.innerWidth
+  const vh = window.innerHeight
+  const nav = document.getElementById('mainNav')
+  const footer = document.querySelector('.footer')
+
+  const navHeight = nav ? nav.getBoundingClientRect().height : 72
+  const footerHeight = footer ? footer.getBoundingClientRect().height : 92
+
+  return {
+    vw,
+    vh,
+    margin,
+    minY: navHeight + margin,
+    maxYBase: vh - footerHeight - margin,
+  }
+}
+
 function loadSavedPos() {
   try {
     const raw = sessionStorage.getItem(STORAGE_KEY)
     if (!raw) return null
     const pos = JSON.parse(raw)
-    if (typeof pos.x === 'number' && typeof pos.y === 'number') return pos
-  } catch {}
-  return null
+    if (typeof pos.x !== 'number' || typeof pos.y !== 'number') return null
+    if (!['left', 'right', 'none'].includes(pos.dock)) {
+      pos.dock = 'none'
+    }
+    return pos
+  } catch {
+    return null
+  }
 }
 
-function savePos(x, y) {
+function savePos(x, y, dock) {
   try {
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ x, y }))
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ x, y, dock }))
   } catch {}
 }
 
 function clampToViewport(x, y) {
   const rect = playerEl.getBoundingClientRect()
-  const vw = window.innerWidth
-  const vh = window.innerHeight
-  const margin = 8
+  const { vw, minY, maxYBase, margin } = getLayoutBounds()
 
-  x = Math.max(margin, Math.min(x, vw - rect.width - margin))
-  y = Math.max(margin, Math.min(y, vh - rect.height - margin))
+  const maxX = vw - rect.width - margin
+  const maxY = maxYBase - rect.height
 
-  return { x, y }
-}
-
-function snapToEdge(x) {
-  const rect = playerEl.getBoundingClientRect()
-  const vw = window.innerWidth
-  const centerX = x + rect.width / 2
-
-  if (centerX < vw * SNAP_THRESHOLD) {
-    return 8
-  } else {
-    return vw - rect.width - 8
+  return {
+    x: Math.max(margin, Math.min(x, maxX)),
+    y: Math.max(minY, Math.min(y, maxY)),
   }
 }
 
+function resolveDockTarget(rect) {
+  const { vw, margin } = getLayoutBounds()
+  const distLeft = rect.left
+  const distRight = vw - rect.right
+
+  if (distLeft <= EDGE_SNAP_PX) {
+    return { dock: 'left', x: margin }
+  }
+  if (distRight <= EDGE_SNAP_PX) {
+    return { dock: 'right', x: vw - rect.width - margin }
+  }
+  return { dock: 'none', x: rect.left }
+}
+
+function applyDockClass(dock) {
+  playerEl.classList.remove('dock-left', 'dock-right', 'dock-none')
+  playerEl.classList.add(`dock-${dock}`)
+}
+
 function applyPosition(x, y) {
-  playerEl.style.left = x + 'px'
-  playerEl.style.top = y + 'px'
+  playerEl.style.left = `${x}px`
+  playerEl.style.top = `${y}px`
 }
 
 function getDefaultPosition() {
   const rect = playerEl.getBoundingClientRect()
-  const vw = window.innerWidth
-  const vh = window.innerHeight
-  const margin = 8
+  const { vw, maxYBase } = getLayoutBounds()
 
   const x = (vw - rect.width) / 2
-  const y = vh - rect.height - margin
+  const y = maxYBase - rect.height
 
+  return clampToViewport(x, y)
+}
+
+function normalizePositionByDock(x, y, dock) {
+  const rect = playerEl.getBoundingClientRect()
+  const { vw, margin } = getLayoutBounds()
+
+  if (dock === 'left') {
+    return clampToViewport(margin, y)
+  }
+  if (dock === 'right') {
+    return clampToViewport(vw - rect.width - margin, y)
+  }
   return clampToViewport(x, y)
 }
 
@@ -94,40 +140,42 @@ function initDrag() {
     const dx = e.clientX - startX
     const dy = e.clientY - startY
 
-    if (!didMove && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
+    if (!didMove && (Math.abs(dx) > MOVE_THRESHOLD || Math.abs(dy) > MOVE_THRESHOLD)) {
       didMove = true
+      currentDock = 'none'
+      applyDockClass(currentDock)
     }
 
     if (!didMove) return
 
-    const rawX = originX + dx
-    const rawY = originY + dy
-    const clamped = clampToViewport(rawX, rawY)
+    const clamped = clampToViewport(originX + dx, originY + dy)
     applyPosition(clamped.x, clamped.y)
   }
 
   function onPointerUp(e) {
     if (!playerEl.hasPointerCapture(e.pointerId)) return
+
     playerEl.releasePointerCapture(e.pointerId)
     playerEl.classList.remove('dragging')
 
-    if (didMove) {
-      const rect = playerEl.getBoundingClientRect()
-      const snappedX = snapToEdge(rect.left)
-      const clamped = clampToViewport(snappedX, rect.top)
+    if (!didMove) return
 
-      innerEl.style.transition = 'transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1)'
-      innerEl.style.transform = 'translateY(0)'
+    const rect = playerEl.getBoundingClientRect()
+    const snap = resolveDockTarget(rect)
+    const final = clampToViewport(snap.x, rect.top)
 
-      applyPosition(clamped.x, clamped.y)
-      savePos(clamped.x, clamped.y)
+    currentDock = snap.dock
+    applyDockClass(currentDock)
 
-      setTimeout(() => {
-        innerEl.style.transition = ''
-      }, 350)
+    playerEl.style.transition = 'left 0.28s cubic-bezier(0.22, 0.61, 0.36, 1), top 0.18s ease'
+    applyPosition(final.x, final.y)
+    savePos(final.x, final.y, currentDock)
 
-      e.preventDefault()
-    }
+    setTimeout(() => {
+      playerEl.style.transition = 'opacity var(--dur-base) var(--ease-smooth)'
+    }, 320)
+
+    e.preventDefault()
   }
 
   function onClick(e) {
@@ -145,26 +193,26 @@ function initDrag() {
 }
 
 function initResizeCorrection() {
-  let resizeTimer = null
+  let timer = null
 
   window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer)
-    resizeTimer = setTimeout(() => {
+    clearTimeout(timer)
+    timer = setTimeout(() => {
       if (!playerEl) return
+
       const rect = playerEl.getBoundingClientRect()
-      const clamped = clampToViewport(rect.left, rect.top)
-      if (clamped.x !== rect.left || clamped.y !== rect.top) {
-        applyPosition(clamped.x, clamped.y)
-        savePos(clamped.x, clamped.y)
-      }
-    }, 200)
+      const corrected = normalizePositionByDock(rect.left, rect.top, currentDock)
+
+      applyPosition(corrected.x, corrected.y)
+      savePos(corrected.x, corrected.y, currentDock)
+    }, 160)
   }, { passive: true })
 }
 
 export function initMiniPlayer() {
   const wrapper = document.createElement('div')
   wrapper.id = 'miniPlayer'
-  wrapper.className = 'mini-player'
+  wrapper.className = 'mini-player dock-none'
   wrapper.innerHTML = `
     <div class="mini-player__inner">
       <div class="mini-player__art" id="miniPlayerArt"></div>
@@ -188,17 +236,23 @@ export function initMiniPlayer() {
   iconEl = document.getElementById('miniPlayerPlayIcon')
 
   const saved = loadSavedPos()
-  if (saved) {
-    const clamped = clampToViewport(saved.x, saved.y)
-    applyPosition(clamped.x, clamped.y)
-  } else {
-    requestAnimationFrame(() => {
-      const pos = getDefaultPosition()
-      applyPosition(pos.x, pos.y)
-    })
-  }
+  requestAnimationFrame(() => {
+    if (saved) {
+      currentDock = saved.dock || 'none'
+      const restored = normalizePositionByDock(saved.x, saved.y, currentDock)
+      applyDockClass(currentDock)
+      applyPosition(restored.x, restored.y)
+      savePos(restored.x, restored.y, currentDock)
+    } else {
+      currentDock = 'none'
+      applyDockClass(currentDock)
+      const initial = getDefaultPosition()
+      applyPosition(initial.x, initial.y)
+      savePos(initial.x, initial.y, currentDock)
+    }
+  })
 
-  document.getElementById('miniPlayerPlay').addEventListener('click', (e) => {
+  document.getElementById('miniPlayerPlay').addEventListener('click', () => {
     if (!playerEl.classList.contains('dragging')) {
       togglePlay()
     }
@@ -207,7 +261,6 @@ export function initMiniPlayer() {
   subscribe((state) => {
     if (state.song) {
       playerEl.classList.add('visible')
-      innerEl.style.transform = 'translateY(0)'
       artEl.style.background = state.song.gradient
       nameEl.textContent = state.song.name
       artistEl.textContent = state.playlistName || state.song.artist

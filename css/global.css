@@ -133,6 +133,7 @@ strong {
 
   --nav-h: 72px;
   --footer-h: 92px;
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
   --max-w: 1200px;
   --radius: 16px;
   --radius-lg: 24px;
@@ -375,6 +376,11 @@ p {
 .mini-player.dragging {
   cursor: grabbing;
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
+}
+
+.mini-player.dock-left,
+.mini-player.dock-right {
+  width: clamp(224px, 24vw, 320px);
 }
 
 .mini-player__art {
