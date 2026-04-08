@@ -1,5 +1,5 @@
 import { playlistsData, allSongs, getMoodLabel, findSongByKey } from '../music-data.js'
-import { getState, subscribe, playSong, togglePlay, seekTo, formatTime } from '../music-player.js'
+import { getState, subscribe, playSong, togglePlay, seekTo, formatTime, prevTrack, nextTrack, toggleShuffle } from '../music-player.js'
 
 let unsubscribe = null
 
@@ -51,10 +51,30 @@ function renderPlaylists() {
   })
 }
 
+function applyCover(artEl, state) {
+  if (!artEl || !state.song) return
+
+  if (state.coverUrl) {
+    artEl.style.backgroundImage = `url(${state.coverUrl})`
+    artEl.style.backgroundSize = 'cover'
+    artEl.style.backgroundPosition = 'center'
+    artEl.style.backgroundRepeat = 'no-repeat'
+    artEl.style.backgroundColor = 'transparent'
+  } else {
+    artEl.style.backgroundImage = ''
+    artEl.style.background = state.song.gradient
+  }
+}
+
 function syncPlayerUI(state) {
+  const shuffleBtn = document.getElementById('shuffleBtn')
+  if (shuffleBtn) {
+    shuffleBtn.classList.toggle('active', !!state.shuffle)
+  }
+
   if (!state.song) return
 
-  document.getElementById('playerArt').style.background = state.song.gradient
+  applyCover(document.getElementById('playerArt'), state)
   document.getElementById('playerTitle').textContent = state.song.name
   document.getElementById('playerArtist').textContent = state.playlistName || state.song.artist
   document.getElementById('playerMood').textContent = getMoodLabel(state.song.mood)
@@ -79,18 +99,37 @@ function syncPlayerUI(state) {
   }
 
   document.querySelectorAll('.music-song').forEach((el) => el.classList.remove('active'))
-  if (state.song._key) {
-    const songEl = document.querySelector(`.music-song[data-key="${state.song._key}"]`)
-    if (songEl) songEl.classList.add('active')
+
+  const idx = allSongs.findIndex((s) => s.src === state.song.src)
+  if (idx !== -1) {
+    const activeSong = allSongs[idx]
+    if (activeSong._key) {
+      const songEl = document.querySelector(`.music-song[data-key="${activeSong._key}"]`)
+      if (songEl) songEl.classList.add('active')
+    }
   }
 }
 
 function initPlayerControls() {
   const playBtn = document.getElementById('playBtn')
-  const playIcon = document.getElementById('playIcon')
+  const prevBtn = document.getElementById('prevBtn')
+  const nextBtn = document.getElementById('nextBtn')
+  const shuffleBtn = document.getElementById('shuffleBtn')
 
   playBtn.addEventListener('click', () => {
     togglePlay()
+  })
+
+  prevBtn.addEventListener('click', () => {
+    prevTrack()
+  })
+
+  nextBtn.addEventListener('click', () => {
+    nextTrack()
+  })
+
+  shuffleBtn.addEventListener('click', () => {
+    toggleShuffle()
   })
 
   const progressBar = document.querySelector('.music-player__progress-bar')
@@ -148,12 +187,10 @@ export function initMusicPage() {
   initMoodTags()
 
   const state = getState()
-  if (state.song) {
-    syncPlayerUI(state)
-  }
+  syncPlayerUI(state)
 
-  unsubscribe = subscribe((state) => {
-    syncPlayerUI(state)
+  unsubscribe = subscribe((nextState) => {
+    syncPlayerUI(nextState)
   })
 }
 

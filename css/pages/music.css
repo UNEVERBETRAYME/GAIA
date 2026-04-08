@@ -130,6 +130,7 @@
   display: flex;
   align-items: center;
   gap: var(--sp-sm);
+  flex-wrap: wrap;
 }
 
 .music-player__btn {
@@ -143,6 +144,16 @@
   border: 1px solid var(--accent-fog-blue-alpha);
   cursor: pointer;
   transition: all var(--dur-fast) var(--ease-smooth);
+}
+
+.music-player__btn--play {
+  width: 56px;
+  height: 56px;
+}
+
+.music-player__btn--shuffle.active {
+  background: rgba(110, 143, 173, 0.35);
+  border-color: rgba(110, 143, 173, 0.5);
 }
 
 .music-player__btn:hover {

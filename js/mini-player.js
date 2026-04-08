@@ -1,8 +1,9 @@
-import { togglePlay, subscribe } from './music-player.js'
+import { togglePlay, subscribe, prevTrack, nextTrack } from './music-player.js'
 
 const STORAGE_KEY = 'gaia-mini-player-pos'
 const EDGE_SNAP_PX = 24
 const MOVE_THRESHOLD = 5
+const COLLAPSE_DELAY = 1500
 
 let playerEl = null
 let innerEl = null
@@ -12,6 +13,8 @@ let artistEl = null
 let iconEl = null
 
 let currentDock = 'none'
+let collapseTimer = null
+let touchExpanded = false
 
 function getLayoutBounds() {
   const margin = 8
@@ -80,9 +83,44 @@ function resolveDockTarget(rect) {
   return { dock: 'none', x: rect.left }
 }
 
+function clearCollapseTimer() {
+  if (collapseTimer) {
+    clearTimeout(collapseTimer)
+    collapseTimer = null
+  }
+}
+
+function setExpanded(expanded) {
+  if (!playerEl) return
+  playerEl.classList.toggle('expanded', expanded)
+  playerEl.classList.toggle('collapsed', !expanded)
+}
+
+function canAutoCollapse() {
+  return currentDock !== 'none' && !playerEl.classList.contains('dragging')
+}
+
+function scheduleCollapse() {
+  clearCollapseTimer()
+  if (!canAutoCollapse()) return
+  collapseTimer = setTimeout(() => {
+    if (canAutoCollapse()) {
+      setExpanded(false)
+      touchExpanded = false
+    }
+  }, COLLAPSE_DELAY)
+}
+
 function applyDockClass(dock) {
   playerEl.classList.remove('dock-left', 'dock-right', 'dock-none')
   playerEl.classList.add(`dock-${dock}`)
+
+  if (dock === 'none') {
+    setExpanded(true)
+  } else {
+    setExpanded(false)
+    scheduleCollapse()
+  }
 }
 
 function applyPosition(x, y) {
@@ -113,6 +151,58 @@ function normalizePositionByDock(x, y, dock) {
   return clampToViewport(x, y)
 }
 
+function applyCover(state) {
+  if (!state.song) return
+  if (state.coverUrl) {
+    artEl.style.backgroundImage = `url(${state.coverUrl})`
+    artEl.style.backgroundSize = 'cover'
+    artEl.style.backgroundPosition = 'center'
+    artEl.style.backgroundRepeat = 'no-repeat'
+    artEl.style.backgroundColor = 'transparent'
+  } else {
+    artEl.style.backgroundImage = ''
+    artEl.style.background = state.song.gradient
+  }
+}
+
+function initExpandBehavior() {
+  const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches
+
+  if (supportsHover) {
+    playerEl.addEventListener('pointerenter', () => {
+      if (currentDock === 'none') return
+      clearCollapseTimer()
+      setExpanded(true)
+    })
+
+    playerEl.addEventListener('pointerleave', () => {
+      if (currentDock === 'none') return
+      scheduleCollapse()
+    })
+    return
+  }
+
+  playerEl.addEventListener('pointerup', (e) => {
+    if (playerEl.classList.contains('dragging')) return
+    if (currentDock === 'none') return
+
+    if (!touchExpanded) {
+      touchExpanded = true
+      setExpanded(true)
+      scheduleCollapse()
+    }
+  })
+
+  document.addEventListener('pointerdown', (e) => {
+    if (currentDock === 'none') return
+    if (!touchExpanded) return
+    if (playerEl.contains(e.target)) return
+    touchExpanded = false
+    setExpanded(false)
+    clearCollapseTimer()
+  })
+}
+
 function initDrag() {
   let didMove = false
   let startX = 0
@@ -122,6 +212,8 @@ function initDrag() {
 
   function onPointerDown(e) {
     if (e.button && e.button !== 0) return
+
+    clearCollapseTimer()
 
     const rect = playerEl.getBoundingClientRect()
     startX = e.clientX
@@ -144,6 +236,7 @@ function initDrag() {
       didMove = true
       currentDock = 'none'
       applyDockClass(currentDock)
+      clearCollapseTimer()
     }
 
     if (!didMove) return
@@ -167,12 +260,13 @@ function initDrag() {
     currentDock = snap.dock
     applyDockClass(currentDock)
 
-    playerEl.style.transition = 'left 0.28s cubic-bezier(0.22, 0.61, 0.36, 1), top 0.18s ease'
+    playerEl.style.transition = 'left 0.28s cubic-bezier(0.22, 0.61, 0.36, 1), top 0.18s ease, opacity var(--dur-base) var(--ease-smooth)'
     applyPosition(final.x, final.y)
     savePos(final.x, final.y, currentDock)
 
     setTimeout(() => {
       playerEl.style.transition = 'opacity var(--dur-base) var(--ease-smooth)'
+      scheduleCollapse()
     }, 320)
 
     e.preventDefault()
@@ -212,7 +306,7 @@ function initResizeCorrection() {
 export function initMiniPlayer() {
   const wrapper = document.createElement('div')
   wrapper.id = 'miniPlayer'
-  wrapper.className = 'mini-player dock-none'
+  wrapper.className = 'mini-player dock-none expanded'
   wrapper.innerHTML = `
     <div class="mini-player__inner">
       <div class="mini-player__art" id="miniPlayerArt"></div>
@@ -220,9 +314,11 @@ export function initMiniPlayer() {
         <div class="mini-player__name" id="miniPlayerName">未播放</div>
         <div class="mini-player__artist" id="miniPlayerArtist"></div>
       </div>
+      <button class="mini-player__ctrl" id="miniPlayerPrev" aria-label="上一首">⏮</button>
       <button class="mini-player__play" id="miniPlayerPlay" aria-label="播放">
         <span class="mini-player__play-icon" id="miniPlayerPlayIcon">▶</span>
       </button>
+      <button class="mini-player__ctrl" id="miniPlayerNext" aria-label="下一首">⏭</button>
       <a href="/pages/music.html" class="mini-player__link" id="miniPlayerLink" aria-label="音乐页">🎵</a>
     </div>
   `
@@ -252,16 +348,28 @@ export function initMiniPlayer() {
     }
   })
 
+  document.getElementById('miniPlayerPrev').addEventListener('click', () => {
+    if (!playerEl.classList.contains('dragging')) {
+      prevTrack()
+    }
+  })
+
   document.getElementById('miniPlayerPlay').addEventListener('click', () => {
     if (!playerEl.classList.contains('dragging')) {
       togglePlay()
     }
   })
 
+  document.getElementById('miniPlayerNext').addEventListener('click', () => {
+    if (!playerEl.classList.contains('dragging')) {
+      nextTrack()
+    }
+  })
+
   subscribe((state) => {
     if (state.song) {
       playerEl.classList.add('visible')
-      artEl.style.background = state.song.gradient
+      applyCover(state)
       nameEl.textContent = state.song.name
       artistEl.textContent = state.playlistName || state.song.artist
       iconEl.textContent = state.isPlaying ? '⏸' : '▶'
@@ -270,6 +378,7 @@ export function initMiniPlayer() {
     }
   })
 
+  initExpandBehavior()
   initDrag()
   initResizeCorrection()
 }
