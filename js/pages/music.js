@@ -19,6 +19,13 @@ const REPEAT_MODE = {
   one: 'one',
 }
 
+const LIBRARY_PLAYLIST_DESCRIPTIONS = {
+  '温柔治愈': '把刺放下，让心在柔光里慢慢复原',
+  '孤独之海': '潮声替你说话，孤独也有它的温度',
+  '深夜独白': '灯灭之后，剩下的句子都写给自己听',
+  '平静片刻': '暂停一下，把呼吸放回当下的节奏',
+}
+
 let repeatMode = REPEAT_MODE.off
 
 async function renderPlaylists() {
@@ -78,7 +85,7 @@ async function renderPlaylists() {
             <h3 class="music-playlist-card__name">${playlistName}</h3>
             <span class="glass-tag music-playlist-card__count">${songs.length} 首</span>
           </div>
-          <p class="music-playlist-card__desc">本地音乐库</p>
+          <p class="music-playlist-card__desc">${LIBRARY_PLAYLIST_DESCRIPTIONS[playlistName] || '本地收藏的声音片段。'}</p>
           <div class="music-playlist-card__songs">${songsHtml}</div>
         `
 
