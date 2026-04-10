@@ -1,3 +1,7 @@
+function svgDataUri(svg) {
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`
+}
+
 const SERIES_DATA = [
   {
     key: 'coast-night',
@@ -16,6 +20,14 @@ const SERIES_DATA = [
   },
 ]
 
+const PREVIEW_IMAGES = {
+  lighthouse: svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2a2a3d"/><stop offset="1" stop-color="#1a1a2e"/></linearGradient><linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0f1522"/><stop offset="1" stop-color="#070b12"/></linearGradient><linearGradient id="beam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff" stop-opacity="0.55"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient></defs><rect width="800" height="600" fill="url(#g)"/><rect y="360" width="800" height="240" fill="url(#sea)"/><path d="M0 420 C120 400 220 450 360 430 C520 405 610 445 800 420 L800 600 L0 600 Z" fill="#0b1220" opacity="0.7"/><g opacity="0.75"><circle cx="620" cy="120" r="42" fill="#d7e3ff" opacity="0.25"/><circle cx="660" cy="160" r="18" fill="#d7e3ff" opacity="0.18"/></g><g transform="translate(130 140)"><path d="M120 420 L220 260 L320 420 Z" fill="#0b101a" opacity="0.95"/><rect x="220" y="190" width="54" height="230" rx="6" fill="#121a28"/><rect x="232" y="215" width="30" height="26" rx="3" fill="#2a3a55" opacity="0.85"/><rect x="232" y="255" width="30" height="26" rx="3" fill="#2a3a55" opacity="0.6"/><rect x="232" y="295" width="30" height="26" rx="3" fill="#2a3a55" opacity="0.45"/><rect x="232" y="335" width="30" height="26" rx="3" fill="#2a3a55" opacity="0.32"/><rect x="214" y="180" width="92" height="22" rx="8" fill="#0f1522"/><circle cx="260" cy="174" r="10" fill="#d7e3ff" opacity="0.35"/></g><path d="M330 250 L800 165 L800 260 Z" fill="url(#beam)"/></svg>`),
+  city: svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1e2a3a"/><stop offset="1" stop-color="#0f1923"/></linearGradient><linearGradient id="h" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b111a"/><stop offset="1" stop-color="#05080d"/></linearGradient></defs><rect width="800" height="600" fill="url(#g)"/><circle cx="610" cy="140" r="70" fill="#c7d8ff" opacity="0.10"/><circle cx="650" cy="180" r="26" fill="#c7d8ff" opacity="0.08"/><rect y="330" width="800" height="270" fill="url(#h)"/><g opacity="0.92"><rect x="70" y="260" width="110" height="340" fill="#0b0f17"/><rect x="190" y="200" width="150" height="400" fill="#0a0e15"/><rect x="350" y="245" width="120" height="355" fill="#0b111a"/><rect x="480" y="180" width="210" height="420" fill="#080c12"/><rect x="700" y="280" width="70" height="320" fill="#0a0f16"/></g><g fill="#d7e3ff"><g opacity="0.30"><rect x="100" y="300" width="14" height="18"/><rect x="128" y="338" width="14" height="18"/><rect x="218" y="250" width="14" height="18"/><rect x="248" y="290" width="14" height="18"/><rect x="278" y="330" width="14" height="18"/><rect x="402" y="290" width="14" height="18"/><rect x="510" y="230" width="14" height="18"/><rect x="540" y="260" width="14" height="18"/><rect x="570" y="300" width="14" height="18"/><rect x="600" y="340" width="14" height="18"/></g><g opacity="0.18"><rect x="122" y="380" width="14" height="18"/><rect x="232" y="370" width="14" height="18"/><rect x="262" y="410" width="14" height="18"/><rect x="540" y="400" width="14" height="18"/><rect x="630" y="420" width="14" height="18"/></g></g><path d="M0 520 C140 500 260 540 400 520 C560 496 660 540 800 520 L800 600 L0 600 Z" fill="#070b12" opacity="0.75"/></svg>`),
+  cyber: svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2d1f3d"/><stop offset="1" stop-color="#1a1225"/></linearGradient><linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0f0a18"/><stop offset="1" stop-color="#05030a"/></linearGradient></defs><rect width="800" height="600" fill="url(#g)"/><rect y="330" width="800" height="270" fill="url(#floor)" opacity="0.95"/><path d="M140 90 L300 600 H0 V220 Z" fill="#0b0a12" opacity="0.85"/><path d="M660 90 L800 220 V600 H500 Z" fill="#0b0a12" opacity="0.85"/><g opacity="0.85"><path d="M150 260 L320 240" stroke="#7ae7ff" stroke-width="6" stroke-linecap="round"/><path d="M540 220 L650 200" stroke="#ff6bd6" stroke-width="6" stroke-linecap="round"/><path d="M210 340 L360 320" stroke="#9cff6b" stroke-width="5" stroke-linecap="round" opacity="0.75"/><path d="M480 320 L640 300" stroke="#7ae7ff" stroke-width="5" stroke-linecap="round" opacity="0.65"/></g><g opacity="0.6"><rect x="170" y="140" width="90" height="48" rx="10" fill="#ff6bd6"/><rect x="540" y="150" width="110" height="54" rx="12" fill="#7ae7ff"/><rect x="250" y="210" width="70" height="36" rx="9" fill="#9cff6b"/></g><path d="M240 350 L560 320 L640 600 H160 Z" fill="#07060f" opacity="0.75"/><path d="M260 380 L540 355" stroke="#7ae7ff" stroke-width="2" opacity="0.35"/><path d="M280 420 L520 395" stroke="#ff6bd6" stroke-width="2" opacity="0.25"/></svg>`),
+  piano: svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1a2530"/><stop offset="1" stop-color="#0d1520"/></linearGradient><linearGradient id="k" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#cbd4e6"/></linearGradient></defs><rect width="800" height="600" fill="url(#g)"/><circle cx="610" cy="140" r="78" fill="#c7d8ff" opacity="0.10"/><circle cx="660" cy="190" r="26" fill="#c7d8ff" opacity="0.08"/><g transform="translate(120 290)"><rect x="0" y="0" width="560" height="240" rx="22" fill="#0a1018" opacity="0.85"/><rect x="30" y="35" width="500" height="170" rx="14" fill="#0d1520"/><g transform="translate(52 58)"><rect width="456" height="124" rx="10" fill="url(#k)" opacity="0.92"/><g fill="#1a2530" opacity="0.85"><rect x="52" y="0" width="32" height="78" rx="6"/><rect x="106" y="0" width="32" height="78" rx="6"/><rect x="186" y="0" width="32" height="78" rx="6"/><rect x="240" y="0" width="32" height="78" rx="6"/><rect x="294" y="0" width="32" height="78" rx="6"/><rect x="372" y="0" width="32" height="78" rx="6"/></g><path d="M0 88 H456" stroke="#92a6c8" stroke-opacity="0.35" stroke-width="2"/></g><path d="M420 16 C520 68 560 140 560 220 V240 H420 Z" fill="#070b12" opacity="0.55"/></g><path d="M0 560 C160 520 300 590 420 555 C560 518 650 590 800 560 L800 600 L0 600 Z" fill="#05080f" opacity="0.65"/></svg>`),
+  fluid: svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#25201a"/><stop offset="1" stop-color="#1a150f"/></linearGradient><radialGradient id="a" cx="30%" cy="35%" r="70%"><stop offset="0" stop-color="#a7d2ff" stop-opacity="0.35"/><stop offset="1" stop-color="#a7d2ff" stop-opacity="0"/></radialGradient><radialGradient id="b" cx="70%" cy="60%" r="70%"><stop offset="0" stop-color="#ff9bd6" stop-opacity="0.25"/><stop offset="1" stop-color="#ff9bd6" stop-opacity="0"/></radialGradient></defs><rect width="800" height="600" fill="url(#g)"/><path d="M150 210 C220 120 360 120 420 210 C490 312 620 290 680 220 C740 150 770 170 800 220 V600 H0 V260 C40 270 90 260 150 210 Z" fill="url(#a)"/><path d="M80 440 C140 360 260 350 320 420 C400 510 520 520 590 450 C650 400 720 370 800 400 V600 H0 V520 C30 500 55 475 80 440 Z" fill="url(#b)"/><g opacity="0.55"><path d="M110 260 C200 210 290 250 360 310 C430 370 520 380 610 340" fill="none" stroke="#d7e3ff" stroke-opacity="0.28" stroke-width="5" stroke-linecap="round"/><path d="M140 330 C240 290 320 320 390 370 C470 430 560 430 660 390" fill="none" stroke="#ffd3ea" stroke-opacity="0.22" stroke-width="4" stroke-linecap="round"/></g><g opacity="0.6"><circle cx="220" cy="160" r="10" fill="#d7e3ff" opacity="0.35"/><circle cx="260" cy="190" r="6" fill="#d7e3ff" opacity="0.25"/><circle cx="560" cy="220" r="12" fill="#ffd3ea" opacity="0.25"/><circle cx="600" cy="250" r="7" fill="#ffd3ea" opacity="0.18"/></g></svg>`),
+}
+
 const aigcData = [
   {
     id: 'aigc-0',
@@ -25,6 +37,7 @@ const aigcData = [
     category: 'painting',
     series: 'coast-night',
     gradient: 'linear-gradient(135deg, #2a2a3d, #1a1a2e)',
+    image: PREVIEW_IMAGES.lighthouse,
     prompt: 'A solitary lighthouse on a dark cliff, surrounded by thick fog, beam of light cutting through the mist, reflection on calm ocean surface, cinematic lighting, photorealistic, 8k --ar 3:4 --v 6',
     model: 'Midjourney v6',
     tags: ['Midjourney', '写实风', '夜景'],
@@ -37,6 +50,7 @@ const aigcData = [
     category: 'copywriting',
     series: 'city-soliloquy',
     gradient: 'linear-gradient(135deg, #1e2a3a, #0f1923)',
+    image: PREVIEW_IMAGES.city,
     prompt: '写一篇关于深夜独自走在城市街道上的散文，300字左右，风格要带有淡淡的忧伤和对生活的思考，不要太矫情，像一个人在和自己对话。',
     model: 'Claude 3.5 Sonnet',
     tags: ['Claude', '散文', '情感'],
@@ -49,6 +63,7 @@ const aigcData = [
     category: 'painting',
     series: 'city-soliloquy',
     gradient: 'linear-gradient(135deg, #2d1f3d, #1a1225)',
+    image: PREVIEW_IMAGES.cyber,
     prompt: 'A narrow alley in a cyberpunk city at night, rain-soaked ground reflecting neon lights, Chinese and Japanese signage, moody atmosphere, volumetric fog, blade runner aesthetic --ar 3:4 --v 6',
     model: 'Stable Diffusion XL',
     tags: ['Stable Diffusion', '赛博朋克', '雨景'],
@@ -61,6 +76,7 @@ const aigcData = [
     category: 'music',
     series: 'coast-night',
     gradient: 'linear-gradient(135deg, #1a2530, #0d1520)',
+    image: PREVIEW_IMAGES.piano,
     prompt: 'A melancholic solo piano piece, slow tempo, ambient atmosphere, late night mood, minimalistic melody with emotional depth, inspired by Ryuichi Sakamoto and Nils Frahm',
     model: 'Suno v3.5',
     tags: ['Suno', '氛围音乐', '钢琴'],
@@ -73,6 +89,7 @@ const aigcData = [
     category: 'video',
     series: 'time-fluid',
     gradient: 'linear-gradient(135deg, #25201a, #1a150f)',
+    image: PREVIEW_IMAGES.fluid,
     prompt: 'Abstract fluid animation, slow morphing shapes in dark muted tones, ink dissolving in water effect, seamless loop, 4k, cinematic color grading',
     model: 'Runway Gen-3',
     tags: ['Runway', '抽象动画', '流体'],
@@ -210,10 +227,13 @@ function renderAigcCard(data, index) {
   if (seriesMeta && !allTags.includes(seriesMeta.title)) allTags.unshift(seriesMeta.title)
 
   const tagsHtml = allTags.map((t) => `<span class="glass-tag">${t}</span>`).join('')
+  const artStyle = data.image
+    ? `background: ${data.gradient}; background-image: url('${data.image}'); background-size: cover; background-position: center; background-repeat: no-repeat;`
+    : `background: ${data.gradient};`
 
   card.innerHTML = `
     <button class="ai-card__fav" type="button" aria-label="收藏">${ICONS.heart}</button>
-    <div class="ai-card__image" style="background: ${data.gradient}"></div>
+    <div class="ai-card__image" style="${artStyle}"></div>
     <h3 class="ai-card__title">${data.title}</h3>
     <p class="ai-card__desc">${data.summary || data.desc}</p>
     <div class="ai-card__tags">${tagsHtml}</div>
@@ -518,7 +538,17 @@ function initAigcUI() {
     currentModalId = data.id
     currentPrompt = data.prompt || ''
 
-    if (modalImage) modalImage.style.background = data.gradient
+    if (modalImage) {
+      modalImage.style.background = data.gradient
+      if (data.image) {
+        modalImage.style.backgroundImage = `url('${data.image}')`
+        modalImage.style.backgroundSize = 'cover'
+        modalImage.style.backgroundPosition = 'center'
+        modalImage.style.backgroundRepeat = 'no-repeat'
+      } else {
+        modalImage.style.backgroundImage = ''
+      }
+    }
     if (modalTitle) modalTitle.textContent = data.title
     if (modalDesc) modalDesc.textContent = data.desc
     if (modalPromptCode) modalPromptCode.textContent = data.prompt

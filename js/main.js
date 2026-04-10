@@ -30,6 +30,7 @@ const PAGE_CSS_MAP = {
 }
 
 let currentStyleEl = null
+let pendingStyleEl = null
 let footerResizeObserver = null
 let observedFooter = null
 
@@ -70,26 +71,27 @@ function refreshFooterSpace() {
 function loadPageCSS(key) {
   return new Promise((resolve) => {
     const href = PAGE_CSS_MAP[key]
-    if (!href) { resolve(); return }
+    if (!href) { resolve(null); return }
 
     const existing = document.querySelector(`link[data-page-style="${key}"]`)
-    if (existing) { currentStyleEl = existing; resolve(); return }
+    if (existing) {
+      pendingStyleEl = existing
+      resolve(existing)
+      return
+    }
 
     const link = document.createElement('link')
     link.rel = 'stylesheet'
     link.href = href
     link.dataset.pageStyle = key
+    link.disabled = true
 
     let settled = false
     function finish() {
       if (settled) return
       settled = true
-
-      if (currentStyleEl && currentStyleEl !== link) {
-        currentStyleEl.remove()
-      }
-      currentStyleEl = link
-      resolve()
+      pendingStyleEl = link
+      resolve(link)
     }
 
     link.onload = finish
@@ -98,6 +100,16 @@ function loadPageCSS(key) {
 
     document.head.appendChild(link)
   })
+}
+
+function commitPageCSS(link) {
+  if (!link) return
+  link.disabled = false
+  if (currentStyleEl && currentStyleEl !== link) {
+    currentStyleEl.remove()
+  }
+  currentStyleEl = link
+  pendingStyleEl = null
 }
 
 function initPageTransition() {
@@ -207,9 +219,9 @@ async function loadPage(path, scroll) {
 
   try {
     const pageKey = getPageKeyFromPath(path)
+    document.body.classList.add('page-switching')
 
-    await loadPageCSS(pageKey)
-
+    const cssPromise = loadPageCSS(pageKey)
     const resp = await fetch(path)
     if (!resp.ok) throw new Error(resp.status)
     const html = await resp.text()
@@ -223,6 +235,9 @@ async function loadPage(path, scroll) {
       oldMain.replaceWith(newMain)
     }
 
+    const nextStyle = await cssPromise
+    commitPageCSS(nextStyle)
+
     const newTitle = doc.querySelector('title')
     if (newTitle) document.title = newTitle.textContent
 
@@ -230,13 +245,19 @@ async function loadPage(path, scroll) {
     document.querySelectorAll(`.nav-link[data-page="${pageKey}"]`).forEach((el) => el.classList.add('active'))
 
     document.documentElement.dataset.page = pageKey
+    document.body.classList.remove('page-enter', 'page-enter-active')
     initPageTransition()
     initScrollReveal()
     runPageInit(pageKey)
     refreshFooterSpace()
 
-    window.scrollTo(0, 0)
+    requestAnimationFrame(() => {
+      document.body.classList.remove('page-switching')
+    })
+
+    if (scroll) window.scrollTo(0, 0)
   } catch {
+    document.body.classList.remove('page-switching')
     window.location.href = path
   }
 }
@@ -260,7 +281,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   refreshFooterSpace()
 
-  initialPageCssPromise.then(() => {
+  initialPageCssPromise.then((link) => {
+    commitPageCSS(link)
     initPageTransition()
     initScrollReveal()
     restoreState()

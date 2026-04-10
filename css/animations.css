@@ -250,3 +250,16 @@
 .page-loading {
   opacity: 0;
 }
+
+.main-content {
+  transition:
+    opacity var(--dur-slow) var(--ease-smooth),
+    transform var(--dur-slow) var(--ease-smooth);
+  will-change: opacity, transform;
+}
+
+.page-switching .main-content {
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+}

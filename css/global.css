@@ -341,16 +341,13 @@ p {
   height: var(--player-btn-size);
   min-width: var(--player-btn-size);
   min-height: var(--player-btn-size);
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  border: none;
+  background: transparent;
   color: var(--text-secondary);
   display: grid;
   place-items: center;
-  backdrop-filter: blur(16px) saturate(1.15);
-  -webkit-backdrop-filter: blur(16px) saturate(1.15);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.26);
-  transition: color var(--dur-fast) var(--ease-smooth), background var(--dur-fast) var(--ease-smooth), border-color var(--dur-fast) var(--ease-smooth), transform var(--dur-fast) var(--ease-smooth), box-shadow var(--dur-fast) var(--ease-smooth);
+  transition: color var(--dur-fast) var(--ease-smooth), transform var(--dur-fast) var(--ease-smooth);
 }
 
 .player-btn svg {
@@ -362,29 +359,36 @@ p {
 
 .player-btn:hover {
   color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.22);
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.28);
+  transform: scale(1.05);
 }
 
 .player-btn:active {
-  transform: translateY(1px);
-  background: rgba(255, 255, 255, 0.1);
+  transform: scale(0.95);
+  color: var(--text-tertiary);
 }
 
 .player-btn--primary {
   --player-btn-size: 56px;
   --player-btn-icon-size: 24px;
-  color: var(--text-primary);
-  background: rgba(110, 143, 173, 0.2);
-  border-color: rgba(110, 143, 173, 0.28);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.32), 0 0 22px rgba(110, 143, 173, 0.18);
+  color: #000000;
+  background: var(--text-primary);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transition: background var(--dur-fast) var(--ease-smooth), transform var(--dur-fast) var(--ease-smooth), box-shadow var(--dur-fast) var(--ease-smooth);
+}
+
+.player-btn--primary:hover {
+  background: var(--text-primary);
+  color: #000000;
+  transform: scale(1.05);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+
+.player-btn--primary:active {
+  transform: scale(0.95);
 }
 
 .player-btn--active {
-  color: var(--text-primary);
-  background: rgba(110, 143, 173, 0.24);
-  border-color: rgba(110, 143, 173, 0.34);
+  color: var(--accent-fog-blue);
 }
 
 /* ============================================================
@@ -399,12 +403,9 @@ p {
   gap: clamp(8px, 1.2vw, 16px);
   width: clamp(260px, 32vw, 420px);
   max-width: calc(100vw - 16px);
-  background: rgba(10, 10, 15, 0.85);
-  backdrop-filter: blur(16px) saturate(1.2);
-  -webkit-backdrop-filter: blur(16px) saturate(1.2);
-  border: 1px solid var(--glass-border);
-  border-radius: 50px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
   opacity: 0;
   pointer-events: none;
   touch-action: none;
@@ -451,6 +452,7 @@ p {
 .mini-player.collapsed.dock-left,
 .mini-player.collapsed.dock-right {
   width: clamp(56px, 5.5vw, 70px);
+  border-radius: 50%;
 }
 
 .mini-player.collapsed .mini-player__art,

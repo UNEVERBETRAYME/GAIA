@@ -139,15 +139,22 @@
    使用 glass-modal-overlay 基础样式，链接垂直居中
    ============================================================ */
 
+.mobile-menu {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  overflow-y: auto;
+}
+
 .mobile-menu__inner {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: var(--sp-lg);
   width: 100%;
-  height: 100%;
-  padding: var(--sp-xl) var(--sp-md);
+  min-height: 100%;
+  padding: calc(var(--nav-h) + var(--sp-lg)) var(--sp-md) var(--sp-xl);
 }
 
 .mobile-menu__link {
