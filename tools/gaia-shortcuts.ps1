@@ -1,4 +1,4 @@
-$projectPath = $PSScriptRoot
+$projectPath = Split-Path -Parent $PSScriptRoot
 Set-Location $projectPath
 
 function gacp {
@@ -6,7 +6,7 @@ function gacp {
         [string]$Message = "更新优化"
     )
 
-    git add .
+    git add -A
 
     $hasChanges = git diff --cached --name-only
     if (-not $hasChanges) {
