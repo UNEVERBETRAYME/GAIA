@@ -1,5 +1,5 @@
 // 测试标签解析逻辑
-import { parseFileTags } from './js/audio-library.js'
+import { parseFileTags } from '../../js/audio-library.js'
 
 // 测试用例
 const testFiles = [

@@ -19,8 +19,8 @@
 - ✅ 共扫描到 23 个音频文件
 
 **相关文件：**
-- [package.json](package.json) - 配置了 predev/prebuild 钩子
-- [scripts/generate-audio-manifest.mjs](scripts/generate-audio-manifest.mjs) - 自动扫描脚本
+- [package.json](../../package.json) - 配置了 predev/prebuild 钩子
+- [scripts/generate-audio-manifest.mjs](../../scripts/generate-audio-manifest.mjs) - 自动扫描脚本
 
 ---
 
@@ -60,7 +60,7 @@
 ```
 
 **相关文件：**
-- [js/audio-library.js:36-93](js/audio-library.js#L36-L93) - `parseFileTags()` 函数
+- [js/audio-library.js:36-93](../../js/audio-library.js#L36-L93) - `parseFileTags()` 函数
 
 ---
 
@@ -73,7 +73,7 @@
 - ✅ 支持中文文件名和空格
 
 **测试页面：**
-- [test-ui-verification.html](test-ui-verification.html) - 完整的 UI 验证测试页面
+- [test-ui-verification.html](../../tests/manual/test-ui-verification.html) - 完整的 UI 验证测试页面
 
 ---
 
@@ -86,7 +86,7 @@
 - ✅ 音频路径格式：`/audio/${fileName}`
 
 **相关文件：**
-- [js/audio-library.js:142-159](js/audio-library.js#L142-L159) - `buildLibrarySongs()` 生成播放路径
+- [js/audio-library.js:142-159](../../js/audio-library.js#L142-L159) - `buildLibrarySongs()` 生成播放路径
 
 ---
 
@@ -99,8 +99,8 @@
 - ✅ ID3 数据优先级高于文件名推断
 
 **相关文件：**
-- [js/audio-art.js](js/audio-art.js) - ID3 读取模块
-- [js/audio-library.js:184-208](js/audio-library.js#L184-L208) - `loadSongMetadata()` 函数
+- [js/audio-art.js](../../js/audio-art.js) - ID3 读取模块
+- [js/audio-library.js:184-208](../../js/audio-library.js#L184-L208) - `loadSongMetadata()` 函数
 
 ---
 
@@ -128,11 +128,11 @@
 - `scripts/generate-audio-manifest.mjs` - 自动扫描脚本
 - `js/audio-library.js` - 音频库核心模块
 - `public/audio/manifest.json` - 自动生成的清单
-- `test-tag-parsing.mjs` - 标签解析测试脚本
-- `test-ui-verification.html` - UI 验证测试页面
+- `tests/scripts/test-tag-parsing.mjs` - 标签解析测试脚本
+- `tests/manual/test-ui-verification.html` - UI 验证测试页面
 
 ### 修改文件
-- `package.json` - 添加 predev/prebuild 钩子
+- `../../package.json` - 添加 predev/prebuild 钩子
 
 ---
 

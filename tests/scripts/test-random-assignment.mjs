@@ -1,5 +1,5 @@
 // 测试随机分配逻辑
-import { parseFileTags } from './js/audio-library.js'
+import { parseFileTags } from '../../js/audio-library.js'
 
 const testFiles = [
   '徐良,阿悄 - 犯贱.mp3',

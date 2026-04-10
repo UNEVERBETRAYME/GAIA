@@ -231,15 +231,15 @@
 
 .page-enter {
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(6px);
 }
 
 .page-enter-active {
   opacity: 1;
   transform: translateY(0);
   transition:
-    opacity var(--dur-glacial) var(--ease-out),
-    transform var(--dur-glacial) var(--ease-out);
+    opacity 0.32s var(--ease-out),
+    transform 0.32s var(--ease-out);
 }
 
 /* ============================================================
@@ -253,13 +253,59 @@
 
 .main-content {
   transition:
-    opacity var(--dur-slow) var(--ease-smooth),
-    transform var(--dur-slow) var(--ease-smooth);
+    opacity 0.26s var(--ease-smooth),
+    transform 0.26s var(--ease-smooth);
   will-change: opacity, transform;
 }
 
 .page-switching .main-content {
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(6px);
   pointer-events: none;
+}
+
+@supports (view-transition-name: page-content) {
+  .main-content {
+    view-transition-name: page-content;
+  }
+
+  ::view-transition-old(page-content),
+  ::view-transition-new(page-content) {
+    animation-duration: 0.28s;
+    animation-timing-function: var(--ease-smooth);
+  }
+
+  ::view-transition-old(page-content) {
+    animation-name: gaiaPageOut;
+  }
+
+  ::view-transition-new(page-content) {
+    animation-name: gaiaPageIn;
+  }
+}
+
+@keyframes gaiaPageOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-4px);
+    filter: blur(4px);
+  }
+}
+
+@keyframes gaiaPageIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
 }

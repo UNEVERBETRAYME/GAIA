@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .claude/
+.trae/
 .DS_Store
 *.local
 .env

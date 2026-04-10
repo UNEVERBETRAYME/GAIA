@@ -181,20 +181,28 @@
          弹窗：作品详情
          ============================ -->
     <div class="glass-modal-overlay" id="aigcModal">
-      <div class="glass-modal-content ai-modal">
+      <div class="glass-modal-content ai-modal ai-modal--work">
         <button class="ai-modal__close" id="aigcModalClose" aria-label="关闭">&times;</button>
-        <div class="ai-modal__image" id="modalImage"></div>
-        <h2 class="ai-modal__title" id="modalTitle"></h2>
-        <p class="ai-modal__desc" id="modalDesc"></p>
-        <div class="ai-modal__prompt" id="modalPrompt">
-          <div class="ai-modal__prompt-head">
-            <span class="ai-modal__prompt-label">Prompt</span>
-            <button class="glass-btn ai-modal__copy" id="copyPromptBtn" type="button">复制 Prompt</button>
+        <div class="ai-modal__layout">
+          <div class="ai-modal__visual">
+            <div class="ai-modal__image" id="modalImage"></div>
           </div>
-          <pre class="ai-modal__prompt-code" id="modalPromptCode"></pre>
-          <div class="ai-prompt-struct" id="modalPromptStruct"></div>
+          <div class="ai-modal__content">
+            <div class="ai-modal__intro">
+              <h2 class="ai-modal__title" id="modalTitle"></h2>
+              <p class="ai-modal__desc" id="modalDesc"></p>
+            </div>
+            <div class="ai-modal__prompt" id="modalPrompt">
+              <div class="ai-modal__prompt-head">
+                <span class="ai-modal__prompt-label">Prompt</span>
+                <button class="glass-btn ai-modal__copy" id="copyPromptBtn" type="button">复制 Prompt</button>
+              </div>
+              <pre class="ai-modal__prompt-code" id="modalPromptCode"></pre>
+              <div class="ai-prompt-struct" id="modalPromptStruct"></div>
+            </div>
+            <div class="ai-modal__meta" id="modalMeta"></div>
+          </div>
         </div>
-        <div class="ai-modal__meta" id="modalMeta"></div>
       </div>
     </div>
 

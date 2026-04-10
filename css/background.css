@@ -20,6 +20,44 @@
   background: var(--bg-primary);
 }
 
+html[data-page="index"] .fluid-bg__blob--1 {
+  opacity: 0.9;
+  filter: blur(110px);
+}
+
+html[data-page="index"] .fluid-bg__blob--2 {
+  opacity: 0.72;
+}
+
+html[data-page="ai"] .fluid-bg__blob--1 {
+  opacity: 1;
+  transform: scale(1.06);
+}
+
+html[data-page="ai"] .fluid-bg__blob--2 {
+  opacity: 0.95;
+}
+
+html[data-page="ai"] .fluid-bg__blob--4 {
+  opacity: 0.55;
+}
+
+html[data-page="music"] .fluid-bg__blob--1 {
+  opacity: 1;
+}
+
+html[data-page="music"] .fluid-bg__blob--2 {
+  opacity: 0.82;
+}
+
+html[data-page="music"] .fluid-bg__blob--3 {
+  opacity: 0.58;
+}
+
+html[data-page="music"] .fluid-bg__blob--4 {
+  opacity: 0.42;
+}
+
 /* ============================================================
    光斑基础样式（4 个光斑共享）
    ============================================================ */

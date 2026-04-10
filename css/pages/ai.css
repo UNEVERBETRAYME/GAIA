@@ -116,6 +116,16 @@
   gap: var(--sp-sm);
   flex-wrap: wrap;
   margin-bottom: var(--sp-lg);
+  position: sticky;
+  top: calc(var(--nav-h) + 12px);
+  z-index: 8;
+  padding: 14px 16px;
+  border-radius: 999px;
+  background: rgba(14, 14, 22, 0.56);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
 }
 
 .ai-view-switch {
@@ -173,6 +183,8 @@
   margin-bottom: var(--sp-lg);
   cursor: pointer;
   overflow: hidden;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.045);
 }
 
 .ai-card__fav {
@@ -211,26 +223,43 @@
 }
 
 .ai-card__image {
+  position: relative;
   width: 100%;
   height: 250px;
   border-radius: var(--radius-sm);
-  margin-bottom: var(--sp-sm);
+  margin-bottom: 18px;
+  overflow: hidden;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.34);
+}
+
+.ai-card__image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 32%, rgba(0, 0, 0, 0.28)),
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.12), transparent 32%);
+  pointer-events: none;
 }
 
 .ai-card__title {
   font-family: var(--font-en), var(--font-cn), sans-serif;
   font-weight: var(--font-weight);
   font-size: 1rem;
-  letter-spacing: var(--ls-base);
+  letter-spacing: 0.12em;
   color: var(--text-primary);
-  margin-bottom: var(--sp-xs);
+  margin-bottom: 10px;
 }
 
 .ai-card__desc {
   font-size: 0.8rem;
   color: var(--text-tertiary);
-  line-height: 1.6;
-  margin-bottom: var(--sp-xs);
+  line-height: 1.8;
+  margin-bottom: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .ai-card__tags {
@@ -261,6 +290,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--sp-md);
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .ai-series__head {
@@ -399,32 +430,77 @@
   color: var(--text-primary);
 }
 
+.ai-modal--work {
+  max-width: min(1120px, calc(100vw - 32px));
+}
+
+.ai-modal__layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.95fr) minmax(0, 1.15fr);
+  gap: clamp(18px, 2.4vw, 32px);
+  align-items: start;
+}
+
+.ai-modal__visual {
+  position: sticky;
+  top: 0;
+}
+
 .ai-modal__image {
   width: 100%;
-  height: 300px;
+  min-height: 420px;
   border-radius: var(--radius-sm);
-  margin-bottom: var(--sp-md);
+  margin-bottom: 0;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.34);
+  position: relative;
+  overflow: hidden;
+}
+
+.ai-modal__image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.10), transparent 28%, rgba(0, 0, 0, 0.26)),
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.14), transparent 30%);
+  pointer-events: none;
+}
+
+.ai-modal__content {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.ai-modal__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 2px;
 }
 
 .ai-modal__title {
   font-family: var(--font-en), var(--font-cn), sans-serif;
   font-weight: var(--font-weight);
   font-size: 1.5rem;
-  letter-spacing: var(--ls-title);
+  letter-spacing: 0.14em;
   color: var(--text-primary);
-  margin-bottom: var(--sp-sm);
+  margin-bottom: 0;
 }
 
 .ai-modal__desc {
   font-size: 0.9rem;
   color: var(--text-secondary);
   line-height: 1.8;
-  margin-bottom: var(--sp-md);
+  margin-bottom: 0;
 }
 
-/* Prompt 代码块 */
 .ai-modal__prompt {
-  margin-bottom: var(--sp-md);
+  padding: 18px;
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .ai-modal__prompt-head {
@@ -510,6 +586,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+  padding-top: 4px;
 }
 
 .ai-modal__meta .glass-tag {
@@ -569,6 +646,18 @@
   .ai-series__grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .ai-modal__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .ai-modal__visual {
+    position: static;
+  }
+
+  .ai-modal__image {
+    min-height: 300px;
+  }
 }
 
 /* ============================================================
@@ -595,6 +684,7 @@
 
   .ai-modal__image {
     height: 200px;
+    min-height: 200px;
   }
 
   .ai-series__grid {

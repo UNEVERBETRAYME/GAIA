@@ -142,6 +142,10 @@ async function renderPlaylists() {
 
 function applyCover(artEl, state) {
   if (!artEl || !state.song) return
+  const playerEl = document.querySelector('.music-player')
+  if (playerEl) {
+    playerEl.style.setProperty('--music-player-ambient', state.song.gradient)
+  }
 
   if (state.coverUrl) {
     artEl.style.backgroundImage = `url(${state.coverUrl})`
@@ -305,10 +309,14 @@ function initMoodTags() {
       card.innerHTML = `
         <div class="music-mood-card__art" style="background: ${song.gradient}"></div>
         <div class="music-mood-card__info">
+          <div class="music-mood-card__eyebrow">${song.playlistName}</div>
           <div class="music-mood-card__name">${song.name}</div>
-          <div class="music-mood-card__artist">${song.playlistName}</div>
+          <div class="music-mood-card__artist">${song.artist}</div>
         </div>
-        <span class="glass-tag music-mood-card__mood-tag">${getMoodLabel(song.mood)}</span>
+        <div class="music-mood-card__actions">
+          <span class="glass-tag music-mood-card__mood-tag">${getMoodLabel(song.mood)}</span>
+          <span class="music-mood-card__play">播放</span>
+        </div>
       `
 
       card.addEventListener('click', () => {

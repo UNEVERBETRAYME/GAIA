@@ -33,6 +33,12 @@ let currentStyleEl = null
 let pendingStyleEl = null
 let footerResizeObserver = null
 let observedFooter = null
+const pageCssPromises = new Map()
+const pageHtmlCache = new Map()
+const pageFetchPromises = new Map()
+let didWarmupPrefetch = false
+let navigationRequestId = 0
+let activeNavigationPath = ''
 
 function syncFooterSpace() {
   const footer = document.querySelector('.footer')
@@ -69,7 +75,9 @@ function refreshFooterSpace() {
 }
 
 function loadPageCSS(key) {
-  return new Promise((resolve) => {
+  if (pageCssPromises.has(key)) return pageCssPromises.get(key)
+
+  const promise = new Promise((resolve) => {
     const href = PAGE_CSS_MAP[key]
     if (!href) { resolve(null); return }
 
@@ -96,10 +104,13 @@ function loadPageCSS(key) {
 
     link.onload = finish
     link.onerror = finish
-    setTimeout(finish, 3000)
+    setTimeout(finish, 1200)
 
     document.head.appendChild(link)
   })
+
+  pageCssPromises.set(key, promise)
+  return promise
 }
 
 function commitPageCSS(link) {
@@ -123,6 +134,129 @@ function initPageTransition() {
   })
 }
 
+function canUseViewTransition() {
+  return typeof document.startViewTransition === 'function' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+}
+
+function getCurrentLocationPath() {
+  return window.location.pathname + window.location.search + window.location.hash
+}
+
+function syncNavState(pageKey) {
+  document.querySelectorAll('[data-page]').forEach((el) => {
+    el.classList.remove('active', 'pending')
+  })
+  document.querySelectorAll(`.nav-link[data-page="${pageKey}"]`).forEach((el) => {
+    el.classList.add('active')
+  })
+}
+
+function setPendingNav(path) {
+  const pageKey = getPageKeyFromPath(path)
+  document.querySelectorAll('[data-page]').forEach((el) => {
+    el.classList.remove('pending')
+  })
+  document.querySelectorAll(`.nav-link[data-page="${pageKey}"]`).forEach((el) => {
+    el.classList.add('pending')
+  })
+}
+
+function clearPendingNav() {
+  document.querySelectorAll('[data-page]').forEach((el) => {
+    el.classList.remove('pending')
+  })
+}
+
+function extractPagePayload(html) {
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(html, 'text/html')
+  const main = doc.querySelector('.main-content')
+  const title = doc.querySelector('title')?.textContent || ''
+
+  return {
+    title,
+    mainHtml: main ? main.outerHTML : '',
+  }
+}
+
+function createMainFromHtml(mainHtml) {
+  if (!mainHtml) return null
+  const template = document.createElement('template')
+  template.innerHTML = mainHtml.trim()
+  return template.content.firstElementChild
+}
+
+function fetchPagePayload(path) {
+  if (pageHtmlCache.has(path)) return Promise.resolve(pageHtmlCache.get(path))
+  if (pageFetchPromises.has(path)) return pageFetchPromises.get(path)
+
+  const promise = fetch(path)
+    .then((resp) => {
+      if (!resp.ok) throw new Error(resp.status)
+      return resp.text()
+    })
+    .then((html) => {
+      const payload = extractPagePayload(html)
+      pageHtmlCache.set(path, payload)
+      pageFetchPromises.delete(path)
+      return payload
+    })
+    .catch((error) => {
+      pageFetchPromises.delete(path)
+      throw error
+    })
+
+  pageFetchPromises.set(path, promise)
+  return promise
+}
+
+function prefetchPage(path) {
+  const pageKey = getPageKeyFromPath(path)
+  return Promise.all([
+    loadPageCSS(pageKey),
+    fetchPagePayload(path),
+  ])
+}
+
+function warmupPagePrefetch() {
+  if (didWarmupPrefetch) return
+  didWarmupPrefetch = true
+
+  const paths = [...new Set(
+    Array.from(document.querySelectorAll('a[href]'))
+      .map((link) => {
+        const href = link.getAttribute('href')
+        if (!href) return null
+        try {
+          const url = new URL(href, window.location.origin)
+          if (url.origin !== window.location.origin) return null
+          if (!url.pathname.endsWith('.html') && url.pathname !== '/') return null
+          if (url.pathname === window.location.pathname) return null
+          return url.pathname + url.search + url.hash
+        } catch {
+          return null
+        }
+      })
+      .filter(Boolean)
+  )]
+
+  if (paths.length === 0) return
+
+  const runner = () => {
+    paths.forEach((path, index) => {
+      window.setTimeout(() => {
+        prefetchPage(path).catch(() => {})
+      }, index * 120)
+    })
+  }
+
+  if ('requestIdleCallback' in window) {
+    window.requestIdleCallback(runner, { timeout: 900 })
+  } else {
+    window.setTimeout(runner, 280)
+  }
+}
+
 function initScrollReveal() {
   const elements = document.querySelectorAll('.scroll-reveal')
   if (elements.length === 0) return
@@ -144,6 +278,28 @@ function initScrollReveal() {
   elements.forEach((el) => {
     window._revealObserver.observe(el)
   })
+}
+
+function applyPagePayload({ pageKey, payload, nextStyle, scroll }) {
+  const newMain = createMainFromHtml(payload?.mainHtml)
+  const oldMain = document.querySelector('.main-content')
+  if (newMain && oldMain) {
+    oldMain.replaceWith(newMain)
+  }
+
+  commitPageCSS(nextStyle)
+
+  if (payload?.title) document.title = payload.title
+  document.documentElement.dataset.page = pageKey
+  syncNavState(pageKey)
+
+  if (scroll) window.scrollTo(0, 0)
+
+  document.body.classList.remove('page-enter', 'page-enter-active')
+  initPageTransition()
+  initScrollReveal()
+  runPageInit(pageKey)
+  refreshFooterSpace()
 }
 
 const pageModules = {
@@ -179,6 +335,21 @@ function runPageInit(key) {
 }
 
 function interceptLinks() {
+  function getPrefetchPath(link) {
+    const href = link?.getAttribute('href')
+    if (!href) return null
+
+    try {
+      const url = new URL(href, window.location.origin)
+      if (url.origin !== window.location.origin) return null
+      if (!url.pathname.endsWith('.html') && url.pathname !== '/') return null
+      if (url.pathname === window.location.pathname) return null
+      return url.pathname + url.search + url.hash
+    } catch {
+      return null
+    }
+  }
+
   document.addEventListener('click', (e) => {
     const link = e.target.closest('a[href]')
     if (!link) return
@@ -206,58 +377,78 @@ function interceptLinks() {
   window.addEventListener('popstate', () => {
     loadPage(window.location.pathname + window.location.search, false)
   })
+
+  document.addEventListener('mouseover', (e) => {
+    const link = e.target.closest('a[href]')
+    if (!link) return
+    const path = getPrefetchPath(link)
+    if (path) prefetchPage(path).catch(() => {})
+  }, { passive: true })
+
+  document.addEventListener('focusin', (e) => {
+    const link = e.target.closest?.('a[href]')
+    if (!link) return
+    const path = getPrefetchPath(link)
+    if (path) prefetchPage(path).catch(() => {})
+  })
+
+  document.addEventListener('touchstart', (e) => {
+    const link = e.target.closest?.('a[href]')
+    if (!link) return
+    const path = getPrefetchPath(link)
+    if (path) prefetchPage(path).catch(() => {})
+  }, { passive: true })
 }
 
 function navigateTo(path) {
-  if (window.location.pathname === path) return
+  if (getCurrentLocationPath() === path || activeNavigationPath === path) return
+  setPendingNav(path)
   history.pushState(null, '', path)
   loadPage(path, true)
 }
 
 async function loadPage(path, scroll) {
-  teardownMusicPage()
+  const requestId = ++navigationRequestId
+  activeNavigationPath = path
 
   try {
     const pageKey = getPageKeyFromPath(path)
-    document.body.classList.add('page-switching')
+    const [nextStyle, payload] = await prefetchPage(path)
 
-    const cssPromise = loadPageCSS(pageKey)
-    const resp = await fetch(path)
-    if (!resp.ok) throw new Error(resp.status)
-    const html = await resp.text()
+    if (requestId !== navigationRequestId) return
 
-    const parser = new DOMParser()
-    const doc = parser.parseFromString(html, 'text/html')
-
-    const newMain = doc.querySelector('.main-content')
-    const oldMain = document.querySelector('.main-content')
-    if (newMain && oldMain) {
-      oldMain.replaceWith(newMain)
+    const leavingMusic = currentPageKey === 'music' && pageKey !== 'music'
+    if (leavingMusic) {
+      teardownMusicPage()
     }
 
-    const nextStyle = await cssPromise
-    commitPageCSS(nextStyle)
-
-    const newTitle = doc.querySelector('title')
-    if (newTitle) document.title = newTitle.textContent
-
-    document.querySelectorAll('[data-page]').forEach((el) => el.classList.remove('active'))
-    document.querySelectorAll(`.nav-link[data-page="${pageKey}"]`).forEach((el) => el.classList.add('active'))
-
-    document.documentElement.dataset.page = pageKey
-    document.body.classList.remove('page-enter', 'page-enter-active')
-    initPageTransition()
-    initScrollReveal()
-    runPageInit(pageKey)
-    refreshFooterSpace()
-
-    requestAnimationFrame(() => {
-      document.body.classList.remove('page-switching')
-    })
-
-    if (scroll) window.scrollTo(0, 0)
+    if (canUseViewTransition()) {
+      document.body.classList.add('page-transition-native')
+      const transition = document.startViewTransition(() => {
+        applyPagePayload({ pageKey, payload, nextStyle, scroll })
+      })
+      transition.finished.catch(() => {}).finally(() => {
+        if (requestId === navigationRequestId) {
+          document.body.classList.remove('page-transition-native')
+          clearPendingNav()
+          activeNavigationPath = ''
+        }
+      })
+    } else {
+      document.body.classList.add('page-switching')
+      applyPagePayload({ pageKey, payload, nextStyle, scroll })
+      requestAnimationFrame(() => {
+        document.body.classList.remove('page-switching')
+        if (requestId === navigationRequestId) {
+          clearPendingNav()
+          activeNavigationPath = ''
+        }
+      })
+    }
   } catch {
-    document.body.classList.remove('page-switching')
+    document.body.classList.remove('page-switching', 'page-transition-native')
+    clearPendingNav()
+    activeNavigationPath = ''
     window.location.href = path
   }
 }
@@ -288,5 +479,6 @@ document.addEventListener('DOMContentLoaded', () => {
     restoreState()
     runPageInit(getPageKey())
     refreshFooterSpace()
+    warmupPagePrefetch()
   })
 })
