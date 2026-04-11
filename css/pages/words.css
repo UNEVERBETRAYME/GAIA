@@ -10,11 +10,21 @@
 
 .page-hero--words {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 30vh;
   text-align: center;
   padding: var(--sp-xl) var(--sp-md);
+}
+
+.page-hero--words .page-hero__subtitle {
+  margin-top: var(--sp-sm);
+  font-size: 0.86rem;
+  letter-spacing: var(--ls-title);
+  color: var(--text-secondary);
+  max-width: 560px;
+  line-height: 1.8;
 }
 
 .page-hero__title--typewriter {
@@ -198,6 +208,50 @@
 
 .words-immersive {
   margin-bottom: var(--sp-2xl);
+}
+
+.words-immersive__controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-sm);
+  margin-bottom: var(--sp-md);
+}
+
+.words-immersive__prompt {
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
+  color: var(--text-tertiary);
+}
+
+.words-immersive__tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-xs);
+}
+
+.words-immersive__tags .glass-tag {
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+}
+
+.words-immersive__tags .glass-tag.active {
+  background: var(--accent-fog-blue-alpha);
+  border-color: var(--accent-fog-blue-alpha);
+  color: var(--text-primary);
+}
+
+.words-immersive__bridge {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-sm);
+}
+
+.words-immersive__bridge .glass-btn {
+  padding: 10px 18px;
+  font-size: 0.78rem;
 }
 
 .words-immersive__stage {

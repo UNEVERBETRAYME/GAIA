@@ -1,3 +1,5 @@
+import { EMOTIONS, getEmotionLabel, normalizeEmotionKey, readEmotionFromUrl, replaceMoodInCurrentUrl, buildUrlWithMood } from '../emotions.js'
+
 function svgDataUri(svg) {
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`
 }
@@ -7,16 +9,19 @@ const SERIES_DATA = [
     key: 'coast-night',
     title: '深夜海岸',
     desc: '雾、潮声与低频的光，适合把心事放远。',
+    mood: 'lonely',
   },
   {
     key: 'city-soliloquy',
     title: '城市独白',
     desc: '霓虹与人群的背面，写给独行者的旁白。',
+    mood: 'melancholy',
   },
   {
     key: 'time-fluid',
     title: '时间的形状',
     desc: '让抽象替你说话，时间在暗处缓慢流动。',
+    mood: 'calm',
   },
 ]
 
@@ -36,6 +41,7 @@ const aigcData = [
     summary: '深夜海边的孤独灯塔，被浓雾环绕',
     category: 'painting',
     series: 'coast-night',
+    mood: 'lonely',
     gradient: 'linear-gradient(135deg, #2a2a3d, #1a1a2e)',
     image: PREVIEW_IMAGES.lighthouse,
     prompt: 'A solitary lighthouse on a dark cliff, surrounded by thick fog, beam of light cutting through the mist, reflection on calm ocean surface, cinematic lighting, photorealistic, 8k --ar 3:4 --v 6',
@@ -49,6 +55,7 @@ const aigcData = [
     summary: '用 AI 生成的都市情感短文系列',
     category: 'copywriting',
     series: 'city-soliloquy',
+    mood: 'melancholy',
     gradient: 'linear-gradient(135deg, #1e2a3a, #0f1923)',
     image: PREVIEW_IMAGES.city,
     prompt: '写一篇关于深夜独自走在城市街道上的散文，300字左右，风格要带有淡淡的忧伤和对生活的思考，不要太矫情，像一个人在和自己对话。',
@@ -62,6 +69,7 @@ const aigcData = [
     summary: '霓虹灯下的雨夜小巷，赛博朋克风格',
     category: 'painting',
     series: 'city-soliloquy',
+    mood: 'melancholy',
     gradient: 'linear-gradient(135deg, #2d1f3d, #1a1225)',
     image: PREVIEW_IMAGES.cyber,
     prompt: 'A narrow alley in a cyberpunk city at night, rain-soaked ground reflecting neon lights, Chinese and Japanese signage, moody atmosphere, volumetric fog, blade runner aesthetic --ar 3:4 --v 6',
@@ -75,6 +83,7 @@ const aigcData = [
     summary: 'AI 生成的氛围钢琴旋律，适合深夜聆听',
     category: 'music',
     series: 'coast-night',
+    mood: 'lonely',
     gradient: 'linear-gradient(135deg, #1a2530, #0d1520)',
     image: PREVIEW_IMAGES.piano,
     prompt: 'A melancholic solo piano piece, slow tempo, ambient atmosphere, late night mood, minimalistic melody with emotional depth, inspired by Ryuichi Sakamoto and Nils Frahm',
@@ -88,6 +97,7 @@ const aigcData = [
     summary: '抽象流体动画，探索时间与空间的视觉隐喻',
     category: 'video',
     series: 'time-fluid',
+    mood: 'calm',
     gradient: 'linear-gradient(135deg, #25201a, #1a150f)',
     image: PREVIEW_IMAGES.fluid,
     prompt: 'Abstract fluid animation, slow morphing shapes in dark muted tones, ink dissolving in water effect, seamless loop, 4k, cinematic color grading',
@@ -259,14 +269,17 @@ function renderAigcGallery() {
   gallery.appendChild(frag)
 }
 
-function renderSeriesView() {
+function renderSeriesView(filterMood = null) {
   const el = document.getElementById('seriesView')
   if (!el) return
   el.innerHTML = ''
 
   const frag = document.createDocumentFragment()
 
-  SERIES_DATA.forEach((series) => {
+  const moodKey = normalizeEmotionKey(filterMood)
+  const list = moodKey ? SERIES_DATA.filter((s) => s.mood === moodKey) : SERIES_DATA
+
+  list.forEach((series) => {
     const items = aigcData.filter((x) => x.series === series.key)
     if (items.length === 0) return
 
@@ -430,7 +443,8 @@ function syncSeriesBar(state) {
 
 function initAigcUI() {
   renderAigcGallery()
-  renderSeriesView()
+  let moodFilter = readEmotionFromUrl()
+  renderSeriesView(moodFilter)
 
   let state = getStateFromStorage()
 
@@ -453,6 +467,60 @@ function initAigcUI() {
       recompute()
     })
   }
+
+  const moodTagsEl = document.getElementById('aiMoodTags')
+  const toMusic = document.getElementById('aiMoodToMusic')
+  const toWords = document.getElementById('aiMoodToWords')
+
+  function syncMoodLinks() {
+    const key = normalizeEmotionKey(moodFilter)
+    if (toMusic) toMusic.setAttribute('href', buildUrlWithMood('/pages/music.html', key))
+    if (toWords) toWords.setAttribute('href', buildUrlWithMood('/pages/words.html', key))
+  }
+
+  function renderMoodTags() {
+    if (!moodTagsEl) return
+    moodTagsEl.innerHTML = ''
+
+    const frag = document.createDocumentFragment()
+
+    const allBtn = document.createElement('button')
+    allBtn.type = 'button'
+    allBtn.className = `glass-tag${moodFilter ? '' : ' active'}`
+    allBtn.dataset.mood = ''
+    allBtn.textContent = '全部'
+    frag.appendChild(allBtn)
+
+    EMOTIONS.forEach((m) => {
+      const btn = document.createElement('button')
+      btn.type = 'button'
+      btn.className = `glass-tag${moodFilter === m.key ? ' active' : ''}`
+      btn.dataset.mood = m.key
+      btn.textContent = m.label
+      frag.appendChild(btn)
+    })
+
+    moodTagsEl.appendChild(frag)
+  }
+
+  function applyMoodFilter(nextMood) {
+    moodFilter = normalizeEmotionKey(nextMood)
+    replaceMoodInCurrentUrl(moodFilter)
+    renderMoodTags()
+    syncMoodLinks()
+    renderSeriesView(moodFilter)
+  }
+
+  if (moodTagsEl) {
+    moodTagsEl.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-mood]')
+      if (!btn) return
+      applyMoodFilter(btn.dataset.mood)
+    })
+  }
+
+  renderMoodTags()
+  syncMoodLinks()
 
   const modal = document.getElementById('aigcModal')
   const closeBtn = document.getElementById('aigcModalClose')
@@ -514,6 +582,26 @@ function initAigcUI() {
           document.getElementById('panelAigc')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
         })
         modalMeta.appendChild(seriesBtn)
+      }
+
+      const moodKey = normalizeEmotionKey(data.mood || seriesMeta?.mood)
+      if (moodKey) {
+        const moodTag = document.createElement('span')
+        moodTag.className = 'glass-tag'
+        moodTag.textContent = `情绪：${getEmotionLabel(moodKey)}`
+        modalMeta.appendChild(moodTag)
+
+        const moodMusic = document.createElement('a')
+        moodMusic.className = 'glass-tag'
+        moodMusic.setAttribute('href', buildUrlWithMood('/pages/music.html', moodKey))
+        moodMusic.textContent = '去听同情绪'
+        modalMeta.appendChild(moodMusic)
+
+        const moodWords = document.createElement('a')
+        moodWords.className = 'glass-tag'
+        moodWords.setAttribute('href', buildUrlWithMood('/pages/words.html', moodKey))
+        moodWords.textContent = '去读同情绪'
+        modalMeta.appendChild(moodWords)
       }
 
       const favBtn = document.createElement('button')
@@ -623,6 +711,14 @@ function initAigcUI() {
   document.addEventListener('click', onDocClick)
 
   recompute()
+
+  return () => {
+    if (copyPromptBtn) copyPromptBtn.removeEventListener('click', onCopyPrompt)
+    document.removeEventListener('keydown', onKeyDown)
+    document.removeEventListener('click', onDocClick)
+    if (modal) modal.classList.remove('active')
+    document.body.style.overflow = ''
+  }
 }
 
 function initTabs() {
@@ -692,13 +788,25 @@ function initToolModal() {
   modal.addEventListener('click', (e) => {
     if (e.target === modal) closeModal()
   })
-  document.addEventListener('keydown', (e) => {
+
+  function onDocKeyDown(e) {
     if (e.key === 'Escape' && modal.classList.contains('active')) closeModal()
-  })
+  }
+  document.addEventListener('keydown', onDocKeyDown)
+
+  return () => {
+    document.removeEventListener('keydown', onDocKeyDown)
+    modal.classList.remove('active')
+    document.body.style.overflow = ''
+  }
 }
 
 export function initAIPage() {
   initTabs()
-  initAigcUI()
-  initToolModal()
+  const cleanupAigc = initAigcUI()
+  const cleanupTool = initToolModal()
+  return () => {
+    if (typeof cleanupAigc === 'function') cleanupAigc()
+    if (typeof cleanupTool === 'function') cleanupTool()
+  }
 }

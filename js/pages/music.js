@@ -1,6 +1,7 @@
-import { playlistsData, allSongs, getMoodLabel, findSongByKey } from '../music-data.js'
+import { playlistsData, allSongs, findSongByKey } from '../music-data.js'
 import { audio, getState, subscribe, playSong, togglePlay, seekTo, formatTime, prevTrack, nextTrack, toggleShuffle, setVolume } from '../music-player.js'
 import { loadAudioManifest, buildLibrarySongs, groupByPlaylist, loadSongMetadata } from '../audio-library.js'
+import { getEmotionLabel, normalizeEmotionKey, readEmotionFromUrl, replaceMoodInCurrentUrl, buildUrlWithMood } from '../emotions.js'
 
 let librarySongs = []
 let currentLibraryMood = 'all'
@@ -251,7 +252,7 @@ function syncPlayerUI(state) {
   applyCover(document.getElementById('playerArt'), state)
   document.getElementById('playerTitle').textContent = state.song.name
   document.getElementById('playerArtist').textContent = state.playlistName || state.song.artist
-  document.getElementById('playerMood').textContent = getMoodLabel(state.song.mood)
+  document.getElementById('playerMood').textContent = getEmotionLabel(state.song.mood)
 
   if (state.duration > 0) {
     document.getElementById('totalTime').textContent = formatTime(state.duration)
@@ -326,6 +327,8 @@ function initPlayerControls() {
 function initMoodTags() {
   const tags = document.querySelectorAll('.music-mood-tag')
   const grid = document.getElementById('moodsGrid')
+  const toAI = document.getElementById('musicMoodToAI')
+  const toWords = document.getElementById('musicMoodToWords')
 
   function renderMoodCards(mood) {
     const filtered = allSongs.filter((s) => s.mood === mood)
@@ -359,12 +362,23 @@ function initMoodTags() {
     tag.addEventListener('click', () => {
       tags.forEach((t) => t.classList.remove('active'))
       tag.classList.add('active')
-      renderMoodCards(tag.dataset.mood)
+      const moodKey = normalizeEmotionKey(tag.dataset.mood)
+      if (!moodKey) return
+      replaceMoodInCurrentUrl(moodKey)
+      syncBridgeLinks(moodKey)
+      renderMoodCards(moodKey)
     })
   })
 
-  // 默认显示第一个心情（忧郁）
-  renderMoodCards('melancholy')
+  function syncBridgeLinks(moodKey) {
+    if (toAI) toAI.setAttribute('href', buildUrlWithMood('/pages/ai.html', moodKey))
+    if (toWords) toWords.setAttribute('href', buildUrlWithMood('/pages/words.html', moodKey))
+  }
+
+  const initialMood = readEmotionFromUrl() || normalizeEmotionKey(document.querySelector('.music-mood-tag.active')?.dataset?.mood) || 'melancholy'
+  tags.forEach((t) => t.classList.toggle('active', normalizeEmotionKey(t.dataset.mood) === initialMood))
+  syncBridgeLinks(initialMood)
+  renderMoodCards(initialMood)
 }
 
 // ============================================================

@@ -62,7 +62,7 @@
     <section class="page-hero">
       <h1 class="page-hero__title anim-fade-in-up">AI 板块</h1>
       <p class="page-hero__subtitle anim-fade-in-up" style="animation-delay: 0.3s">
-        创作灵感与智能工具，汇聚于此
+        把难说的感觉翻译成提示词、旋律与句子
       </p>
     </section>
 
@@ -81,7 +81,15 @@
         <div class="ai-controls">
           <div class="ai-controls__copy">
             <span class="ai-controls__label">Curated Works</span>
-            <p class="ai-controls__desc">把图像、文案、音乐与情绪线索整理成系列，而不是零散地堆在一起。</p>
+            <p class="ai-controls__desc">把图像、文案、音乐与情绪线索整理成系列，让“翻译”更像一条可追溯的路径。</p>
+          </div>
+          <div class="ai-controls__emotion">
+            <div class="ai-controls__emotion-label">选择情绪</div>
+            <div class="ai-controls__emotion-tags" id="aiMoodTags"></div>
+            <div class="ai-controls__emotion-links">
+              <a class="glass-btn" id="aiMoodToMusic" href="/pages/music.html">去听同情绪</a>
+              <a class="glass-btn" id="aiMoodToWords" href="/pages/words.html">去读同情绪</a>
+            </div>
           </div>
         </div>
 
@@ -181,8 +189,8 @@
             </div>
             <div class="ai-modal__prompt" id="modalPrompt">
               <div class="ai-modal__prompt-head">
-                <span class="ai-modal__prompt-label">Prompt</span>
-                <button class="glass-btn ai-modal__copy" id="copyPromptBtn" type="button">复制 Prompt</button>
+                <span class="ai-modal__prompt-label">提示词</span>
+                <button class="glass-btn ai-modal__copy" id="copyPromptBtn" type="button">复制提示词</button>
               </div>
               <pre class="ai-modal__prompt-code" id="modalPromptCode"></pre>
               <div class="ai-prompt-struct" id="modalPromptStruct"></div>

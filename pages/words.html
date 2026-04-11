@@ -61,6 +61,7 @@
     <!-- 页面 Hero 区（约 30vh，极简） -->
     <section class="page-hero page-hero--words">
       <h1 class="page-hero__title page-hero__title--typewriter" id="heroTitle"></h1>
+      <p class="page-hero__subtitle anim-fade-in-up" style="animation-delay: 0.25s">把说不清的感受，交给一句更贴近的文字</p>
     </section>
 
     <div class="words-content container">
@@ -190,6 +191,14 @@
            ============================ -->
       <section class="words-immersive scroll-reveal">
         <h2 class="words-section-title words-section-title--light">沉浸</h2>
+        <div class="words-immersive__controls">
+          <div class="words-immersive__prompt">你现在更像哪一种？</div>
+          <div class="words-immersive__tags" id="wordsMoodTags"></div>
+          <div class="words-immersive__bridge">
+            <a class="glass-btn" id="wordsMoodToMusic" href="/pages/music.html">去听同情绪</a>
+            <a class="glass-btn" id="wordsMoodToAI" href="/pages/ai.html">去生成提示词</a>
+          </div>
+        </div>
         <div class="words-immersive__stage">
           <div class="words-immersive__text" id="immersiveText"></div>
         </div>

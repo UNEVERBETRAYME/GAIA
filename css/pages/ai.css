@@ -125,6 +125,48 @@
   color: var(--text-secondary);
 }
 
+.ai-controls__emotion {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-sm);
+  flex-wrap: wrap;
+}
+
+.ai-controls__emotion-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  color: var(--text-tertiary);
+}
+
+.ai-controls__emotion-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-xs);
+}
+
+.ai-controls__emotion-tags .glass-tag {
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+}
+
+.ai-controls__emotion-tags .glass-tag.active {
+  background: var(--accent-fog-blue-alpha);
+  border-color: var(--accent-fog-blue-alpha);
+  color: var(--text-primary);
+}
+
+.ai-controls__emotion-links {
+  display: flex;
+  gap: var(--sp-xs);
+  flex-wrap: wrap;
+}
+
+.ai-controls__emotion-links .glass-btn {
+  padding: 8px 14px;
+  font-size: 0.74rem;
+}
+
 .ai-series-bar {
   display: flex;
   align-items: center;
