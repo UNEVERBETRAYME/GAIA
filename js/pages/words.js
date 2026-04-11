@@ -1,3 +1,5 @@
+import { EMOTIONS, normalizeEmotionKey, readEmotionFromUrl, replaceMoodInCurrentUrl, buildUrlWithMood } from '../emotions.js'
+
 function typewriter(element, text, speed = 100) {
   return new Promise((resolve) => {
     element.textContent = ''
@@ -200,21 +202,71 @@ const immersiveTexts = [
 先让自己成为那个不再轻易否定自己的人。等那一天来了，你会比任何时候都更清楚，温柔不是别人赏给你的，而是你终于学会给自己的东西。`,
 ]
 
+const IMMERSIVE_MOOD_INDEX = {
+  melancholy: [3, 5, 7, 9, 10],
+  lonely: [0, 4, 6],
+  calm: [1, 12],
+  healing: [2, 8, 11, 13],
+}
+
 function initImmersive() {
   const stage = document.querySelector('.words-immersive__stage')
   const textEl = document.getElementById('immersiveText')
   if (!stage || !textEl) return
 
-  const randomIndex = Math.floor(Math.random() * immersiveTexts.length)
-  const selectedText = immersiveTexts[randomIndex]
+  const tagsEl = document.getElementById('wordsMoodTags')
+  const toMusic = document.getElementById('wordsMoodToMusic')
+  const toAI = document.getElementById('wordsMoodToAI')
+
+  let currentMood = readEmotionFromUrl() || 'melancholy'
+  let hasStarted = false
+
+  function pickText(moodKey) {
+    const k = normalizeEmotionKey(moodKey)
+    if (!k) {
+      const idx = Math.floor(Math.random() * immersiveTexts.length)
+      return immersiveTexts[idx]
+    }
+    const pool = IMMERSIVE_MOOD_INDEX[k] || []
+    if (pool.length === 0) {
+      const idx = Math.floor(Math.random() * immersiveTexts.length)
+      return immersiveTexts[idx]
+    }
+    const idx = pool[Math.floor(Math.random() * pool.length)]
+    return immersiveTexts[idx]
+  }
+
+  function syncBridgeLinks() {
+    if (toMusic) toMusic.setAttribute('href', buildUrlWithMood('/pages/music.html', currentMood))
+    if (toAI) toAI.setAttribute('href', buildUrlWithMood('/pages/ai.html', currentMood))
+  }
+
+  function renderMoodTags() {
+    if (!tagsEl) return
+    tagsEl.innerHTML = ''
+    const frag = document.createDocumentFragment()
+    EMOTIONS.forEach((m) => {
+      const btn = document.createElement('button')
+      btn.type = 'button'
+      btn.className = `glass-tag${currentMood === m.key ? ' active' : ''}`
+      btn.dataset.mood = m.key
+      btn.textContent = m.label
+      frag.appendChild(btn)
+    })
+    tagsEl.appendChild(frag)
+  }
+
+  function startTyping() {
+    const selectedText = pickText(currentMood)
+    typewriter(textEl, selectedText, 50)
+  }
 
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          setTimeout(() => {
-            typewriter(textEl, selectedText, 50)
-          }, 600)
+          hasStarted = true
+          setTimeout(() => startTyping(), 600)
           observer.unobserve(entry.target)
         }
       })
@@ -223,6 +275,24 @@ function initImmersive() {
   )
 
   observer.observe(stage)
+
+  if (tagsEl) {
+    renderMoodTags()
+    syncBridgeLinks()
+    tagsEl.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-mood]')
+      if (!btn) return
+      const next = normalizeEmotionKey(btn.dataset.mood)
+      if (!next) return
+      currentMood = next
+      replaceMoodInCurrentUrl(currentMood)
+      renderMoodTags()
+      syncBridgeLinks()
+      if (hasStarted) startTyping()
+    })
+  } else {
+    syncBridgeLinks()
+  }
 }
 
 export function initWordsPage() {
