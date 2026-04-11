@@ -126,6 +126,11 @@
   margin-bottom: 0;
 }
 
+.brand-anchor__cta {
+  margin-top: 18px;
+  padding: 12px 20px;
+}
+
 .brand-anchor__grid {
   display: grid;
   gap: 14px;

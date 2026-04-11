@@ -4,6 +4,7 @@ import { initMiniPlayer } from './mini-player.js'
 
 import { initIndexPage } from './pages/index.js'
 import { initAIPage } from './pages/ai.js'
+import { initEmotionTranslatePage } from './pages/emotion-translate.js'
 import { initMusicPage } from './pages/music.js'
 import { initGameArtPage } from './pages/game-art.js'
 import { initWordsPage } from './pages/words.js'
@@ -69,7 +70,10 @@ function setPendingNav(path) {
   })
 }
 
+let activeLoadId = 0
+
 async function loadPage(url) {
+  const loadId = ++activeLoadId
   document.body.classList.add('page-loading')
   document.body.classList.remove('page-enter', 'page-enter-active')
 
@@ -77,6 +81,7 @@ async function loadPage(url) {
     const res = await fetch(url)
     if (!res.ok) throw new Error('Fetch failed')
     const html = await res.text()
+    if (loadId !== activeLoadId) return
     const parser = new DOMParser()
     const doc = parser.parseFromString(html, 'text/html')
 
@@ -86,35 +91,43 @@ async function loadPage(url) {
     if (newMain && oldMain) {
       // 提取并加载新的页面样式
       const newStyle = doc.querySelector('link[data-page-style]')
-      const oldStyle = document.querySelector('link[data-page-style]')
+      const existingStyles = Array.from(document.querySelectorAll('link[data-page-style]'))
+      const oldStyle = existingStyles[0] || null
       
       let stylePromise = Promise.resolve()
       
       if (newStyle) {
         const styleHref = newStyle.getAttribute('href')
-        if (!oldStyle || oldStyle.getAttribute('href') !== styleHref) {
+        const currentHref = oldStyle?.getAttribute('href')
+
+        if (styleHref && (!currentHref || currentHref !== styleHref)) {
+          const link = document.createElement('link')
+          link.rel = 'stylesheet'
+          link.href = styleHref
+          link.setAttribute('data-page-style', newStyle.getAttribute('data-page-style') || '')
+
           stylePromise = new Promise((resolve) => {
-            const link = document.createElement('link')
-            link.rel = 'stylesheet'
-            link.href = styleHref
-            link.setAttribute('data-page-style', newStyle.getAttribute('data-page-style'))
             link.onload = resolve
             link.onerror = resolve
             document.head.appendChild(link)
-            
-            // 移除旧的样式
-            if (oldStyle) {
-              // 延迟移除旧样式，防止闪烁
-              setTimeout(() => oldStyle.remove(), 100)
+          }).then(() => {
+            if (loadId !== activeLoadId) {
+              link.remove()
+              return
             }
+
+            Array.from(document.querySelectorAll('link[data-page-style]')).forEach((el) => {
+              if (el !== link) el.remove()
+            })
           })
         }
-      } else if (oldStyle) {
-        oldStyle.remove()
+      } else if (existingStyles.length > 0) {
+        existingStyles.forEach((el) => el.remove())
       }
 
       // 等待样式加载完成
       await stylePromise
+      if (loadId !== activeLoadId) return
 
       // 更新 Title 和 dataset
       document.title = doc.title
@@ -236,6 +249,7 @@ function initScrollReveal() {
 
 const pageModules = {
   'index': initIndexPage,
+  'emotion-translate': initEmotionTranslatePage,
   'ai': initAIPage,
   'music': initMusicPage,
   'game-art': initGameArtPage,

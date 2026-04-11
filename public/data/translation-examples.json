@@ -1,0 +1,51 @@
+[
+  {
+    "text": "我也不知道为什么，就是突然很累。明明什么都没发生，但一想到明天要面对一切，就有点喘不过气。",
+    "scene": "self",
+    "tone": "restrained",
+    "intensity": 58
+  },
+  {
+    "text": "我其实没生气，只是有点难过。感觉我说的话你都听到了，但没有真的放在心上。",
+    "scene": "toSomeone",
+    "tone": "gentle",
+    "intensity": 62
+  },
+  {
+    "text": "最近总是睡不着。夜里很安静的时候，我反而会想起很多旧事，心里像被掏空了一块。",
+    "scene": "self",
+    "tone": "poetic",
+    "intensity": 66
+  },
+  {
+    "text": "我需要一点空间，不是讨厌你，只是我现在的情绪太乱了，我想先把自己理清楚。",
+    "scene": "toSomeone",
+    "tone": "restrained",
+    "intensity": 54
+  },
+  {
+    "text": "今天突然觉得，原来我一直在假装没事。其实我只是很想有人能问一句：你还好吗？",
+    "scene": "post",
+    "tone": "gentle",
+    "intensity": 70
+  },
+  {
+    "text": "我现在不太适合继续聊这个话题了。不是不配合，而是我需要先让自己冷静下来。",
+    "scene": "work",
+    "tone": "direct",
+    "intensity": 46
+  },
+  {
+    "text": "我好像总是一个人扛着。也不是没人，只是很多话不知道该怎么说出口。",
+    "scene": "self",
+    "tone": "gentle",
+    "intensity": 64
+  },
+  {
+    "text": "我其实很在意，只是我不想显得太脆弱，所以一直装作没关系。",
+    "scene": "toSomeone",
+    "tone": "poetic",
+    "intensity": 60
+  }
+]
+

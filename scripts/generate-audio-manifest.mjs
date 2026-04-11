@@ -19,7 +19,7 @@ function generateManifest() {
   try {
     // 检查目录是否存在
     if (!fs.existsSync(AUDIO_DIR)) {
-      console.error(`❌ 音频目录不存在: ${AUDIO_DIR}`)
+      console.error(`Audio directory not found: ${AUDIO_DIR}`)
       process.exit(1)
     }
 
@@ -47,10 +47,10 @@ function generateManifest() {
       'utf-8'
     )
 
-    console.log(`✅ 音频清单已生成: ${OUTPUT_FILE}`)
-    console.log(`📁 共扫描到 ${audioFiles.length} 个音频文件`)
+    console.log(`Audio manifest generated: ${OUTPUT_FILE}`)
+    console.log(`Files scanned: ${audioFiles.length}`)
   } catch (error) {
-    console.error('❌ 生成音频清单失败:', error.message)
+    console.error('Failed to generate audio manifest:', error.message)
     process.exit(1)
   }
 }
