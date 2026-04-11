@@ -471,6 +471,25 @@ function initAigcUI() {
   const moodTagsEl = document.getElementById('aiMoodTags')
   const toMusic = document.getElementById('aiMoodToMusic')
   const toWords = document.getElementById('aiMoodToWords')
+  const controlsEl = document.querySelector('#panelAigc .ai-controls')
+  let scrollRaf = 0
+
+  function syncControlsDensity() {
+    if (!controlsEl) return
+    const condensed = window.scrollY > 140
+    controlsEl.classList.toggle('ai-controls--condensed', condensed)
+  }
+
+  function onScroll() {
+    if (scrollRaf) return
+    scrollRaf = window.requestAnimationFrame(() => {
+      scrollRaf = 0
+      syncControlsDensity()
+    })
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true })
+  syncControlsDensity()
 
   function syncMoodLinks() {
     const key = normalizeEmotionKey(moodFilter)
@@ -483,13 +502,6 @@ function initAigcUI() {
     moodTagsEl.innerHTML = ''
 
     const frag = document.createDocumentFragment()
-
-    const allBtn = document.createElement('button')
-    allBtn.type = 'button'
-    allBtn.className = `glass-tag${moodFilter ? '' : ' active'}`
-    allBtn.dataset.mood = ''
-    allBtn.textContent = '全部'
-    frag.appendChild(allBtn)
 
     EMOTIONS.forEach((m) => {
       const btn = document.createElement('button')
@@ -504,7 +516,8 @@ function initAigcUI() {
   }
 
   function applyMoodFilter(nextMood) {
-    moodFilter = normalizeEmotionKey(nextMood)
+    const next = normalizeEmotionKey(nextMood)
+    moodFilter = next && next === moodFilter ? null : next
     replaceMoodInCurrentUrl(moodFilter)
     renderMoodTags()
     syncMoodLinks()
@@ -713,6 +726,11 @@ function initAigcUI() {
   recompute()
 
   return () => {
+    window.removeEventListener('scroll', onScroll)
+    if (scrollRaf) {
+      window.cancelAnimationFrame(scrollRaf)
+      scrollRaf = 0
+    }
     if (copyPromptBtn) copyPromptBtn.removeEventListener('click', onCopyPrompt)
     document.removeEventListener('keydown', onKeyDown)
     document.removeEventListener('click', onDocClick)

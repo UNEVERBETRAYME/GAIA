@@ -62,7 +62,8 @@
     <section class="page-hero">
       <h1 class="page-hero__title anim-fade-in-up">AI 板块</h1>
       <p class="page-hero__subtitle anim-fade-in-up" style="animation-delay: 0.3s">
-        把难说的感觉翻译成提示词、旋律与句子
+        把难说的感觉翻译成提示词、旋律与句子<br>
+        <span style="font-size: 0.85em; opacity: 0.7; display: block; margin-top: 12px; font-weight: 300;">将图像、文案、音乐与情绪线索整理成系列，让“翻译”更像一条可追溯的路径。</span>
       </p>
     </section>
 
@@ -79,16 +80,11 @@
       <div class="ai-panel ai-panel--aigc active" id="panelAigc">
 
         <div class="ai-controls">
-          <div class="ai-controls__copy">
-            <span class="ai-controls__label">Curated Works</span>
-            <p class="ai-controls__desc">把图像、文案、音乐与情绪线索整理成系列，让“翻译”更像一条可追溯的路径。</p>
-          </div>
           <div class="ai-controls__emotion">
-            <div class="ai-controls__emotion-label">选择情绪</div>
             <div class="ai-controls__emotion-tags" id="aiMoodTags"></div>
             <div class="ai-controls__emotion-links">
-              <a class="glass-btn" id="aiMoodToMusic" href="/pages/music.html">去听同情绪</a>
-              <a class="glass-btn" id="aiMoodToWords" href="/pages/words.html">去读同情绪</a>
+              <a class="glass-tag ai-controls__emotion-link" id="aiMoodToMusic" href="/pages/music.html">听同情绪</a>
+              <a class="glass-tag ai-controls__emotion-link" id="aiMoodToWords" href="/pages/words.html">读同情绪</a>
             </div>
           </div>
         </div>
