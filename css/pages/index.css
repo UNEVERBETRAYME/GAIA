@@ -87,6 +87,75 @@
   animation: floatGentle 3s ease-in-out infinite;
 }
 
+.brand-anchor {
+  padding: 0 var(--sp-md) var(--sp-2xl);
+}
+
+.brand-anchor__panel {
+  max-width: 980px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.9fr);
+  gap: clamp(24px, 3vw, 42px);
+  align-items: start;
+}
+
+.brand-anchor__label {
+  display: inline-flex;
+  margin-bottom: 14px;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.brand-anchor__title {
+  font-size: clamp(1.4rem, 2.6vw, 2rem);
+  line-height: 1.45;
+  letter-spacing: 0.1em;
+  color: var(--text-primary);
+  margin-bottom: 14px;
+}
+
+.brand-anchor__desc {
+  max-width: 46ch;
+  font-size: 0.88rem;
+  line-height: 1.9;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  margin-bottom: 0;
+}
+
+.brand-anchor__grid {
+  display: grid;
+  gap: 14px;
+}
+
+.brand-anchor__item {
+  padding: 18px 20px;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.brand-anchor__item-key {
+  display: inline-block;
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent-fog-blue);
+  margin-bottom: 10px;
+}
+
+.brand-anchor__item-text {
+  font-size: 0.82rem;
+  line-height: 1.85;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  margin-bottom: 0;
+}
+
 /* ============================================================
    区域 2：板块入口卡片区
    标题 + 网格布局
@@ -243,6 +312,10 @@
    ============================================================ */
 
 @media (max-width: 1024px) {
+  .brand-anchor__panel {
+    grid-template-columns: 1fr;
+  }
+
   .sections__grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -259,6 +332,10 @@
 @media (max-width: 768px) {
   .hero__inner {
     gap: 18px;
+  }
+
+  .brand-anchor {
+    padding-bottom: var(--sp-xl);
   }
 
   .sections__grid {

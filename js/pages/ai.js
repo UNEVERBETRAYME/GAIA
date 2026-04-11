@@ -144,10 +144,9 @@ const toolsData = [
 const STORAGE_KEYS = {
   favorites: 'gaia_ai_favorites',
   recent: 'gaia_ai_recent',
-  view: 'gaia_ai_view',
-  filter: 'gaia_ai_filter',
   series: 'gaia_ai_series',
 }
+const aigcIndexMap = new Map(aigcData.map((item, index) => [item.id, index]))
 
 const ICONS = {
   heart: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-4.4-9.4-8.4C.6 9.2 2.5 6 6 6c1.8 0 3.2.9 4 2 0.8-1.1 2.2-2 4-2 3.5 0 5.4 3.2 3.4 6.6C19 16.6 12 21 12 21z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>`,
@@ -242,6 +241,12 @@ function renderAigcCard(data, index) {
   return card
 }
 
+function renderSeriesCard(data, options = {}) {
+  const card = renderAigcCard(data, aigcIndexMap.get(data.id) ?? 0)
+  card.classList.add(options.lead ? 'ai-card--series-lead' : 'ai-card--series-compact')
+  return card
+}
+
 function renderAigcGallery() {
   const gallery = document.getElementById('aigcGallery')
   if (!gallery) return
@@ -269,22 +274,30 @@ function renderSeriesView() {
     wrap.className = 'ai-series glass-card'
     wrap.dataset.series = series.key
 
-    const grid = document.createElement('div')
-    grid.className = 'ai-series__grid'
-    items.forEach((item) => grid.appendChild(renderAigcCard(item, aigcData.findIndex((x) => x.id === item.id))))
-
     wrap.innerHTML = `
-      <div class="ai-series__head">
-        <div class="ai-series__text">
-          <h3 class="ai-series__title">${series.title}</h3>
-          <p class="ai-series__desc">${series.desc}</p>
+      <div class="ai-series__layout">
+        <div class="ai-series__head">
+          <div class="ai-series__text">
+            <span class="ai-series__eyebrow">Curated Series</span>
+            <h3 class="ai-series__title">${series.title}</h3>
+            <p class="ai-series__desc">${series.desc}</p>
+            <p class="ai-series__note">围绕同一情绪命题整理作品线索，让每一组图像像同一段心绪的不同切面。</p>
+          </div>
+          <div class="ai-series__actions">
+            <span class="glass-tag ai-series__count">${items.length} 件内容</span>
+            <button class="glass-btn ai-series__open" type="button" data-series="${series.key}">进入系列</button>
+          </div>
         </div>
-        <div class="ai-series__actions">
-          <button class="glass-btn ai-series__open" type="button" data-series="${series.key}">进入系列</button>
+        <div class="ai-series__body">
+          <div class="ai-series__lead"></div>
+          <div class="ai-series__grid"></div>
         </div>
       </div>
     `
-    wrap.appendChild(grid)
+    const lead = wrap.querySelector('.ai-series__lead')
+    const grid = wrap.querySelector('.ai-series__grid')
+    if (lead) lead.appendChild(renderSeriesCard(items[0], { lead: true }))
+    items.slice(1).forEach((item) => grid?.appendChild(renderSeriesCard(item)))
     frag.appendChild(wrap)
   })
 
@@ -375,19 +388,14 @@ function renderPromptStruct(prompt, container) {
 }
 
 function getStateFromStorage() {
-  const view = localStorage.getItem(STORAGE_KEYS.view) || 'cards'
-  const filter = localStorage.getItem(STORAGE_KEYS.filter) || 'all'
   const series = localStorage.getItem(STORAGE_KEYS.series) || ''
   return {
-    view: view === 'series' ? 'series' : 'cards',
-    filter,
+    view: 'series',
     series: series || null,
   }
 }
 
 function setStateToStorage(state) {
-  localStorage.setItem(STORAGE_KEYS.view, state.view)
-  localStorage.setItem(STORAGE_KEYS.filter, state.filter)
   localStorage.setItem(STORAGE_KEYS.series, state.series || '')
 }
 
@@ -398,53 +406,11 @@ function syncFavoriteClasses(favoritesSet) {
   })
 }
 
-function applyAigcFilter(state, favoritesSet, recentSet) {
-  const cards = document.querySelectorAll('#aigcGallery .ai-card')
-  let visible = 0
-
-  cards.forEach((card) => {
-    const id = card.dataset.id
-    const category = card.dataset.category
-    const series = card.dataset.series
-
-    let show = true
-    if (state.series) show = show && series === state.series
-
-    if (state.filter === 'favorites') {
-      show = show && favoritesSet.has(id)
-    } else if (state.filter === 'recent') {
-      show = show && recentSet.has(id)
-    } else if (state.filter !== 'all') {
-      show = show && category === state.filter
-    }
-
-    card.style.display = show ? '' : 'none'
-    if (show) visible += 1
-  })
-
-  const empty = document.getElementById('aigcEmpty')
-  if (empty) empty.hidden = visible !== 0
-}
-
 function applyView(state) {
   const gallery = document.getElementById('aigcGallery')
-  const empty = document.getElementById('aigcEmpty')
   const series = document.getElementById('seriesView')
-  if (!gallery || !series) return
-
-  const isCards = state.view === 'cards'
-  gallery.hidden = !isCards
-  if (empty) empty.hidden = !isCards || empty.hidden
-  series.hidden = isCards
-}
-
-function syncControls(state) {
-  document.querySelectorAll('.ai-filter__tag').forEach((tag) => {
-    tag.classList.toggle('active', tag.dataset.filter === state.filter)
-  })
-  document.querySelectorAll('.ai-view-btn').forEach((btn) => {
-    btn.classList.toggle('active', btn.dataset.view === state.view)
-  })
+  if (gallery) gallery.hidden = true
+  if (series) series.hidden = false
 }
 
 function syncSeriesBar(state) {
@@ -463,11 +429,6 @@ function syncSeriesBar(state) {
 }
 
 function initAigcUI() {
-  if (window.__gaiaAiCleanup) {
-    window.__gaiaAiCleanup()
-    window.__gaiaAiCleanup = null
-  }
-
   renderAigcGallery()
   renderSeriesView()
 
@@ -480,10 +441,8 @@ function initAigcUI() {
 
   function recompute() {
     syncFavoriteClasses(favoritesSet)
-    syncControls(state)
     syncSeriesBar(state)
     applyView(state)
-    if (state.view === 'cards') applyAigcFilter(state, favoritesSet, recentSet)
     setStateToStorage(state)
   }
 
@@ -494,21 +453,6 @@ function initAigcUI() {
       recompute()
     })
   }
-
-  document.querySelectorAll('.ai-filter__tag').forEach((tag) => {
-    tag.addEventListener('click', () => {
-      state.filter = tag.dataset.filter || 'all'
-      if (state.view !== 'cards') state.view = 'cards'
-      recompute()
-    })
-  })
-
-  document.querySelectorAll('.ai-view-btn').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      state.view = btn.dataset.view === 'series' ? 'series' : 'cards'
-      recompute()
-    })
-  })
 
   const modal = document.getElementById('aigcModal')
   const closeBtn = document.getElementById('aigcModalClose')
@@ -564,9 +508,7 @@ function initAigcUI() {
         seriesBtn.type = 'button'
         seriesBtn.textContent = `系列：${seriesMeta.title}`
         seriesBtn.addEventListener('click', () => {
-          state.view = 'cards'
           state.series = data.series
-          state.filter = 'all'
           closeModal()
           recompute()
           document.getElementById('panelAigc')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -632,9 +574,7 @@ function initAigcUI() {
     if (seriesBtn) {
       const key = seriesBtn.dataset.series
       if (key) {
-        state.view = 'cards'
         state.series = key
-        state.filter = 'all'
         recompute()
         document.getElementById('panelAigc')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }
@@ -682,12 +622,6 @@ function initAigcUI() {
   document.addEventListener('keydown', onKeyDown)
   document.addEventListener('click', onDocClick)
 
-  window.__gaiaAiCleanup = () => {
-    if (copyPromptBtn) copyPromptBtn.removeEventListener('click', onCopyPrompt)
-    document.removeEventListener('keydown', onKeyDown)
-    document.removeEventListener('click', onDocClick)
-  }
-
   recompute()
 }
 
@@ -710,10 +644,6 @@ function initTabs() {
     })
   })
 }
-
-function initFilter() {}
-
-function initAigcModal() {}
 
 function initToolModal() {
   const modal = document.getElementById('toolModal')

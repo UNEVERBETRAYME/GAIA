@@ -3,7 +3,7 @@ import { getAudioMetadata } from './audio-art.js'
 
 const STORAGE_KEY = 'gaia-music-state'
 const DEFAULT_SONG_SRC = '/audio/Tears4MaLuv.mp3'
-const DEFAULT_VOLUME = 0.8
+const DEFAULT_VOLUME = 0.3
 
 const audio = new Audio()
 audio.preload = 'metadata'
@@ -16,6 +16,7 @@ let shuffle = false
 let shuffleHistory = []
 let coverUrl = ''
 let volume = DEFAULT_VOLUME
+let pendingRestoreTime = 0
 const listeners = new Set()
 
 function getState() {
@@ -189,9 +190,7 @@ function restoreState() {
     audio.src = song.src
     resolveMetadataForSong(song)
 
-    if (data.currentTime > 0) {
-      audio.currentTime = data.currentTime
-    }
+    pendingRestoreTime = data.currentTime > 0 ? data.currentTime : 0
 
     if (data.isPlaying) {
       audio.play().catch(() => {})
@@ -202,6 +201,10 @@ function restoreState() {
 }
 
 audio.addEventListener('loadedmetadata', () => {
+  if (pendingRestoreTime > 0 && audio.duration) {
+    audio.currentTime = Math.min(pendingRestoreTime, audio.duration)
+    pendingRestoreTime = 0
+  }
   saveState()
   notify()
 })
@@ -361,7 +364,7 @@ function prevTrack() {
 
 function seekTo(percent) {
   if (!audio.duration) return
-  audio.currentTime = percent * audio.duration
+  audio.currentTime = Math.max(0, Math.min(1, percent)) * audio.duration
   notify()
 }
 
@@ -374,7 +377,7 @@ function seekToTime(time) {
 function formatTime(seconds) {
   if (!seconds || isNaN(seconds)) return '0:00'
   const min = Math.floor(seconds / 60)
-  const sec = Math.round(seconds % 60)
+  const sec = Math.floor(seconds % 60)
   return `${min}:${sec.toString().padStart(2, '0')}`
 }
 

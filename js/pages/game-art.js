@@ -1,12 +1,12 @@
 const galleryData = [
-  { game: '荒野大镖客：救赎 2', scene: '黄昏时分的瓦伦丁小镇', gradient: 'linear-gradient(135deg, #1a2a3a, #0d1520)' },
-  { game: '赛博朋克 2077', scene: '夜之城的霓虹天际线', gradient: 'linear-gradient(135deg, #2d1f3d, #1a1225)' },
-  { game: '塞尔达传说：旷野之息', scene: '海拉鲁平原的暴风雨之夜', gradient: 'linear-gradient(135deg, #1a3025, #0d1a15)' },
-  { game: '最后生还者 Part II', scene: '西雅图废弃的书店', gradient: 'linear-gradient(135deg, #2a2a3d, #1a1a2e)' },
-  { game: '死亡搁浅', scene: '荒原上的孤独行者', gradient: 'linear-gradient(135deg, #1e2a3a, #0f1923)' },
-  { game: '艾尔登法环', scene: '黄金树下的交界地', gradient: 'linear-gradient(135deg, #25201a, #1a150f)' },
-  { game: '对马岛之魂', scene: '金叶飘落的蒙古营地', gradient: 'linear-gradient(135deg, #1a2535, #0d1520)' },
-  { game: '空洞骑士', scene: '泪水之城的幽暗雨夜', gradient: 'linear-gradient(135deg, #2d1f3d, #1a1225)' },
+  { game: '荒野大镖客：救赎 2', scene: '黄昏时分的瓦伦丁小镇', gradient: 'linear-gradient(135deg, #1a2a3a, #0d1520)', image: '/images/game-art/rdr2.jpg' },
+  { game: '赛博朋克 2077', scene: '夜之城的霓虹天际线', gradient: 'linear-gradient(135deg, #2d1f3d, #1a1225)', image: '/images/game-art/cyberpunk2077.jpg' },
+  { game: '塞尔达传说：旷野之息', scene: '海拉鲁平原的暴风雨之夜', gradient: 'linear-gradient(135deg, #1a3025, #0d1a15)', image: '/images/game-art/botw.jpg' },
+  { game: '最后生还者 Part II', scene: '西雅图废弃的书店', gradient: 'linear-gradient(135deg, #2a2a3d, #1a1a2e)', image: '/images/game-art/tlou2.png' },
+  { game: '死亡搁浅', scene: '荒原上的孤独行者', gradient: 'linear-gradient(135deg, #1e2a3a, #0f1923)', image: '/images/game-art/death-stranding.jpg' },
+  { game: '艾尔登法环', scene: '黄金树下的交界地', gradient: 'linear-gradient(135deg, #25201a, #1a150f)', image: '/images/game-art/elden-ring.jpg' },
+  { game: '对马岛之魂', scene: '金叶飘落的蒙古营地', gradient: 'linear-gradient(135deg, #1a2535, #0d1520)', image: '/images/game-art/ghost-of-tsushima.png' },
+  { game: '空洞骑士', scene: '泪水之城的幽暗雨夜', gradient: 'linear-gradient(135deg, #2d1f3d, #1a1225)', image: '/images/game-art/hollow-knight.jpg' },
 ]
 
 function initGalleryModal() {
@@ -28,6 +28,14 @@ function initGalleryModal() {
     if (!data) return
 
     modalImage.style.background = data.gradient
+    if (data.image) {
+      modalImage.style.backgroundImage = `linear-gradient(180deg, rgba(7, 10, 20, 0.12), rgba(7, 10, 20, 0.32)), url('${data.image}')`
+      modalImage.style.backgroundSize = 'cover'
+      modalImage.style.backgroundPosition = 'center'
+      modalImage.style.backgroundRepeat = 'no-repeat'
+    } else {
+      modalImage.style.backgroundImage = 'none'
+    }
     modalGame.textContent = data.game
     modalScene.textContent = data.scene
 

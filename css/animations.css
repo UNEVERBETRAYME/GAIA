@@ -252,16 +252,11 @@
 }
 
 .main-content {
-  transition:
-    opacity 0.26s var(--ease-smooth),
-    transform 0.26s var(--ease-smooth);
-  will-change: opacity, transform;
+  transition: opacity 0.18s var(--ease-smooth);
 }
 
-.page-switching .main-content {
-  opacity: 0;
-  transform: translateY(6px);
-  pointer-events: none;
+@view-transition {
+  navigation: auto;
 }
 
 @supports (view-transition-name: page-content) {
@@ -271,7 +266,7 @@
 
   ::view-transition-old(page-content),
   ::view-transition-new(page-content) {
-    animation-duration: 0.28s;
+    animation-duration: 0.22s;
     animation-timing-function: var(--ease-smooth);
   }
 
@@ -288,24 +283,20 @@
   from {
     opacity: 1;
     transform: translateY(0);
-    filter: blur(0);
   }
   to {
     opacity: 0;
-    transform: translateY(-4px);
-    filter: blur(4px);
+    transform: translateY(-2px);
   }
 }
 
 @keyframes gaiaPageIn {
   from {
     opacity: 0;
-    transform: translateY(6px);
-    filter: blur(6px);
+    transform: translateY(4px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
-    filter: blur(0);
   }
 }

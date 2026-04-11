@@ -2,7 +2,6 @@ import { playlistsData, allSongs, getMoodLabel, findSongByKey } from '../music-d
 import { audio, getState, subscribe, playSong, togglePlay, seekTo, formatTime, prevTrack, nextTrack, toggleShuffle, setVolume } from '../music-player.js'
 import { loadAudioManifest, buildLibrarySongs, groupByPlaylist, loadSongMetadata } from '../audio-library.js'
 
-let unsubscribe = null
 let librarySongs = []
 let currentLibraryMood = 'all'
 
@@ -38,6 +37,7 @@ async function renderPlaylists() {
     const card = document.createElement('div')
     card.className = 'glass-card music-playlist-card'
     card.dataset.playlist = plIdx
+    const shouldScroll = pl.songs.length > 5
 
     const songsHtml = pl.songs.map((song, songIdx) => {
       const key = `${plIdx}-${songIdx}`
@@ -52,8 +52,18 @@ async function renderPlaylists() {
         <span class="glass-tag music-playlist-card__count">${pl.songs.length} 首</span>
       </div>
       <p class="music-playlist-card__desc">${pl.desc}</p>
-      <div class="music-playlist-card__songs">${songsHtml}</div>
+      <div class="music-playlist-card__songs ${shouldScroll ? 'music-playlist-card__songs--scrollable' : ''}"><div class="music-playlist-card__songs-list">${songsHtml}</div></div>
     `
+
+    const coverEl = card.querySelector('.music-playlist-card__cover')
+    const coverSource = pl.songs.find((song) => !!song.audio)
+    if (coverEl && coverSource) {
+      loadSongMetadata(coverSource).then((meta) => {
+        if (meta?.coverUrl) {
+          coverEl.style.background = `center / cover no-repeat url('${meta.coverUrl}')`
+        }
+      }).catch(() => {})
+    }
 
     grid.appendChild(card)
   })
@@ -69,6 +79,7 @@ async function renderPlaylists() {
         const card = document.createElement('div')
         card.className = 'glass-card music-playlist-card music-playlist-card--library'
         card.dataset.playlistLibrary = playlistName
+        const shouldScroll = songs.length > 5
 
         const songsHtml = songs.map((song, idx) => {
           const key = `library-${playlistName}-${idx}`
@@ -86,8 +97,18 @@ async function renderPlaylists() {
             <span class="glass-tag music-playlist-card__count">${songs.length} 首</span>
           </div>
           <p class="music-playlist-card__desc">${LIBRARY_PLAYLIST_DESCRIPTIONS[playlistName] || '本地收藏的声音片段。'}</p>
-          <div class="music-playlist-card__songs">${songsHtml}</div>
+          <div class="music-playlist-card__songs ${shouldScroll ? 'music-playlist-card__songs--scrollable' : ''}"><div class="music-playlist-card__songs-list">${songsHtml}</div></div>
         `
+
+        const coverEl = card.querySelector('.music-playlist-card__cover')
+        const coverSource = songs[0]
+        if (coverEl && coverSource) {
+          loadSongMetadata(coverSource).then((meta) => {
+            if (meta?.coverUrl) {
+              coverEl.style.background = `center / cover no-repeat url('${meta.coverUrl}')`
+            }
+          }).catch(() => {})
+        }
 
         grid.appendChild(card)
       })
@@ -145,6 +166,13 @@ function applyCover(artEl, state) {
   const playerEl = document.querySelector('.music-player')
   if (playerEl) {
     playerEl.style.setProperty('--music-player-ambient', state.song.gradient)
+    playerEl.classList.remove('music-player--refresh')
+    requestAnimationFrame(() => {
+      playerEl.classList.add('music-player--refresh')
+      window.setTimeout(() => {
+        playerEl.classList.remove('music-player--refresh')
+      }, 700)
+    })
   }
 
   if (state.coverUrl) {
@@ -359,17 +387,7 @@ export async function initMusicPage() {
   const state = getState()
   syncPlayerUI(state)
 
-  unsubscribe = subscribe((nextState) => {
+  subscribe((nextState) => {
     syncPlayerUI(nextState)
   })
-}
-
-export function teardownMusicPage() {
-  audio.loop = false
-  repeatMode = REPEAT_MODE.off
-
-  if (unsubscribe) {
-    unsubscribe()
-    unsubscribe = null
-  }
 }

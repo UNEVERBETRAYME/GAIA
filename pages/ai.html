@@ -79,18 +79,9 @@
       <div class="ai-panel ai-panel--aigc active" id="panelAigc">
 
         <div class="ai-controls">
-          <div class="ai-filter">
-            <button class="glass-tag ai-filter__tag active" data-filter="all">全部</button>
-            <button class="glass-tag ai-filter__tag" data-filter="painting">画作</button>
-            <button class="glass-tag ai-filter__tag" data-filter="copywriting">文案</button>
-            <button class="glass-tag ai-filter__tag" data-filter="music">音乐</button>
-            <button class="glass-tag ai-filter__tag" data-filter="video">视频</button>
-            <button class="glass-tag ai-filter__tag" data-filter="favorites">收藏</button>
-            <button class="glass-tag ai-filter__tag" data-filter="recent">最近</button>
-          </div>
-          <div class="ai-view-switch">
-            <button class="glass-btn ai-view-btn active" data-view="cards" type="button">作品</button>
-            <button class="glass-btn ai-view-btn" data-view="series" type="button">系列</button>
+          <div class="ai-controls__copy">
+            <span class="ai-controls__label">Curated Works</span>
+            <p class="ai-controls__desc">把图像、文案、音乐与情绪线索整理成系列，而不是零散地堆在一起。</p>
           </div>
         </div>
 
@@ -101,11 +92,6 @@
         </div>
 
         <!-- 瀑布流作品区 -->
-        <div class="ai-masonry" id="aigcGallery">
-        </div>
-
-        <div class="ai-empty" id="aigcEmpty" hidden>这里还没有内容</div>
-
         <div class="ai-series-view" id="seriesView" hidden></div>
       </div>
 
