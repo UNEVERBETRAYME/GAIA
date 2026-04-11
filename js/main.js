@@ -69,6 +69,95 @@ function setPendingNav(path) {
   })
 }
 
+async function loadPage(url) {
+  document.body.classList.add('page-loading')
+  document.body.classList.remove('page-enter', 'page-enter-active')
+
+  try {
+    const res = await fetch(url)
+    if (!res.ok) throw new Error('Fetch failed')
+    const html = await res.text()
+    const parser = new DOMParser()
+    const doc = parser.parseFromString(html, 'text/html')
+
+    const newMain = doc.querySelector('.main-content')
+    const oldMain = document.querySelector('.main-content')
+    
+    if (newMain && oldMain) {
+      // 提取并加载新的页面样式
+      const newStyle = doc.querySelector('link[data-page-style]')
+      const oldStyle = document.querySelector('link[data-page-style]')
+      
+      let stylePromise = Promise.resolve()
+      
+      if (newStyle) {
+        const styleHref = newStyle.getAttribute('href')
+        if (!oldStyle || oldStyle.getAttribute('href') !== styleHref) {
+          stylePromise = new Promise((resolve) => {
+            const link = document.createElement('link')
+            link.rel = 'stylesheet'
+            link.href = styleHref
+            link.setAttribute('data-page-style', newStyle.getAttribute('data-page-style'))
+            link.onload = resolve
+            link.onerror = resolve
+            document.head.appendChild(link)
+            
+            // 移除旧的样式
+            if (oldStyle) {
+              // 延迟移除旧样式，防止闪烁
+              setTimeout(() => oldStyle.remove(), 100)
+            }
+          })
+        }
+      } else if (oldStyle) {
+        oldStyle.remove()
+      }
+
+      // 等待样式加载完成
+      await stylePromise
+
+      // 更新 Title 和 dataset
+      document.title = doc.title
+      const newPageKey = getPageKeyFromPath(url)
+      document.documentElement.dataset.page = newPageKey
+
+      // 替换 DOM
+      if (document.startViewTransition) {
+        document.startViewTransition(() => {
+          oldMain.innerHTML = newMain.innerHTML
+          afterPageLoad(newPageKey)
+        })
+      } else {
+        oldMain.innerHTML = newMain.innerHTML
+        afterPageLoad(newPageKey)
+      }
+    } else {
+      window.location.href = url
+    }
+  } catch (err) {
+    console.error('Page load error:', err)
+    window.location.href = url
+  }
+}
+
+function afterPageLoad(pageKey) {
+  window.scrollTo(0, 0)
+  initPageTransition()
+  initScrollReveal()
+  refreshFooterSpace()
+  runPageInit(pageKey)
+  
+  // 更新导航栏状态
+  document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active', 'pending'))
+  document.querySelectorAll(`.nav-link[data-page="${pageKey}"]`).forEach(el => el.classList.add('active'))
+}
+
+function navigateTo(url) {
+  if (url === window.location.pathname + window.location.search) return
+  history.pushState({}, '', url)
+  loadPage(url)
+}
+
 function getPrefetchPath(link) {
   const href = link?.getAttribute('href')
   if (!href) return null
@@ -165,9 +254,17 @@ function getPageKey() {
   return getPageKeyFromPath(window.location.pathname)
 }
 
-function runPageInit(key) {
+let currentPageCleanup = null
+
+async function runPageInit(key) {
+  if (currentPageCleanup && typeof currentPageCleanup === 'function') {
+    currentPageCleanup()
+    currentPageCleanup = null
+  }
   const initFn = pageModules[key]
-  if (initFn) initFn()
+  if (initFn) {
+    currentPageCleanup = await initFn()
+  }
 }
 
 function initNativeNavigation() {
@@ -196,9 +293,21 @@ function initNativeNavigation() {
     const link = e.target.closest('a[href]')
     if (!link) return
     if (link.target === '_blank' || link.hasAttribute('download')) return
-    const path = getPrefetchPath(link)
-    if (!path) return
+    
+    // 如果是外部链接则不处理
+    const url = new URL(link.href, window.location.origin)
+    if (url.origin !== window.location.origin) return
+    
+    const path = url.pathname + url.search + url.hash
+    
+    e.preventDefault()
     setPendingNav(path)
+    navigateTo(path)
+  })
+
+  // 处理浏览器前进/后退
+  window.addEventListener('popstate', () => {
+    loadPage(window.location.pathname + window.location.search + window.location.hash)
   })
 }
 

@@ -387,7 +387,11 @@ export async function initMusicPage() {
   const state = getState()
   syncPlayerUI(state)
 
-  subscribe((nextState) => {
+  const unsubscribe = subscribe((nextState) => {
     syncPlayerUI(nextState)
   })
+
+  return () => {
+    unsubscribe()
+  }
 }
