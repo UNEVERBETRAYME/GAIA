@@ -1,169 +1,28 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GAIA - 首页</title>
-  <link rel="stylesheet" href="/css/global.css">
-  <link rel="stylesheet" href="/css/glass.css">
-  <link rel="stylesheet" href="/css/animations.css">
-  <link rel="stylesheet" href="/css/background.css">
-  <link rel="stylesheet" href="/css/nav.css">
-  <link rel="stylesheet" href="/css/responsive.css">
-  <link rel="stylesheet" href="/css/pages/index.css" data-page-style="index">
-</head>
-<body class="page-loading">
-  <!-- 流体背景 -->
-  <div class="fluid-bg" aria-hidden="true">
-    <div class="fluid-bg__blob fluid-bg__blob--1"></div>
-    <div class="fluid-bg__blob fluid-bg__blob--2"></div>
-    <div class="fluid-bg__blob fluid-bg__blob--3"></div>
-    <div class="fluid-bg__blob fluid-bg__blob--4"></div>
-  </div>
-
-  <!-- 导航栏 -->
-  <header class="glass-nav" id="mainNav">
-    <div class="nav-inner container">
-      <nav class="nav-links" id="navLinks">
-        <a href="/index.html" class="nav-link" data-page="index">首页</a>
-        <a href="/pages/emotion-translate.html" class="nav-link" data-page="emotion-translate">情绪翻译</a>
-        <a href="/pages/ai.html" class="nav-link" data-page="ai">AI 板块</a>
-        <a href="/pages/music.html" class="nav-link" data-page="music">情绪音乐</a>
-        <a href="/pages/game-art.html" class="nav-link" data-page="game-art">第九艺术</a>
-        <a href="/pages/words.html" class="nav-link" data-page="words">伤感文字</a>
-        <a href="/pages/kook.html" class="nav-link" data-page="kook">社区</a>
-        <a href="/pages/about.html" class="nav-link" data-page="about">关于</a>
-      </nav>
-      <button class="nav-hamburger" id="navHamburger" aria-label="菜单">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </header>
-
-  <!-- 移动端全屏菜单 -->
-  <div class="mobile-menu glass-modal-overlay" id="mobileMenu">
-    <div class="mobile-menu__inner">
-      <a href="/index.html" class="mobile-menu__link">首页</a>
-      <a href="/pages/emotion-translate.html" class="mobile-menu__link">情绪翻译</a>
-      <a href="/pages/ai.html" class="mobile-menu__link">AI 板块</a>
-      <a href="/pages/music.html" class="mobile-menu__link">情绪音乐</a>
-      <a href="/pages/game-art.html" class="mobile-menu__link">第九艺术</a>
-      <a href="/pages/words.html" class="mobile-menu__link">伤感文字</a>
-      <a href="/pages/kook.html" class="mobile-menu__link">社区</a>
-      <a href="/pages/about.html" class="mobile-menu__link">关于</a>
-    </div>
-    <button class="mobile-menu__close" id="mobileMenuClose" aria-label="关闭">✕</button>
-  </div>
-
-  <!-- ============================
-       区域 1：Hero 全屏区
-       ============================ -->
-  <main class="main-content">
-    <section class="hero" id="hero">
-      <div class="hero__inner">
-        <p class="hero__eyebrow anim-fade-in-up">A quiet digital room for emotion, AI and late-night thoughts</p>
-        <h1 class="hero__title anim-fade-in-up">GAIA</h1>
-        <p class="hero__slogan anim-fade-in-up" style="animation-delay: 0.6s">
-          有些感觉很重，却一直没有合适的语言。
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="GAIA 是情绪翻译器。把说不清的感受，变成准确的表达。" />
+    <meta property="og:title" content="GAIA — 情绪翻译器" />
+    <meta property="og:description" content="把说不清的感受，变成准确的表达。解释权永远归你。" />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>🌙</text></svg>" />
+    <title>GAIA</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <noscript>
+      <div style="padding: 48px 28px; max-width: 680px; margin: 0 auto; font-family: 'Inter', 'Noto Sans SC', system-ui, sans-serif; color: #e0e0e6; background: #0a0a0f; min-height: 100vh;">
+        <h1 style="font-weight: 300; font-size: 32px;">GAIA</h1>
+        <p style="margin-top: 16px; color: rgba(224,224,230,0.68); line-height: 1.8;">
+          GAIA 需要 JavaScript 才能运转。请在浏览器设置中启用 JavaScript，然后刷新页面。
         </p>
-        <p class="hero__meta anim-fade-in-up" style="animation-delay: 0.8s">
-          GAIA 想做的，不是替你回答，而是在你最说不清楚的时候，陪你把那句话慢慢找出来。
+        <p style="margin-top: 12px; font-size: 14px; color: rgba(224,224,230,0.42);">
+          如果您正在经历困难时刻，可以拨打 400-161-9995（24 小时心理援助热线）。
         </p>
-        <button class="hero__scroll-arrow" id="heroScrollArrow" aria-label="向下滚动">
-          <span class="hero__arrow-v"></span>
-        </button>
       </div>
-    </section>
-
-    <section class="brand-anchor scroll-reveal">
-      <div class="glass-card-lg brand-anchor__panel">
-        <div class="brand-anchor__intro">
-          <span class="brand-anchor__label">GAIA / AI 情绪翻译</span>
-          <h2 class="brand-anchor__title">有些难过不是惊天动地的崩塌，只是你忽然发现，自己已经很久没有被真正听见。</h2>
-          <p class="brand-anchor__desc">所以 GAIA 不想做一个喧闹的工具站。它更像一间深夜还亮着灯的房间：你把零碎、迟疑、说到一半停住的话放进来，它陪你一点点整理，直到那份情绪终于有了自己的名字。</p>
-          <a class="glass-btn glass-btn-accent brand-anchor__cta" href="/pages/emotion-translate.html">开始翻译</a>
-        </div>
-        <div class="brand-anchor__grid">
-          <div class="brand-anchor__item">
-            <span class="brand-anchor__item-key">01</span>
-            <p class="brand-anchor__item-text">你不需要先把自己解释清楚，GAIA 会从那些零碎里帮你找到真正想说的话。</p>
-          </div>
-          <div class="brand-anchor__item">
-            <span class="brand-anchor__item-key">02</span>
-            <p class="brand-anchor__item-text">这里不是替你表演理解，而是让情绪、音乐、文字和图像一起变成可被共鸣的表达。</p>
-          </div>
-          <div class="brand-anchor__item">
-            <span class="brand-anchor__item-key">03</span>
-            <p class="brand-anchor__item-text">我们想留下的不是功能堆叠，而是一种温柔的确定感：你可以在这里慢一点，也可以诚实一点。</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============================
-         区域 2：板块入口卡片区
-         ============================ -->
-    <section class="sections" id="sections">
-      <h2 class="sections__title scroll-reveal">探索空间</h2>
-
-      <div class="sections__grid">
-        <a href="/pages/emotion-translate.html" class="glass-card glass-card-hover-glow section-card section-card--featured section-card--ai scroll-reveal scroll-reveal-delay-1">
-          <div class="section-card__icon">TR</div>
-          <h3 class="section-card__name">情绪翻译</h3>
-          <p class="section-card__desc">把说不清的感觉，翻译成可说出口的话</p>
-        </a>
-
-        <a href="/pages/music.html" class="glass-card glass-card-hover-glow section-card section-card--featured section-card--music scroll-reveal scroll-reveal-delay-2">
-          <div class="section-card__icon">MU</div>
-          <h3 class="section-card__name">情绪音乐</h3>
-          <p class="section-card__desc">深夜的旋律，情绪的容器</p>
-        </a>
-
-        <a href="/pages/game-art.html" class="glass-card glass-card-hover-glow section-card section-card--game scroll-reveal scroll-reveal-delay-3">
-          <div class="section-card__icon">GA</div>
-          <h3 class="section-card__name">第九艺术</h3>
-          <p class="section-card__desc">游戏中的孤独美学与叙事</p>
-        </a>
-
-        <a href="/pages/words.html" class="glass-card glass-card-hover-glow section-card section-card--words scroll-reveal scroll-reveal-delay-4">
-          <div class="section-card__icon">WR</div>
-          <h3 class="section-card__name">伤感文字</h3>
-          <p class="section-card__desc">落在纸面上的情绪碎片</p>
-        </a>
-
-        <a href="/pages/kook.html" class="glass-card glass-card-hover-glow section-card section-card--kook scroll-reveal scroll-reveal-delay-5">
-          <div class="section-card__icon">KO</div>
-          <h3 class="section-card__name">社区 (Kook)</h3>
-          <p class="section-card__desc">一起聊聊 AI、游戏与深夜心事</p>
-        </a>
-
-        <a href="/pages/about.html" class="glass-card glass-card-hover-glow section-card section-card--about scroll-reveal scroll-reveal-delay-6">
-          <div class="section-card__icon">AB</div>
-          <h3 class="section-card__name">关于我</h3>
-          <p class="section-card__desc">关于这个空间的主人</p>
-        </a>
-      </div>
-    </section>
-
-    <!-- ============================
-         区域 3：底部 Footer
-         ============================ -->
-    <footer class="footer">
-      <div class="glass-divider"></div>
-      <div class="footer__inner">
-        <p class="footer__copy">&copy; 2025 GAIA &middot; Crafted with emotion</p>
-        <nav class="footer__links">
-          <a href="/pages/emotion-translate.html">翻译</a>
-          <a href="/pages/ai.html">AI</a>
-          <a href="/pages/music.html">音乐</a>
-          <a href="/pages/game-art.html">游戏</a>
-          <a href="/pages/words.html">文字</a>
-          <a href="/pages/about.html">关于</a>
-        </nav>
-      </div>
-    </footer>
-  </main>
-
-  <script type="module" src="/js/main.js"></script>
-</body>
+    </noscript>
+    <script type="module" src="/src/main.js"></script>
+  </body>
 </html>

@@ -1,0 +1,86 @@
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: var(--space-font-size-1);
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  min-height: var(--space-viewport-h);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--color-bg-0);
+  color: var(--color-text-0);
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: var(--space-100p);
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+input[type='range'] {
+  accent-color: var(--color-accent);
+}
+
+button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--color-accent-alpha);
+  color: var(--color-text-0);
+}
+
+*:focus-visible {
+  outline: var(--space-0-25) solid var(--color-accent);
+  outline-offset: var(--space-0-25);
+}
+
+::-webkit-scrollbar {
+  width: var(--space-0-5);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-glass-border);
+  border-radius: var(--radius-round);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-glass-border-hover);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-glass-border) transparent;
+}
+

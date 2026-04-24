@@ -1,5 +1,3 @@
-import jsmediatags from 'jsmediatags/dist/jsmediatags.min.js'
-
 // 完整 ID3 信息缓存（包括 title/artist/coverUrl）
 const id3Cache = new Map()
 const pending = new Map()
@@ -40,9 +38,20 @@ function bufferToDataUrl(picture) {
   return `data:${picture.format};base64,${btoa(binary)}`
 }
 
+function getMediaTags() {
+  if (typeof window === 'undefined') return null
+  return window.jsmediatags || null
+}
+
 function parseTags(src) {
   return new Promise((resolve, reject) => {
-    jsmediatags.read(src, {
+    const lib = getMediaTags()
+    if (!lib) {
+      reject(new Error('jsmediatags unavailable'))
+      return
+    }
+
+    lib.read(src, {
       onSuccess: (tag) => resolve(tag),
       onError: (err) => reject(err),
     })
@@ -56,6 +65,7 @@ function parseTags(src) {
  */
 export async function getAudioMetadata(src) {
   if (!src) return null
+  if (!getMediaTags()) return null
 
   // 返回缓存
   if (id3Cache.has(src)) return id3Cache.get(src)

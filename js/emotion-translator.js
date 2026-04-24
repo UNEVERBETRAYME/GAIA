@@ -126,6 +126,17 @@ function fillTemplate(str, ctx) {
     .replaceAll('{desc}', ctx.desc)
 }
 
+function hasSelfHarmRisk(text) {
+  const t = String(text || '').trim()
+  if (!t) return false
+  const keywords = [
+    '自杀', '轻生', '想死', '不想活', '结束生命', '活不下去',
+    '自残', '割腕', '跳楼', '了断', '不想存在', '结束一切',
+    '离开这个世界', '死了算了', '死掉', '自行了断', '不想撑了',
+  ]
+  return keywords.some((k) => t.includes(k))
+}
+
 const TEMPLATE_BANK = {
   melancholy: {
     self: {
@@ -740,6 +751,11 @@ function buildPrompts(moodKey) {
 
 export function translateEmotion(rawText, options = {}) {
   const text = String(rawText || '').trim()
+
+  if (hasSelfHarmRisk(text)) {
+    return { safety: true, input: text }
+  }
+
   const scene = options.scene in SCENES ? options.scene : 'self'
   const tone = options.tone in TONES ? options.tone : 'restrained'
   const forcedIntensity = typeof options.intensity === 'number' ? options.intensity : null
@@ -771,4 +787,4 @@ export function translateEmotion(rawText, options = {}) {
   }
 }
 
-export { SCENES, TONES }
+export { SCENES, TONES, hasSelfHarmRisk }

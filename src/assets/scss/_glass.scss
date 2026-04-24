@@ -1,0 +1,67 @@
+.glass {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--color-glass-bg);
+  border: var(--space-0-125) solid var(--color-glass-border);
+  box-shadow: var(--space-glass-shadow), inset var(--space-0-125) var(--space-0) var(--color-shadow-inset);
+  backdrop-filter: blur(var(--space-glass-blur)) saturate(var(--space-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--space-glass-blur)) saturate(var(--space-glass-saturate));
+  border-radius: var(--radius-2);
+  transition: background var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.glass--surface::before {
+  content: '';
+  position: absolute;
+  inset: var(--space-0);
+  background:
+    linear-gradient(
+      180deg,
+      var(--color-glass-highlight) 0%,
+      var(--color-glass-highlight-soft) 18%,
+      var(--color-glass-highlight-none) 52%
+    ),
+    radial-gradient(circle at top right, var(--color-bg-blob-2), transparent 46%);
+  opacity: var(--space-opacity-0-72);
+  pointer-events: none;
+}
+
+.glass--interactive {
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.glass--interactive:hover:not(.is-active) {
+  background: var(--color-glass-bg-hover);
+  border-color: var(--color-glass-border-hover);
+  color: var(--color-text-0);
+}
+
+.glass--interactive:active:not(.is-active) {
+  background: var(--color-glass-bg-active);
+}
+
+.glass--card {
+  padding: var(--space-4);
+}
+
+.glass--btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-1-5) var(--space-2-25);
+  border-radius: var(--radius-round);
+  background: var(--color-glass-bg);
+  border: var(--space-0-125) solid var(--color-glass-border);
+  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.glass--btn:hover {
+  background: var(--color-glass-bg-hover);
+  border-color: var(--color-glass-border-hover);
+}
+
+.glass--btn:active {
+  background: var(--color-glass-bg-active);
+}

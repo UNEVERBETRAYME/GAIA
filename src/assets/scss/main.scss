@@ -1,0 +1,33 @@
+@use './_reset.scss';
+@use './_typography.scss';
+@use './_glass.scss';
+
+@include gaiaRootVariables();
+
+body {
+  background: var(--color-bg-0);
+}
+
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  inset: var(--space-0);
+  pointer-events: none;
+  z-index: -1;
+}
+
+body::before {
+  background:
+    radial-gradient(circle at 12% 8%, var(--color-bg-blob-1), transparent 52%),
+    radial-gradient(circle at 88% 18%, var(--color-bg-blob-2), transparent 48%),
+    radial-gradient(circle at 18% 86%, var(--color-bg-blob-3), transparent 56%);
+  opacity: var(--space-opacity-0-9);
+  filter: blur(var(--space-glass-blur));
+}
+
+body::after {
+  background: linear-gradient(180deg, var(--color-bg-0) 0%, var(--color-bg-1) 40%, var(--color-bg-2) 100%);
+  opacity: var(--space-opacity-0-6);
+}
+

@@ -38,6 +38,13 @@ function getEmotionDesc(key) {
   return k ? EMOTION_MAP.get(k).desc : ''
 }
 
+function readEmotionFromQuery(query) {
+  const raw = query?.mood
+  if (typeof raw === 'string') return normalizeEmotionKey(raw)
+  if (Array.isArray(raw)) return normalizeEmotionKey(raw[0])
+  return null
+}
+
 function readEmotionFromUrl(url = window.location.href) {
   try {
     const u = new URL(url, window.location.origin)
@@ -69,13 +76,22 @@ function replaceMoodInCurrentUrl(moodKey) {
   window.history.replaceState({}, '', u.pathname + u.search + u.hash)
 }
 
+function buildQueryWithMood(query = {}, moodKey) {
+  const next = { ...(query || {}) }
+  const k = normalizeEmotionKey(moodKey)
+  if (k) next.mood = k
+  else delete next.mood
+  return next
+}
+
 export {
   EMOTIONS,
   normalizeEmotionKey,
   getEmotionLabel,
   getEmotionDesc,
+  readEmotionFromQuery,
   readEmotionFromUrl,
   buildUrlWithMood,
   replaceMoodInCurrentUrl,
+  buildQueryWithMood,
 }
-

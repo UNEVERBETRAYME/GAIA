@@ -1,0 +1,23 @@
+body {
+  font-family: var(--space-font-family-sans);
+  font-weight: var(--space-font-weight-regular);
+  line-height: var(--space-font-line-height-base);
+  letter-spacing: var(--space-letter-spacing-base);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: var(--space-font-weight-regular);
+  line-height: var(--space-font-line-height-tight);
+  letter-spacing: var(--space-letter-spacing-title);
+}
+
+p {
+  line-height: var(--space-font-line-height-base);
+  color: var(--color-text-1);
+}
+

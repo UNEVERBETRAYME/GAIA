@@ -161,7 +161,7 @@ function restoreState() {
       name: data.name || '未知',
       artist: data.artist || '',
       mood: data.mood || '',
-      gradient: data.gradient || 'linear-gradient(135deg, #1a2535, #0d1520)',
+      gradient: data.gradient || 'var(--gradient-song-primary)',
       src: data.src,
       playlistName: data.playlistName || '',
     })
