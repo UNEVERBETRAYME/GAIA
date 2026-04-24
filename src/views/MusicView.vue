@@ -31,10 +31,10 @@ const filteredPlaylists = computed(() => {
 const nowPlayingMoodLabel = computed(() => getEmotionLabel(playerState.value.song?.mood))
 const coverStyle = computed(() => {
   const url = playerState.value.coverUrl
-  if (!url) return {}
-  return {
-    backgroundImage: `url('${url}')`,
-  }
+  const gradient = playerState.value.song?.gradient
+  if (url) return { backgroundImage: `url('${url}')` }
+  if (gradient) return { background: gradient }
+  return {}
 })
 
 function setMood(nextMood) {
