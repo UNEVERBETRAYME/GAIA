@@ -125,7 +125,7 @@ watch(
 .home {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-4-5);
   padding-bottom: var(--space-6);
 }
 
@@ -134,7 +134,7 @@ watch(
 }
 
 .home__title {
-  font-size: var(--space-font-size-5);
+  font-size: var(--space-font-size-6);
   color: var(--color-text-0);
   margin: var(--space-0);
 }
@@ -146,7 +146,7 @@ watch(
 }
 
 .home__panel {
-  padding: var(--space-4);
+  padding: var(--space-4-5);
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
@@ -160,7 +160,7 @@ watch(
 }
 
 .home__panel-title {
-  font-size: var(--space-font-size-2);
+  font-size: var(--space-font-size-3);
   color: var(--color-text-0);
 }
 

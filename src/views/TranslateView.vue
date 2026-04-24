@@ -2,7 +2,7 @@
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { getEmotionDesc, getEmotionLabel, buildUrlWithMood } from '../../js/emotions.js'
-import { translateEmotion, hasSelfHarmRisk } from '../../js/emotion-translator.js'
+import { translateEmotion, translateEmotionAsync, hasSelfHarmRisk } from '../../js/emotion-translator.js'
 
 const route = useRoute()
 
@@ -16,6 +16,7 @@ const intensity = ref(60)
 
 const isSafety = ref(false)
 const isReady = ref(false)
+const isTranslating = ref(false)
 
 const currentEntryId = ref(null)
 const result = ref(null)
@@ -219,7 +220,7 @@ function clearAll() {
   promptWords.value = ''
 }
 
-function runTranslate() {
+async function runTranslate() {
   const raw = String(inputText.value || '').trim()
   if (!raw) return
 
@@ -232,11 +233,15 @@ function runTranslate() {
 
   isSafety.value = false
   currentEntryId.value = null
-  const nextResult = translateEmotion(raw, {
+  isTranslating.value = true
+
+  const nextResult = await translateEmotionAsync(raw, {
     scene: scene.value,
     tone: tone.value,
     intensity: intensity.value,
   })
+
+  isTranslating.value = false
 
   if (nextResult.safety) {
     isSafety.value = true
@@ -383,9 +388,11 @@ async function copyField(text) {
         </div>
 
         <div class="et__actions">
-          <button class="et__btn et__btn--accent glass" type="button" @click="runTranslate">开始翻译</button>
-          <button class="et__btn glass glass--interactive" type="button" @click="pickSample">随机示例</button>
-          <button class="et__btn glass glass--interactive" type="button" @click="clearAll">清空</button>
+          <button class="et__btn et__btn--accent glass" type="button" :disabled="isTranslating" @click="runTranslate">
+            {{ isTranslating ? '翻译中…' : '开始翻译' }}
+          </button>
+          <button class="et__btn glass glass--interactive" type="button" :disabled="isTranslating" @click="pickSample">随机示例</button>
+          <button class="et__btn glass glass--interactive" type="button" :disabled="isTranslating" @click="clearAll">清空</button>
         </div>
       </div>
 
@@ -551,7 +558,7 @@ async function copyField(text) {
 }
 
 .et__title {
-  font-size: var(--space-font-size-5);
+  font-size: var(--space-font-size-6);
   color: var(--color-text-0);
 }
 
@@ -586,7 +593,7 @@ async function copyField(text) {
 }
 
 .et__panel-title {
-  font-size: var(--space-font-size-2);
+  font-size: var(--space-font-size-3);
   color: var(--color-text-0);
 }
 
@@ -723,6 +730,11 @@ async function copyField(text) {
 
 .et__btn--accent:active {
   background: var(--color-glass-bg-active);
+}
+
+.et__btn--accent:disabled {
+  opacity: var(--space-opacity-0-6);
+  cursor: default;
 }
 
 @media (max-width: 860px) {

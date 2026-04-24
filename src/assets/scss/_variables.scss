@@ -3,6 +3,7 @@
     --color-bg-0: #0a0a0f;
     --color-bg-1: #0f0f17;
     --color-bg-2: #12121a;
+    --color-bg-3: #18181f;
 
     --color-text-0: #e0e0e6;
     --color-text-1: rgba(224, 224, 230, 0.68);
@@ -45,11 +46,13 @@
     --space-2-25: 18px;
     --space-3: 28px;
     --space-4: 48px;
+    --space-4-5: 56px;
     --space-5: 80px;
     --space-6: 120px;
 
     --radius-1: 12px;
     --radius-2: 16px;
+    --radius-2-5: 20px;
     --radius-3: 24px;
     --radius-round: 999px;
 
@@ -63,6 +66,7 @@
     --space-font-size-3: 20px;
     --space-font-size-4: 24px;
     --space-font-size-5: 32px;
+    --space-font-size-6: 36px;
 
     --space-font-family-sans: 'Inter', 'Noto Sans SC', system-ui, -apple-system, 'Segoe UI', sans-serif;
     --space-font-weight-regular: 300;
@@ -70,7 +74,7 @@
     --space-font-line-height-base: 1.8;
     --space-font-line-height-tight: 1.6;
     --space-letter-spacing-base: 0.04em;
-    --space-letter-spacing-title: 0.1em;
+    --space-letter-spacing-title: 0.08em;
 
     --color-bg-veil: rgba(10, 10, 15, 0.65);
     --color-bg-blob-1: rgba(124, 138, 255, 0.12);

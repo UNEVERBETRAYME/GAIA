@@ -133,6 +133,7 @@ function hasSelfHarmRisk(text) {
     '自杀', '轻生', '想死', '不想活', '结束生命', '活不下去',
     '自残', '割腕', '跳楼', '了断', '不想存在', '结束一切',
     '离开这个世界', '死了算了', '死掉', '自行了断', '不想撑了',
+    '没人需要', '想消失', '不想继续', '不想再这样',
   ]
   return keywords.some((k) => t.includes(k))
 }
@@ -784,6 +785,42 @@ export function translateEmotion(rawText, options = {}) {
     oneLine: built.oneLine,
     rewrites: built.rewrites,
     prompts,
+  }
+}
+
+export async function translateEmotionAsync(rawText, options = {}) {
+  const text = String(rawText || '').trim()
+
+  if (hasSelfHarmRisk(text)) {
+    return { safety: true, input: text }
+  }
+
+  try {
+    const controller = new AbortController()
+    const timer = setTimeout(() => controller.abort(), 4500)
+
+    const res = await fetch('/api/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+      signal: controller.signal,
+    })
+
+    clearTimeout(timer)
+
+    if (!res.ok) {
+      return translateEmotion(rawText, options)
+    }
+
+    const data = await res.json()
+
+    if (data.fallback || !data.result) {
+      return translateEmotion(rawText, options)
+    }
+
+    return data.result
+  } catch {
+    return translateEmotion(rawText, options)
   }
 }
 

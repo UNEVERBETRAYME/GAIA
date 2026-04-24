@@ -37,6 +37,12 @@ const coverStyle = computed(() => {
   return {}
 })
 
+const ambientStyle = computed(() => {
+  const gradient = playerState.value.song?.gradient
+  if (!playerState.value.song) return {}
+  return { '--music-now-ambient': gradient }
+})
+
 function setMood(nextMood) {
   router.replace({ query: buildQueryWithMood(route.query, nextMood) })
 }
@@ -115,7 +121,7 @@ watch(
       </div>
     </section>
 
-    <section class="music__now glass glass--surface">
+    <section class="music__now glass glass--surface" :style="ambientStyle">
       <div class="music__now-art" :class="`music__now-art--${playerState.song?.mood || 'none'}`" :style="coverStyle" />
       <div class="music__now-main">
         <div class="music__now-title">{{ playerState.song?.name || '未选择歌曲' }}</div>
@@ -175,7 +181,7 @@ watch(
 .music {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-4-5);
   padding-bottom: var(--space-6);
 }
 
@@ -184,7 +190,7 @@ watch(
 }
 
 .music__title {
-  font-size: var(--space-font-size-5);
+  font-size: var(--space-font-size-6);
   color: var(--color-text-0);
   margin: var(--space-0);
 }
@@ -196,7 +202,7 @@ watch(
 }
 
 .music__panel {
-  padding: var(--space-4);
+  padding: var(--space-4-5);
 }
 
 .music__panel-head {
@@ -207,7 +213,7 @@ watch(
 }
 
 .music__panel-title {
-  font-size: var(--space-font-size-2);
+  font-size: var(--space-font-size-3);
   color: var(--color-text-0);
 }
 
@@ -279,6 +285,9 @@ watch(
   max-width: var(--space-layout-reading-max-width);
   margin-left: auto;
   margin-right: auto;
+  background:
+    radial-gradient(ellipse 60% 50% at 70% 30%, var(--music-now-ambient, transparent), transparent 90%),
+    var(--color-bg-3);
 }
 
 .music__now-art {
@@ -479,6 +488,18 @@ watch(
 .music__track.is-active {
   background: var(--color-accent-alpha);
   border-color: var(--color-glass-border-hover);
+  position: relative;
+}
+
+.music__track.is-active::before {
+  content: '';
+  position: absolute;
+  top: var(--space-0-5);
+  left: var(--space-0);
+  bottom: var(--space-0-5);
+  width: var(--space-0-375);
+  background: var(--color-accent);
+  border-radius: var(--radius-round);
 }
 
 .music__track-name {

@@ -366,7 +366,7 @@ watch(
 .ai {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-4-5);
   padding-bottom: var(--space-6);
 }
 
@@ -375,7 +375,7 @@ watch(
 }
 
 .ai__title {
-  font-size: var(--space-font-size-5);
+  font-size: var(--space-font-size-6);
   color: var(--color-text-0);
   margin: var(--space-0);
 }
@@ -387,7 +387,7 @@ watch(
 }
 
 .ai__panel {
-  padding: var(--space-4);
+  padding: var(--space-4-5);
 }
 
 .ai__panel-head {
@@ -398,7 +398,7 @@ watch(
 }
 
 .ai__panel-title {
-  font-size: var(--space-font-size-2);
+  font-size: var(--space-font-size-3);
   color: var(--color-text-0);
 }
 
@@ -481,7 +481,7 @@ watch(
 }
 
 .ai__group {
-  padding: var(--space-4);
+  padding: var(--space-4-5);
   max-width: var(--space-layout-reading-max-width);
   margin-left: auto;
   margin-right: auto;

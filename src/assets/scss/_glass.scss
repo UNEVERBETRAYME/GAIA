@@ -7,8 +7,12 @@
   box-shadow: var(--space-glass-shadow), inset var(--space-0-125) var(--space-0) var(--color-shadow-inset);
   backdrop-filter: blur(var(--space-glass-blur)) saturate(var(--space-glass-saturate));
   -webkit-backdrop-filter: blur(var(--space-glass-blur)) saturate(var(--space-glass-saturate));
-  border-radius: var(--radius-2);
+  border-radius: var(--radius-2-5);
   transition: background var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.glass--surface {
+  background: var(--color-bg-3);
 }
 
 .glass--surface::before {
@@ -43,7 +47,7 @@
 }
 
 .glass--card {
-  padding: var(--space-4);
+  padding: var(--space-4-5);
 }
 
 .glass--btn {

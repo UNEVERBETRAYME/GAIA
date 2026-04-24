@@ -244,11 +244,10 @@ onBeforeUnmount(() => {
 .app-shell__link.is-active::after {
   content: '';
   position: absolute;
-  bottom: calc(var(--space-0-25) * -1);
-  left: 50%;
-  transform: translateX(-50%);
-  width: var(--space-1);
-  height: var(--space-0-125);
+  top: var(--space-0-5);
+  left: var(--space-0);
+  bottom: var(--space-0-5);
+  width: var(--space-0-375);
   background: var(--color-accent);
   border-radius: var(--radius-round);
   opacity: var(--space-opacity-0-72);
@@ -296,6 +295,10 @@ onBeforeUnmount(() => {
   gap: var(--space-2);
   align-items: center;
   padding: var(--space-1-5) var(--space-2);
+  background: var(--color-bg-1);
+  border: var(--space-0-125) solid var(--color-glass-border);
+  border-radius: var(--radius-2-5);
+  backdrop-filter: blur(var(--space-glass-blur)) saturate(var(--space-glass-saturate));
 }
 
 .mini-player__meta {

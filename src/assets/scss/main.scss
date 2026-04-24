@@ -5,7 +5,9 @@
 @include gaiaRootVariables();
 
 body {
-  background: var(--color-bg-0);
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 20%, var(--color-bg-blob-3), transparent),
+    var(--color-bg-0);
 }
 
 body::before,
