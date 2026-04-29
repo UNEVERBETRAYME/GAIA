@@ -115,7 +115,7 @@ watch(
         <button class="home__btn home__btn--accent glass" type="button" @click="goTranslate">进入翻译</button>
         <RouterLink class="home__link glass glass--interactive" :to="buildUrlWithMood('/music', currentMood)">去听同情绪</RouterLink>
         <RouterLink class="home__link glass glass--interactive" :to="buildUrlWithMood('/words', currentMood)">去读同情绪</RouterLink>
-        <RouterLink class="home__link glass glass--interactive" :to="buildUrlWithMood('/ai', currentMood)">去生成提示词</RouterLink>
+        <RouterLink class="home__link glass glass--interactive" :to="buildUrlWithMood('/ai', currentMood)">跟她说说话</RouterLink>
       </div>
     </section>
   </div>

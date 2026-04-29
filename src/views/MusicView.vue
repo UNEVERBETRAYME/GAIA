@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { EMOTIONS, buildQueryWithMood, buildUrlWithMood, getEmotionDesc, getEmotionLabel, normalizeEmotionKey, readEmotionFromQuery } from '../../js/emotions.js'
+import { EMOTIONS, buildQueryWithMood, buildUrlWithMood, getEmotionLabel, normalizeEmotionKey, readEmotionFromQuery } from '../../js/emotions.js'
 import { playlistsData } from '../../js/music-data.js'
 import { formatTime, getState, playSong, subscribe, togglePlay } from '../../js/music-player.js'
 
@@ -9,13 +9,11 @@ const route = useRoute()
 const router = useRouter()
 
 const currentMood = ref(null)
-const expandedPlaylist = ref(null)
 
 const playerState = ref(getState())
 let unsubscribePlayer = null
 
 const moodLabel = computed(() => (currentMood.value ? getEmotionLabel(currentMood.value) : '全部'))
-const moodDesc = computed(() => (currentMood.value ? getEmotionDesc(currentMood.value) : '从情绪进入，让旋律先替你开口。'))
 
 const filteredPlaylists = computed(() => {
   const k = currentMood.value
@@ -49,10 +47,6 @@ function setMood(nextMood) {
 
 function syncMoodFromRoute() {
   currentMood.value = readEmotionFromQuery(route.query)
-}
-
-function togglePlaylist(name) {
-  expandedPlaylist.value = expandedPlaylist.value === name ? null : name
 }
 
 function isActiveSong(song) {
@@ -91,36 +85,6 @@ watch(
       <p class="music__subtitle">深夜的旋律，是情绪最柔软的容器。</p>
     </section>
 
-    <section class="music__panel glass glass--surface">
-      <div class="music__panel-head">
-        <div class="music__panel-title">当前情绪</div>
-        <div class="music__panel-meta">{{ moodLabel }}</div>
-      </div>
-      <div class="music__panel-desc">{{ moodDesc }}</div>
-
-      <div class="music__moods" role="group" aria-label="情绪筛选">
-        <button class="music__mood glass glass--interactive" type="button" :class="{ 'is-active': !currentMood }" @click="setMood(null)">
-          全部
-        </button>
-        <button
-          v-for="m in EMOTIONS"
-          :key="m.key"
-          class="music__mood glass glass--interactive"
-          type="button"
-          :class="{ 'is-active': currentMood === m.key }"
-          @click="setMood(m.key)"
-        >
-          {{ m.label }}
-        </button>
-      </div>
-
-      <div class="music__bridge">
-        <RouterLink class="music__bridge-link glass glass--interactive" :to="buildUrlWithMood('/translate', currentMood)">去翻译</RouterLink>
-        <RouterLink class="music__bridge-link glass glass--interactive" :to="buildUrlWithMood('/words', currentMood)">去读同情绪</RouterLink>
-        <RouterLink class="music__bridge-link glass glass--interactive" :to="buildUrlWithMood('/ai', currentMood)">去生成提示词</RouterLink>
-      </div>
-    </section>
-
     <section class="music__now glass glass--surface" :style="ambientStyle">
       <div class="music__now-art" :class="`music__now-art--${playerState.song?.mood || 'none'}`" :style="coverStyle" />
       <div class="music__now-main">
@@ -137,36 +101,25 @@ watch(
     </section>
 
     <section class="music__section">
-      <h2 class="music__section-title">播放列表</h2>
+      <div class="music__section-row">
+        <h2 class="music__section-title">播放列表</h2>
+        <div class="music__moods" role="group" aria-label="情绪筛选">
+          <button class="music__mood glass glass--interactive" type="button" :class="{ 'is-active': !currentMood }" @click="setMood(null)">全部</button>
+          <button v-for="m in EMOTIONS" :key="m.key" class="music__mood glass glass--interactive" type="button" :class="{ 'is-active': currentMood === m.key }" @click="setMood(m.key)">{{ m.label }}</button>
+        </div>
+      </div>
 
       <div v-if="filteredPlaylists.length === 0" class="music__empty glass glass--surface">
-        这一种情绪下暂时没有歌单。你可以换一种情绪，或回到“全部”。
+        这一种情绪下暂时没有歌单。你可以换一种情绪，或回到"全部"。
       </div>
 
       <div v-else class="music__lists">
-        <article
-          v-for="pl in filteredPlaylists"
-          :key="pl.name"
-          class="music__list glass glass--surface"
-          :class="{ 'is-expanded': expandedPlaylist === pl.name }"
-        >
-          <button class="music__list-head" type="button" @click="togglePlaylist(pl.name)">
-            <div class="music__list-text">
-              <div class="music__list-title">{{ pl.name }}</div>
-              <div class="music__list-desc">{{ pl.desc }}</div>
-            </div>
-            <span class="music__list-count glass">{{ pl.songs.length }} 首</span>
-          </button>
-
+        <article v-for="pl in filteredPlaylists" :key="pl.name" class="music__list glass glass--surface">
+          <div class="music__list-label glass">{{ pl.songs.length }} 首</div>
+          <div class="music__list-title">{{ pl.name }}</div>
+          <div class="music__list-desc">{{ pl.desc }}</div>
           <div class="music__tracks">
-            <button
-              v-for="song in pl.songs"
-              :key="song.src"
-              class="music__track"
-              type="button"
-              :class="{ 'is-active': isActiveSong(song) }"
-              @click="playFromList(song, pl.name)"
-            >
+            <button v-for="song in pl.songs" :key="song.src" class="music__track" type="button" :class="{ 'is-active': isActiveSong(song) }" @click="playFromList(song, pl.name)">
               <span class="music__track-name">{{ song.name }}</span>
               <span class="music__track-artist">{{ song.artist }}</span>
             </button>
@@ -201,37 +154,10 @@ watch(
   color: var(--color-text-1);
 }
 
-.music__panel {
-  padding: var(--space-4-5);
-}
-
-.music__panel-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-2);
-}
-
-.music__panel-title {
-  font-size: var(--space-font-size-3);
-  color: var(--color-text-0);
-}
-
-.music__panel-meta {
-  font-size: var(--space-font-size-0);
-  color: var(--color-accent);
-}
-
-.music__panel-desc {
-  margin-top: var(--space-1);
-  color: var(--color-text-1);
-}
-
 .music__moods {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-1);
-  margin-top: var(--space-2);
 }
 
 .music__mood {
@@ -252,28 +178,6 @@ watch(
   color: var(--color-text-0);
   border-color: var(--color-glass-border-hover);
   background: var(--color-accent-alpha);
-}
-
-.music__bridge {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1);
-  margin-top: var(--space-3);
-}
-
-.music__bridge-link {
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-round);
-  font-size: var(--space-font-size-0);
-  color: var(--color-text-0);
-  transition: background var(--transition-fast), border-color var(--transition-fast);
-  border: var(--space-0-125) solid var(--color-glass-border);
-  background: var(--color-glass-bg);
-}
-
-.music__bridge-link:hover {
-  background: var(--color-glass-bg-hover);
-  border-color: var(--color-glass-border-hover);
 }
 
 .music__now {
@@ -387,6 +291,13 @@ watch(
   margin: var(--space-0);
 }
 
+.music__section-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
 .music__empty {
   margin-top: var(--space-2);
   padding: var(--space-3);
@@ -395,71 +306,41 @@ watch(
 
 .music__lists {
   margin-top: var(--space-3);
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--space-2);
-  max-width: var(--space-layout-reading-max-width);
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .music__list {
-  padding: var(--space-0);
-  overflow: hidden;
-}
-
-.music__list-head {
-  width: var(--space-100p);
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-2);
   padding: var(--space-3);
-  text-align: left;
-  border-radius: var(--radius-2);
-  border: var(--space-0-125) solid transparent;
-  transition: background var(--transition-fast), border-color var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
-.music__list-head:hover {
-  background: var(--color-glass-bg);
-  border-color: var(--color-glass-border);
-}
-
-.music__list-head:active {
-  background: var(--color-glass-bg-hover);
+.music__list-label {
+  align-self: flex-start;
+  padding: var(--space-0-25) var(--space-1);
+  border-radius: var(--radius-round);
+  font-size: var(--space-font-size-0);
+  color: var(--color-text-2);
 }
 
 .music__list-title {
   color: var(--color-text-0);
-  font-size: var(--space-font-size-3);
+  font-size: var(--space-font-size-2);
 }
 
 .music__list-desc {
-  margin-top: var(--space-1);
   color: var(--color-text-1);
-}
-
-.music__list-count {
-  padding: var(--space-0-25) var(--space-1);
-  border-radius: var(--radius-round);
   font-size: var(--space-font-size-0);
-  color: var(--color-text-1);
-  flex-shrink: 0;
 }
 
 .music__tracks {
-  padding: var(--space-0) var(--space-3) var(--space-3);
   display: flex;
   flex-direction: column;
   gap: var(--space-0-5);
-  max-height: var(--space-6);
-  overflow: hidden;
-  transition: max-height var(--transition-base);
-}
-
-.music__list.is-expanded .music__tracks {
-  max-height: calc(var(--space-6) * 10);
+  margin-top: var(--space-1);
 }
 
 .music__track {
@@ -525,8 +406,7 @@ watch(
   }
 
   .music__lists {
-    margin-left: var(--space-0);
-    margin-right: var(--space-0);
+    grid-template-columns: 1fr;
   }
 
   .music__now {

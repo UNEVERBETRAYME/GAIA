@@ -456,7 +456,7 @@ onBeforeUnmount(() => {
 
       <div class="words__bridge">
         <RouterLink class="words__bridge-link glass glass--interactive" :to="buildUrlWithMood('/music', currentMood)">去听同情绪</RouterLink>
-        <RouterLink class="words__bridge-link glass glass--interactive" :to="buildUrlWithMood('/ai', currentMood)">去生成提示词</RouterLink>
+        <RouterLink class="words__bridge-link glass glass--interactive" :to="buildUrlWithMood('/ai', currentMood)">跟她说说话</RouterLink>
         <RouterLink class="words__bridge-link glass glass--interactive" :to="buildUrlWithMood('/translate', currentMood)">去翻译</RouterLink>
       </div>
     </section>
@@ -529,7 +529,7 @@ onBeforeUnmount(() => {
           </div>
           <div class="words__immersive-links">
             <RouterLink class="glass--btn words__immersive-btn" :to="buildUrlWithMood('/music', currentMood)">去听同情绪</RouterLink>
-            <RouterLink class="glass--btn words__immersive-btn" :to="buildUrlWithMood('/ai', currentMood)">去生成提示词</RouterLink>
+            <RouterLink class="glass--btn words__immersive-btn" :to="buildUrlWithMood('/ai', currentMood)">跟她说说话</RouterLink>
           </div>
         </div>
 

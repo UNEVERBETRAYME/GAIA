@@ -1,628 +1,283 @@
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { EMOTIONS, buildQueryWithMood, buildUrlWithMood, getEmotionDesc, getEmotionLabel, normalizeEmotionKey, readEmotionFromQuery } from '../../js/emotions.js'
+import { computed, nextTick, onMounted, ref } from 'vue'
 
-const route = useRoute()
-const router = useRouter()
+const DAILY_LIMIT = 50
 
-const currentMood = ref(null)
-const lastCopiedId = ref(null)
-const copiedGroupKey = ref(null)
+const messages = ref([])
+const inputText = ref('')
+const isLoading = ref(false)
+const messagesEl = ref(null)
+const passphrase = ref('')
+const passInput = ref('')
 
-const series = [
-  {
-    key: 'coast-night',
-    title: '深夜海岸',
-    desc: '雾、潮声与低频的光，适合把心事放远。',
-    mood: 'lonely',
-  },
-  {
-    key: 'city-soliloquy',
-    title: '城市独白',
-    desc: '霓虹与人群的背面，写给独行者的旁白。',
-    mood: 'melancholy',
-  },
-  {
-    key: 'time-fluid',
-    title: '时间的形状',
-    desc: '让抽象替你说话，时间在暗处缓慢流动。',
-    mood: 'calm',
-  },
-]
+const mode = ref('gate')
+const dailyCount = ref(0)
 
-const promptItems = [
-  {
-    id: 'aigc-0',
-    title: '雾中灯塔',
-    desc: '深夜海边的孤独灯塔，被浓雾环绕。远处的光束穿透雾气，在海面上投下长长的光路。',
-    summary: '深夜海边的孤独灯塔，被浓雾环绕',
-    category: 'painting',
-    series: 'coast-night',
-    mood: 'lonely',
-    prompt:
-      'A solitary lighthouse on a dark cliff, surrounded by thick fog, beam of light cutting through the mist, reflection on calm ocean surface, cinematic lighting, photorealistic, 8k --ar 3:4 --v 6',
-    model: 'Midjourney v6',
-    tags: ['Midjourney', '写实风', '夜景'],
-  },
-  {
-    id: 'aigc-1',
-    title: '城市独白',
-    desc: '用 AI 生成的都市情感短文系列，捕捉城市生活中那些细微的情绪波动。',
-    summary: '用 AI 生成的都市情感短文系列',
-    category: 'copywriting',
-    series: 'city-soliloquy',
-    mood: 'melancholy',
-    prompt: '写一篇关于深夜独自走在城市街道上的散文，300字左右，风格要带有淡淡的忧伤和对生活的思考，不要太矫情，像一个人在和自己对话。',
-    model: 'Claude 3.5 Sonnet',
-    tags: ['Claude', '散文', '情感'],
-  },
-  {
-    id: 'aigc-2',
-    title: '赛博雨巷',
-    desc: '霓虹灯下的雨夜小巷，赛博朋克风格。湿漉漉的地面反射着五彩的霓虹光。',
-    summary: '霓虹灯下的雨夜小巷，赛博朋克风格',
-    category: 'painting',
-    series: 'city-soliloquy',
-    mood: 'melancholy',
-    prompt:
-      'A narrow alley in a cyberpunk city at night, rain-soaked ground reflecting neon lights, Chinese and Japanese signage, moody atmosphere, volumetric fog, blade runner aesthetic --ar 3:4 --v 6',
-    model: 'Stable Diffusion XL',
-    tags: ['Stable Diffusion', '赛博朋克', '雨景'],
-  },
-  {
-    id: 'aigc-3',
-    title: '午夜钢琴曲',
-    desc: 'AI 生成的氛围钢琴旋律，适合深夜聆听。简单的几个音符，却能触动心底最柔软的地方。',
-    summary: 'AI 生成的氛围钢琴旋律，适合深夜聆听',
-    category: 'music',
-    series: 'coast-night',
-    mood: 'lonely',
-    prompt:
-      'A melancholic solo piano piece, slow tempo, ambient atmosphere, late night mood, minimalistic melody with emotional depth, inspired by Ryuichi Sakamoto and Nils Frahm',
-    model: 'Suno v3.5',
-    tags: ['Suno', '氛围音乐', '钢琴'],
-  },
-  {
-    id: 'aigc-4',
-    title: '时间的形状',
-    desc: '抽象流体动画，探索时间与空间的视觉隐喻。色彩在画布上自由流动、融合、消散。',
-    summary: '抽象流体动画，探索时间与空间的视觉隐喻',
-    category: 'video',
-    series: 'time-fluid',
-    mood: 'calm',
-    prompt: 'Abstract fluid animation, slow morphing shapes in dark muted tones, ink dissolving in water effect, seamless loop, 4k, cinematic color grading',
-    model: 'Runway Gen-3',
-    tags: ['Runway', '抽象动画', '流体'],
-  },
-]
+const isGate = computed(() => mode.value === 'gate')
 
-async function copyText(text) {
-  const t = String(text || '')
-  if (!t) return false
+function getStorageKey() {
+  const today = new Date().toISOString().slice(0, 10)
+  return 'relic-daily-' + today
+}
+
+function loadDailyCount() {
+  const key = getStorageKey()
+  const stored = localStorage.getItem(key)
+  dailyCount.value = stored ? parseInt(stored, 10) : 0
+}
+
+function bumpDailyCount() {
+  dailyCount.value++
+  localStorage.setItem(getStorageKey(), String(dailyCount.value))
+}
+
+function delay(ms) { return new Promise(r => setTimeout(r, ms)) }
+
+function submitPassphrase() {
+  const val = passInput.value.trim()
+  if (!val) return
+  passphrase.value = val
+  passInput.value = ''
+
+  if (val.length >= 3) {
+    mode.value = 'private'
+    messages.value.push({ role: 'assistant', content: '嗯。是你。' })
+    return
+  }
+
+  mode.value = 'public'
+}
+
+function skipToPublic() {
+  mode.value = 'public'
+}
+
+async function send() {
+  const text = inputText.value.trim()
+  if (!text || isLoading.value) return
+
+  if (mode.value === 'public' && dailyCount.value >= DAILY_LIMIT) {
+    messages.value.push({ role: 'assistant', content: '今天说得够多了。明天再来。' })
+    inputText.value = ''
+    return
+  }
+
+  inputText.value = ''
+
+  messages.value.push({ role: 'user', content: text })
+  isLoading.value = true
+  await scrollBottom()
+
   try {
-    await navigator.clipboard.writeText(t)
-    return true
+    const body = {
+      messages: messages.value
+        .filter(m => m.role === 'user' || m.role === 'assistant')
+        .map(m => ({ role: m.role, content: m.content }))
+    }
+    if (mode.value === 'private') body.passphrase = passphrase.value
+
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    })
+    const data = await res.json()
+    const fullReply = data.ok
+      ? data.content
+      : data.status
+        ? '...\n\nAPI ' + data.status + '\n\n' + (data.body || '').slice(0, 200)
+        : data.error || '...\n\nstuck\n\ntry again'
+
+    const parts = fullReply.split(/\n{2,}/).filter(Boolean)
+    for (let i = 0; i < parts.length; i++) {
+      messages.value.push({ role: 'assistant', content: parts[i] })
+      await scrollBottom()
+      if (i < parts.length - 1) {
+        await delay(500 + Math.random() * 400)
+      }
+    }
+
+    bumpDailyCount()
   } catch {
-    const ta = document.createElement('textarea')
-    ta.value = t
-    ta.style.position = 'fixed'
-    ta.style.left = '-9999px'
-    ta.style.top = '0'
-    document.body.appendChild(ta)
-    ta.focus()
-    ta.select()
-    try {
-      document.execCommand('copy')
-      return true
-    } catch {
-      return false
-    } finally {
-      ta.remove()
-    }
+    messages.value.push({ role: 'assistant', content: '...\n\nunreachable\n\nis your network ok' })
+  } finally {
+    isLoading.value = false
+    await scrollBottom()
   }
 }
 
-function getSeriesMeta(seriesKey) {
-  return series.find((s) => s.key === seriesKey) || null
-}
-
-function parsePrompt(prompt) {
-  const raw = (prompt || '').trim()
-  const params = raw.match(/--[a-zA-Z0-9:_-]+(?:\s+[^\s,，]+)?/g) || []
-  let main = raw
-  params.forEach((p) => {
-    main = main.replace(p, '')
-  })
-  main = main.replace(/\s{2,}/g, ' ').trim()
-
-  const parts = main.includes(',') ? main.split(',') : main.includes('，') ? main.split('，') : [main]
-  const cleaned = parts.map((p) => p.trim()).filter(Boolean)
-
-  const groups = {
-    subject: [],
-    scene: [],
-    lighting: [],
-    camera: [],
-    style: [],
-    params: [...new Set(params.map((p) => p.trim()).filter(Boolean))],
-  }
-
-  if (cleaned.length === 0) return groups
-  groups.subject.push(cleaned[0])
-
-  const lightingKeys = ['lighting', 'light', 'cinematic', 'volumetric', 'glow', 'shadow', 'rim light', 'color grading', 'moody']
-  const cameraKeys = ['lens', 'camera', 'depth of field', 'bokeh', 'close-up', 'wide', 'angle', 'shot', 'focus']
-  const styleKeys = ['photorealistic', 'realistic', '8k', '4k', 'ultra', 'high detail', 'blade runner', 'aesthetic', 'style', 'render', 'illustration', 'anime']
-  const sceneKeys = ['city', 'alley', 'ocean', 'sea', 'rain', 'fog', 'mist', 'cliff', 'night', 'street', 'neon', 'signage', 'water']
-
-  cleaned.slice(1).forEach((seg) => {
-    const s = seg.toLowerCase()
-    if (lightingKeys.some((k) => s.includes(k))) {
-      groups.lighting.push(seg)
-      return
-    }
-    if (cameraKeys.some((k) => s.includes(k))) {
-      groups.camera.push(seg)
-      return
-    }
-    if (styleKeys.some((k) => s.includes(k))) {
-      groups.style.push(seg)
-      return
-    }
-    if (sceneKeys.some((k) => s.includes(k))) {
-      groups.scene.push(seg)
-      return
-    }
-    groups.scene.push(seg)
-  })
-
-  return groups
-}
-
-const moodLabel = computed(() => (currentMood.value ? getEmotionLabel(currentMood.value) : '全部'))
-const moodDesc = computed(() => (currentMood.value ? getEmotionDesc(currentMood.value) : '你可以按情绪筛选，像在同一条夜路上挑一盏灯。'))
-
-const filteredPrompts = computed(() => {
-  const k = currentMood.value
-  if (!k) return promptItems
-  return promptItems.filter((x) => normalizeEmotionKey(x.mood) === k)
-})
-
-const groupedPrompts = computed(() => {
-  const list = filteredPrompts.value
-  const map = new Map()
-  list.forEach((item) => {
-    const seriesMeta = getSeriesMeta(item.series)
-    const groupKey = seriesMeta?.key || 'misc'
-    if (!map.has(groupKey)) {
-      map.set(groupKey, {
-        key: groupKey,
-        title: seriesMeta?.title || '未归档',
-        desc: seriesMeta?.desc || '一些散落的提示词片段。',
-        mood: seriesMeta?.mood || item.mood,
-        items: [],
-      })
-    }
-    map.get(groupKey).items.push(item)
-  })
-  return Array.from(map.values())
-})
-
-function setMood(nextMood) {
-  router.replace({ query: buildQueryWithMood(route.query, nextMood) })
-}
-
-function syncMoodFromRoute() {
-  currentMood.value = readEmotionFromQuery(route.query)
-}
-
-async function onCopyPrompt(item) {
-  const ok = await copyText(item?.prompt)
-  lastCopiedId.value = ok ? item?.id : null
-  if (ok) {
-    window.setTimeout(() => {
-      if (lastCopiedId.value === item?.id) lastCopiedId.value = null
-    }, 900)
+async function scrollBottom() {
+  await nextTick()
+  if (messagesEl.value) {
+    messagesEl.value.scrollTop = messagesEl.value.scrollHeight
   }
 }
 
-function buildGroupText(group) {
-  const lines = []
-  lines.push(`情绪：${getEmotionLabel(currentMood.value) || '全部'}`)
-  lines.push(`系列：${group?.title || '未命名'}`)
-  lines.push('')
-  ;(group?.items || []).forEach((item, idx) => {
-    lines.push(`${idx + 1}. ${item.title}`)
-    if (item.model) lines.push(`模型：${item.model}`)
-    if (item.prompt) lines.push(item.prompt)
-    lines.push('')
-  })
-  return lines.join('\n').trim()
-}
-
-async function onCopyGroup(group) {
-  const ok = await copyText(buildGroupText(group))
-  copiedGroupKey.value = ok ? group?.key : null
-  if (ok) {
-    window.setTimeout(() => {
-      if (copiedGroupKey.value === group?.key) copiedGroupKey.value = null
-    }, 900)
+function onKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault()
+    if (isGate.value) { submitPassphrase(); return }
+    send()
   }
 }
 
 onMounted(() => {
-  syncMoodFromRoute()
+  loadDailyCount()
 })
-
-watch(
-  () => route.query.mood,
-  () => syncMoodFromRoute()
-)
 </script>
 
 <template>
-  <div class="ai">
-    <section class="ai__hero">
-      <h1 class="ai__title">AI</h1>
-      <p class="ai__subtitle">
-        把难说的感觉翻译成提示词、旋律与句子。<br />
-        将线索整理成系列，让“翻译”更像一条可追溯的路径。
+  <div class="chat">
+    <div class="chat__hero">
+      <h1 class="chat__title">RELIC</h1>
+      <p class="chat__subtitle" v-if="isGate">你嵌在手机里的芯片。说句暗号。</p>
+      <p class="chat__subtitle" v-else-if="mode === 'public'">
+        许杨玉琢在这里。但真正的那个人——只有他知道怎么进来。
       </p>
-    </section>
+      <p class="chat__subtitle" v-else>嗯。是你。</p>
+    </div>
 
-    <section class="ai__panel glass glass--surface">
-      <div class="ai__panel-head">
-        <div class="ai__panel-title">当前情绪</div>
-        <div class="ai__panel-meta">{{ moodLabel }}</div>
+    <div v-if="isGate" class="chat__gate">
+      <input
+        v-model="passInput"
+        class="chat__pass-input"
+        type="text"
+        placeholder="她知道该说什么"
+        @keydown="onKeydown"
+        autofocus
+      />
+      <button class="chat__pass-btn glass glass--interactive" @click="submitPassphrase">→</button>
+      <div class="chat__pass-skip" @click="skipToPublic">或者随便看看</div>
+    </div>
+
+    <template v-else>
+      <div ref="messagesEl" class="chat__messages">
+        <template v-for="(m, i) in messages" :key="i">
+          <div class="chat__msg" :class="m.role === 'assistant' ? 'chat__msg--left' : 'chat__msg--right'">
+            {{ m.content }}
+          </div>
+        </template>
+        <div v-if="isLoading" class="chat__typing">
+          <span class="chat__dot"></span><span class="chat__dot"></span><span class="chat__dot"></span>
+        </div>
       </div>
-      <div class="ai__panel-desc">{{ moodDesc }}</div>
 
-      <div class="ai__moods" role="group" aria-label="情绪筛选">
-        <button class="ai__mood glass glass--interactive" type="button" :class="{ 'is-active': !currentMood }" @click="setMood(null)">全部</button>
+      <div class="chat__input-area">
+        <textarea
+          v-model="inputText"
+          class="chat__input"
+          rows="1"
+          :placeholder="mode === 'public' && dailyCount >= DAILY_LIMIT ? '今天说得够多了' : '说点什么...'"
+          :disabled="mode === 'public' && dailyCount >= DAILY_LIMIT"
+          @keydown="onKeydown"
+        ></textarea>
         <button
-          v-for="m in EMOTIONS"
-          :key="m.key"
-          class="ai__mood glass glass--interactive"
-          type="button"
-          :class="{ 'is-active': currentMood === m.key }"
-          @click="setMood(m.key)"
-        >
-          {{ m.label }}
-        </button>
+          class="chat__send"
+          :disabled="mode === 'public' && dailyCount >= DAILY_LIMIT"
+          @click="send"
+        >↑</button>
       </div>
-
-      <div class="ai__bridge">
-        <RouterLink class="ai__bridge-link glass glass--interactive" :to="buildUrlWithMood('/translate', currentMood)">去翻译</RouterLink>
-        <RouterLink class="ai__bridge-link glass glass--interactive" :to="buildUrlWithMood('/words', currentMood)">去读同情绪</RouterLink>
-        <RouterLink class="ai__bridge-link glass glass--interactive" :to="buildUrlWithMood('/music', currentMood)">去听同情绪</RouterLink>
+      <div class="chat__disclaimer">
+        RELIC · 灵感来源于《赛博朋克 2077》Relic 芯片设定 · CD Projekt Red 持有其各自商标权益
       </div>
-    </section>
-
-    <section class="ai__section">
-      <h2 class="ai__section-title">提示词</h2>
-
-      <div v-if="groupedPrompts.length === 0" class="ai__empty glass glass--surface">
-        这一种情绪下暂时没有提示词。你可以换一种情绪，或回到“全部”。
-      </div>
-
-      <div v-else class="ai__groups">
-        <article v-for="group in groupedPrompts" :key="group.key" class="ai__group glass glass--surface">
-          <div class="ai__group-head">
-            <div class="ai__group-text">
-              <div class="ai__group-title">{{ group.title }}</div>
-              <div class="ai__group-desc">{{ group.desc }}</div>
-            </div>
-            <button class="glass--btn ai__group-copy" type="button" @click="onCopyGroup(group)">
-              {{ copiedGroupKey === group.key ? '已复制' : '复制本组' }}
-            </button>
-          </div>
-
-          <div class="ai__cards">
-            <div v-for="item in group.items" :key="item.id" class="ai__card glass glass--surface">
-              <div class="ai__card-head">
-                <div class="ai__card-title">{{ item.title }}</div>
-                <button class="glass--btn ai__copy" type="button" @click="onCopyPrompt(item)">
-                  {{ lastCopiedId === item.id ? '已复制' : '复制' }}
-                </button>
-              </div>
-
-              <div class="ai__card-meta">
-                <span v-if="item.model" class="ai__meta">{{ item.model }}</span>
-                <span v-for="(t, idx) in item.tags" :key="idx" class="ai__tag glass">{{ t }}</span>
-              </div>
-
-              <div class="ai__card-desc">{{ item.desc }}</div>
-
-              <pre class="ai__prompt">{{ item.prompt }}</pre>
-
-              <div class="ai__struct">
-                <div v-for="(label, key) in { subject: '主体', scene: '环境', lighting: '光影', camera: '镜头', style: '风格', params: '参数' }" :key="key">
-                  <template v-if="parsePrompt(item.prompt)[key]?.length">
-                    <div class="ai__struct-label">{{ label }}</div>
-                    <div class="ai__struct-tags">
-                      <button
-                        v-for="(part, pidx) in parsePrompt(item.prompt)[key]"
-                        :key="pidx"
-                        class="ai__struct-tag glass glass--interactive"
-                        type="button"
-                        @click="copyText(part)"
-                      >
-                        {{ part }}
-                      </button>
-                    </div>
-                  </template>
-                </div>
-              </div>
-            </div>
-          </div>
-        </article>
-      </div>
-    </section>
+    </template>
   </div>
 </template>
 
-<style scoped lang="scss">
-.ai {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4-5);
-  padding-bottom: var(--space-6);
+<style scoped>
+.chat { display: flex; flex-direction: column; height: calc(100vh - 72px); padding: 0 }
+
+.chat__hero { text-align: center; padding: 28px 16px 14px }
+.chat__title {
+  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-weight: var(--font-weight);
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  letter-spacing: var(--ls-hero);
+  color: var(--text-primary);
 }
+.chat__subtitle { margin-top: 4px; font-size: 0.82rem; color: var(--text-secondary); letter-spacing: 0.06em }
 
-.ai__hero {
-  padding: var(--space-4) var(--space-0);
+.chat__gate { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 20px 32px }
+.chat__pass-input {
+  width: 100%; max-width: 280px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  color: var(--text-primary);
+  font-size: 0.92rem;
+  font-family: inherit;
+  text-align: center;
+  outline: none;
 }
+.chat__pass-input:focus { border-color: var(--accent-fog-blue); }
+.chat__pass-input::placeholder { color: var(--text-tertiary); }
+.chat__pass-btn { padding: 8px 24px; cursor: pointer; font-size: 1rem }
+.chat__pass-skip { font-size: 0.78rem; color: var(--text-tertiary); cursor: pointer; margin-top: 4px; opacity: 0.6 }
+.chat__pass-skip:hover { opacity: 1 }
 
-.ai__title {
-  font-size: var(--space-font-size-6);
-  color: var(--color-text-0);
-  margin: var(--space-0);
+.chat__messages { flex: 1; overflow-y: auto; padding: 6px 18px 4px; display: flex; flex-direction: column; gap: 3px }
+.chat__msg {
+  max-width: 86%; padding: 9px 14px; border-radius: 16px;
+  font-size: 0.88rem; line-height: 1.8;
+  white-space: pre-wrap; word-break: break-word;
+  animation: relicFade 0.2s ease;
 }
-
-.ai__subtitle {
-  margin: var(--space-1) var(--space-0) var(--space-0);
-  max-width: var(--space-layout-subtitle-max-width);
-  color: var(--color-text-1);
+.chat__msg--left {
+  align-self: flex-start;
+  background: var(--glass-bg);
+  border-bottom-left-radius: 6px;
+  border: 1px solid var(--glass-border);
 }
-
-.ai__panel {
-  padding: var(--space-4-5);
+.chat__msg--right {
+  align-self: flex-end;
+  background: var(--glass-bg-hover);
+  border-bottom-right-radius: 6px;
+  border: 1px solid var(--glass-border);
 }
+@keyframes relicFade { from { opacity: 0; transform: translateY(4px) } to { opacity: 1; transform: translateY(0) } }
 
-.ai__panel-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-2);
+.chat__typing { padding: 4px 20px }
+.chat__dot {
+  display: inline-block; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--text-tertiary); opacity: 0.4; margin-right: 3px;
+  animation: relicBlink 1.2s infinite;
 }
+.chat__dot:nth-child(2) { animation-delay: 0.2s }
+.chat__dot:nth-child(3) { animation-delay: 0.4s }
+@keyframes relicBlink { 0%,100% { opacity: 0.2 } 50% { opacity: 0.7 } }
 
-.ai__panel-title {
-  font-size: var(--space-font-size-3);
-  color: var(--color-text-0);
+.chat__input-area {
+  display: flex; align-items: flex-end; gap: 8px;
+  padding: 12px 16px 16px;
+  border-top: 1px solid var(--glass-border);
 }
-
-.ai__panel-meta {
-  font-size: var(--space-font-size-0);
-  color: var(--color-accent);
+.chat__input {
+  flex: 1;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 18px;
+  padding: 10px 16px;
+  color: var(--text-primary);
+  font-size: 0.88rem; font-family: inherit;
+  resize: none; outline: none; max-height: 100px;
 }
-
-.ai__panel-desc {
-  margin-top: var(--space-1);
-  color: var(--color-text-1);
+.chat__input:focus { border-color: var(--accent-fog-blue); }
+.chat__input::placeholder { color: var(--text-tertiary); }
+.chat__input:disabled { opacity: 0.4 }
+.chat__send {
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg-hover);
+  color: var(--text-secondary);
+  font-size: 16px; cursor: pointer; flex-shrink: 0;
+  transition: background 0.3s var(--ease-smooth);
 }
-
-.ai__moods {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1);
-  margin-top: var(--space-2);
-}
-
-.ai__mood {
-  padding: var(--space-0-5) var(--space-1-5);
-  border-radius: var(--radius-round);
-  font-size: var(--space-font-size-0);
-  color: var(--color-text-1);
-  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
-}
-
-.ai__mood:hover {
-  background: var(--color-glass-bg-hover);
-  border-color: var(--color-glass-border-hover);
-  color: var(--color-text-0);
-}
-
-.ai__mood.is-active {
-  color: var(--color-text-0);
-  border-color: var(--color-glass-border-hover);
-  background: var(--color-accent-alpha);
-}
-
-.ai__bridge {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1);
-  margin-top: var(--space-3);
-}
-
-.ai__bridge-link {
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-round);
-  font-size: var(--space-font-size-0);
-  color: var(--color-text-0);
-  transition: background var(--transition-fast), border-color var(--transition-fast);
-  border: var(--space-0-125) solid var(--color-glass-border);
-  background: var(--color-glass-bg);
-}
-
-.ai__bridge-link:hover {
-  background: var(--color-glass-bg-hover);
-  border-color: var(--color-glass-border-hover);
-}
-
-.ai__section-title {
-  font-size: var(--space-font-size-3);
-  color: var(--color-text-0);
-  margin: var(--space-0);
-}
-
-.ai__empty {
-  margin-top: var(--space-2);
-  padding: var(--space-3);
-  color: var(--color-text-1);
-}
-
-.ai__groups {
-  margin-top: var(--space-3);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.ai__group {
-  padding: var(--space-4-5);
-  max-width: var(--space-layout-reading-max-width);
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.ai__group-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-2);
-}
-
-.ai__group-title {
-  font-size: var(--space-font-size-3);
-  color: var(--color-text-0);
-}
-
-.ai__group-desc {
-  margin-top: var(--space-1);
-  color: var(--color-text-1);
-}
-
-.ai__group-copy {
-  color: var(--color-text-0);
-  font-size: var(--space-font-size-0);
-}
-
-.ai__cards {
-  margin-top: var(--space-3);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.ai__card {
-  padding: var(--space-3);
-}
-
-.ai__card-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-2);
-}
-
-.ai__card-title {
-  font-size: var(--space-font-size-2);
-  color: var(--color-text-0);
-}
-
-.ai__copy {
-  color: var(--color-text-0);
-  font-size: var(--space-font-size-0);
-}
-
-.ai__card-meta {
-  margin-top: var(--space-1);
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1);
-  align-items: center;
-}
-
-.ai__meta {
-  color: var(--color-text-2);
-  font-size: var(--space-font-size-0);
-}
-
-.ai__tag {
-  padding: var(--space-0-25) var(--space-1);
-  border-radius: var(--radius-round);
-  font-size: var(--space-font-size-0);
-  color: var(--color-text-1);
-}
-
-.ai__card-desc {
-  margin-top: var(--space-2);
-  color: var(--color-text-1);
-}
-
-.ai__prompt {
-  margin-top: var(--space-2);
-  padding: var(--space-2);
-  border-radius: var(--radius-2);
-  border: var(--space-0-125) solid var(--color-glass-border);
-  background: var(--color-glass-bg);
-  color: var(--color-text-0);
-  font-family: var(--space-font-family-sans);
-  font-size: var(--space-font-size-0);
-  line-height: var(--space-font-line-height-base);
-  white-space: pre-wrap;
-  word-break: break-word;
-  overflow-wrap: anywhere;
-}
-
-.ai__struct {
-  margin-top: var(--space-2);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.ai__struct-label {
-  color: var(--color-text-2);
-  font-size: var(--space-font-size-0);
-  margin-bottom: var(--space-0-5);
-}
-
-.ai__struct-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1);
-}
-
-.ai__struct-tag {
-  padding: var(--space-0-25) var(--space-1);
-  border-radius: var(--radius-round);
-  font-size: var(--space-font-size-0);
-  color: var(--color-text-1);
-  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
-}
-
-.ai__struct-tag:hover {
-  background: var(--color-glass-bg-hover);
-  border-color: var(--color-glass-border-hover);
-  color: var(--color-text-0);
-}
-
-@media (max-width: 860px) {
-  .ai__panel {
-    padding: var(--space-3);
-  }
-
-  .ai__group {
-    padding: var(--space-3);
-    margin-left: var(--space-0);
-    margin-right: var(--space-0);
-  }
-
-  .ai__card {
-    padding: var(--space-2);
-  }
+.chat__send:hover { background: var(--accent-fog-blue-alpha); color: var(--text-primary); }
+.chat__send:disabled { opacity: 0.3; cursor: default }
+.chat__disclaimer {
+  text-align: center; padding: 4px 0 10px;
+  font-size: 10px; color: var(--text-tertiary);
+  letter-spacing: 0.04em; opacity: 0.5;
 }
 </style>

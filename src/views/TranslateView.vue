@@ -422,7 +422,7 @@ async function copyField(text) {
               <div class="et__links">
                 <RouterLink class="et__link glass glass--interactive" :to="toMoodLink('/music')">去听同情绪</RouterLink>
                 <RouterLink class="et__link glass glass--interactive" :to="toMoodLink('/words')">去读同情绪</RouterLink>
-                <RouterLink class="et__link glass glass--interactive" :to="toMoodLink('/ai')">去生成提示词</RouterLink>
+                <RouterLink class="et__link glass glass--interactive" :to="toMoodLink('/ai')">跟她说说话</RouterLink>
               </div>
             </div>
           </div>

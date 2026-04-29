@@ -6,7 +6,7 @@ const navItems = [
   { to: '/', label: '首页' },
   { to: '/translate', label: '翻译' },
   { to: '/words', label: '文字' },
-  { to: '/ai', label: '提示词' },
+  { to: '/ai', label: 'RELIC' },
   { to: '/music', label: '音乐' },
 ]
 
