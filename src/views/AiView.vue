@@ -187,7 +187,7 @@ onMounted(() => {
 <style scoped>
 .chat { display: flex; flex-direction: column; height: calc(100vh - 72px); padding: 0 }
 
-.chat__hero { text-align: center; padding: 28px 16px 14px }
+.chat__hero { text-align: center; padding: 28px 16px 32px; flex-shrink: 0 }
 .chat__title {
   font-family: var(--font-en), var(--font-cn), sans-serif;
   font-weight: var(--font-weight);
@@ -197,18 +197,19 @@ onMounted(() => {
 }
 .chat__subtitle { margin-top: 4px; font-size: 0.82rem; color: var(--text-secondary); letter-spacing: 0.06em }
 
-.chat__gate { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 20px 32px }
+.chat__gate { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 0 32px 20px; flex-shrink: 0 }
 .chat__pass-input {
   width: 100%; max-width: 280px;
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-sm);
-  padding: 12px 16px;
+  padding: 14px 18px;
   color: var(--text-primary);
   font-size: 0.92rem;
   font-family: inherit;
   text-align: center;
   outline: none;
+  min-height: 48px;
 }
 .chat__pass-input:focus { border-color: var(--accent-fog-blue); }
 .chat__pass-input::placeholder { color: var(--text-tertiary); }
