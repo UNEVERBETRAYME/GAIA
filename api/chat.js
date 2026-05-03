@@ -79,7 +79,7 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`
+        'Authorization': `Bearer ${(process.env.DEEPSEEK_API_KEY || '').replace(/[^\x20-\x7E]/g, '').trim()}`,
       },
       body: JSON.stringify(payload)
     })
