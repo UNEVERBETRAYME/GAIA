@@ -75,18 +75,23 @@ export default async function handler(req, res) {
       stop: ['\n\n\n']
     }
 
+    const rawKey = (process.env.DEEPSEEK_API_KEY || '').replace(/[^\x20-\x7E]/g, '').trim()
+
     const apiRes = await fetch('https://api.deepseek.com/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${(process.env.DEEPSEEK_API_KEY || '').replace(/[^\x20-\x7E]/g, '').trim()}`,
+        'Authorization': `Bearer ${rawKey}`,
       },
       body: JSON.stringify(payload)
     })
 
-    const data = await apiRes.json()
+    const text = await apiRes.text()
+    let data
+    try { data = JSON.parse(text) } catch { data = { _raw: text.slice(0, 300) } }
+
     if (!apiRes.ok) {
-      return res.status(502).json({ ok: false, status: apiRes.status, body: JSON.stringify(data).slice(0, 400) })
+      return res.status(502).json({ ok: false, status: apiRes.status, body: JSON.stringify(data).slice(0, 400), proxy_key_len: rawKey.length })
     }
 
     res.status(200).json({ ok: true, content: data.choices?.[0]?.message?.content || '' })
