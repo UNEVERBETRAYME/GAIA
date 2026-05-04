@@ -388,7 +388,7 @@ async function copyField(text) {
         </div>
 
         <div class="et__actions">
-          <button class="et__btn et__btn--accent glass" type="button" :disabled="isTranslating" @click="runTranslate">
+          <button class="et__btn et__btn--accent glass glass--strong" type="button" :disabled="isTranslating" @click="runTranslate">
             {{ isTranslating ? '翻译中…' : '开始翻译' }}
           </button>
           <button class="et__btn glass glass--interactive" type="button" :disabled="isTranslating" @click="pickSample">随机示例</button>
