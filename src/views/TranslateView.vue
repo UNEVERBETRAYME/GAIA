@@ -388,7 +388,7 @@ async function copyField(text) {
         </div>
 
         <div class="et__actions">
-          <button class="et__btn et__btn--accent glass glass--strong" type="button" :disabled="isTranslating" @click="runTranslate">
+          <button class="et__btn et__btn--accent glass glass--btn" type="button" :disabled="isTranslating" @click="runTranslate">
             {{ isTranslating ? '翻译中…' : '开始翻译' }}
           </button>
           <button class="et__btn glass glass--interactive" type="button" :disabled="isTranslating" @click="pickSample">随机示例</button>
@@ -720,16 +720,10 @@ async function copyField(text) {
 
 .et__btn--accent {
   background: var(--color-accent-alpha);
-  border-color: var(--color-glass-border-hover);
 }
 
 .et__btn--accent:hover {
   background: var(--color-accent-alpha-strong);
-  border-color: var(--color-glass-border-hover);
-}
-
-.et__btn--accent:active {
-  background: var(--color-glass-bg-active);
 }
 
 .et__btn--accent:disabled {

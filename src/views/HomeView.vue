@@ -112,7 +112,7 @@ watch(
       </div>
 
       <div class="home__actions">
-        <button class="home__btn home__btn--accent glass glass--strong" type="button" @click="goTranslate">进入翻译</button>
+        <button class="home__btn home__btn--accent glass glass--btn" type="button" @click="goTranslate">进入翻译</button>
         <RouterLink class="home__link glass glass--interactive" :to="buildUrlWithMood('/music', currentMood)">去听同情绪</RouterLink>
         <RouterLink class="home__link glass glass--interactive" :to="buildUrlWithMood('/words', currentMood)">去读同情绪</RouterLink>
         <RouterLink class="home__link glass glass--interactive" :to="buildUrlWithMood('/ai', currentMood)">跟她说说话</RouterLink>
@@ -294,16 +294,10 @@ watch(
 
 .home__btn--accent {
   background: var(--color-accent-alpha);
-  border-color: var(--color-glass-border-hover);
 }
 
 .home__btn--accent:hover {
   background: var(--color-accent-alpha-strong);
-  border-color: var(--color-glass-border-hover);
-}
-
-.home__btn--accent:active {
-  background: var(--color-glass-bg-active);
 }
 
 .home__link {
