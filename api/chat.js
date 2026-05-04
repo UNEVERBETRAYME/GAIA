@@ -46,12 +46,10 @@ export default async function handler(req, res) {
 
   if (req.method === 'OPTIONS') { res.status(204).end(); return }
 
-  const pathname = new URL(req.url, 'http://localhost').pathname
-
-  if (req.method === 'GET' && pathname === '/api/config') {
+  if (req.method === 'GET') {
     const raw = (process.env.DEEPSEEK_API_KEY || '')
     const cleaned = raw.replace(/[^\x20-\x7E]/g, '').trim()
-    res.status(200).json({
+    const cfg = {
       hasKey: !!process.env.DEEPSEEK_API_KEY,
       keyLen: raw.length,
       cleanedLen: cleaned.length,
@@ -60,42 +58,23 @@ export default async function handler(req, res) {
       keyDiff: raw.length !== cleaned.length,
       model: process.env.DEEPSEEK_MODEL || 'deepseek-chat',
       hasPassphrase: !!process.env.RELIC_PASSPHRASE
-    })
-    return
-  }
-
-  if (req.method === 'GET' && pathname === '/api/ping') {
-    const rawKey = (process.env.DEEPSEEK_API_KEY || '').replace(/[^\x20-\x7E]/g, '').trim()
-    if (!rawKey) {
-      res.status(200).json({ ok: false, reason: 'no_key', hint: 'DEEPSEEK_API_KEY 环境变量为空' })
-      return
     }
+
+    if (!cleaned) {
+      return res.status(200).json({ ...cfg, ping: { ok: false, reason: 'no_key', hint: 'DEEPSEEK_API_KEY 环境变量为空' } })
+    }
+
     try {
       const pingRes = await fetch('https://api.deepseek.com/chat/completions', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${rawKey}`
-        },
-        body: JSON.stringify({
-          model: process.env.DEEPSEEK_MODEL || 'deepseek-chat',
-          messages: [{ role: 'user', content: 'ping' }],
-          max_tokens: 1,
-          temperature: 0
-        })
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${cleaned}` },
+        body: JSON.stringify({ model: cfg.model, messages: [{ role: 'user', content: 'ping' }], max_tokens: 1, temperature: 0 })
       })
       const body = await pingRes.text()
-      res.status(200).json({
-        ok: pingRes.ok,
-        status: pingRes.status,
-        body: body.slice(0, 500),
-        keyLen: rawKey.length,
-        model: process.env.DEEPSEEK_MODEL || 'deepseek-chat'
-      })
+      return res.status(200).json({ ...cfg, ping: { ok: pingRes.ok, status: pingRes.status, body: body.slice(0, 500) } })
     } catch (e) {
-      res.status(200).json({ ok: false, error: e.message })
+      return res.status(200).json({ ...cfg, ping: { ok: false, error: e.message } })
     }
-    return
   }
 
   if (req.method !== 'POST') {

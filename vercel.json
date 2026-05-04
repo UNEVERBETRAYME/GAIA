@@ -1,14 +1,1 @@
-{
-  "functions": {
-    "api/chat.js": {
-      "memory": 256,
-      "maxDuration": 30
-    }
-  },
-  "rewrites": [
-    { "source": "/api/config", "destination": "/api/chat" },
-    { "source": "/api/ping", "destination": "/api/chat" },
-    { "source": "/api/chat", "destination": "/api/chat" },
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
-}
+{"rewrites":[{"source":"/((?!api/).*)","destination":"/index.html"}]}
