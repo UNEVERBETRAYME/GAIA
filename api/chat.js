@@ -46,7 +46,9 @@ export default async function handler(req, res) {
 
   if (req.method === 'OPTIONS') { res.status(204).end(); return }
 
-  if (req.method === 'GET' && req.url === '/api/config') {
+  const pathname = new URL(req.url, 'http://localhost').pathname
+
+  if (req.method === 'GET' && pathname === '/api/config') {
     const raw = (process.env.DEEPSEEK_API_KEY || '')
     const cleaned = raw.replace(/[^\x20-\x7E]/g, '').trim()
     res.status(200).json({
@@ -62,7 +64,7 @@ export default async function handler(req, res) {
     return
   }
 
-  if (req.method === 'GET' && req.url === '/api/ping') {
+  if (req.method === 'GET' && pathname === '/api/ping') {
     const rawKey = (process.env.DEEPSEEK_API_KEY || '').replace(/[^\x20-\x7E]/g, '').trim()
     if (!rawKey) {
       res.status(200).json({ ok: false, reason: 'no_key', hint: 'DEEPSEEK_API_KEY 环境变量为空' })
