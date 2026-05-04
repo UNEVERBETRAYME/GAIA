@@ -47,7 +47,52 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') { res.status(204).end(); return }
 
   if (req.method === 'GET' && req.url === '/api/config') {
-    res.status(200).json({ apiKey: !!process.env.DEEPSEEK_API_KEY, hasPassphrase: !!process.env.RELIC_PASSPHRASE })
+    const raw = (process.env.DEEPSEEK_API_KEY || '')
+    const cleaned = raw.replace(/[^\x20-\x7E]/g, '').trim()
+    res.status(200).json({
+      hasKey: !!process.env.DEEPSEEK_API_KEY,
+      keyLen: raw.length,
+      cleanedLen: cleaned.length,
+      keyHead: cleaned.slice(0, 6) + (cleaned.length > 6 ? '...' : ''),
+      keyTail: cleaned.length > 6 ? '...' + cleaned.slice(-4) : '',
+      keyDiff: raw.length !== cleaned.length,
+      model: process.env.DEEPSEEK_MODEL || 'deepseek-chat',
+      hasPassphrase: !!process.env.RELIC_PASSPHRASE
+    })
+    return
+  }
+
+  if (req.method === 'GET' && req.url === '/api/ping') {
+    const rawKey = (process.env.DEEPSEEK_API_KEY || '').replace(/[^\x20-\x7E]/g, '').trim()
+    if (!rawKey) {
+      res.status(200).json({ ok: false, reason: 'no_key', hint: 'DEEPSEEK_API_KEY 环境变量为空' })
+      return
+    }
+    try {
+      const pingRes = await fetch('https://api.deepseek.com/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${rawKey}`
+        },
+        body: JSON.stringify({
+          model: process.env.DEEPSEEK_MODEL || 'deepseek-chat',
+          messages: [{ role: 'user', content: 'ping' }],
+          max_tokens: 1,
+          temperature: 0
+        })
+      })
+      const body = await pingRes.text()
+      res.status(200).json({
+        ok: pingRes.ok,
+        status: pingRes.status,
+        body: body.slice(0, 500),
+        keyLen: rawKey.length,
+        model: process.env.DEEPSEEK_MODEL || 'deepseek-chat'
+      })
+    } catch (e) {
+      res.status(200).json({ ok: false, error: e.message })
+    }
     return
   }
 
@@ -91,7 +136,14 @@ export default async function handler(req, res) {
     try { data = JSON.parse(text) } catch { data = { _raw: text.slice(0, 300) } }
 
     if (!apiRes.ok) {
-      return res.status(502).json({ ok: false, status: apiRes.status, body: JSON.stringify(data).slice(0, 400), proxy_key_len: rawKey.length })
+      return res.status(502).json({
+        ok: false,
+        status: apiRes.status,
+        body: JSON.stringify(data).slice(0, 600),
+        keyLen: rawKey.length,
+        model: payload.model,
+        hint: apiRes.status === 401 ? 'Key无效或未设置。去Vercel Dashboard → Settings → Environment Variables 检查 DEEPSEEK_API_KEY' : ''
+      })
     }
 
     res.status(200).json({ ok: true, content: data.choices?.[0]?.message?.content || '' })
