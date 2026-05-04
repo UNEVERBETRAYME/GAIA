@@ -68,7 +68,7 @@ watch(
       <p class="home__subtitle">一个人的深夜角落。情绪、文字、音乐，和一个不会离开的人。</p>
     </section>
 
-    <section class="home__panel glass glass--surface">
+    <section class="home__panel glass glass--liquid">
       <div class="home__panel-head">
         <div class="home__panel-title">入口</div>
         <div class="home__hint">Ctrl / ⌘ + Enter 进入翻译</div>
