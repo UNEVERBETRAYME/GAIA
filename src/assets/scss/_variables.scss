@@ -1,31 +1,31 @@
 @mixin gaiaRootVariables() {
   :root {
-    --color-bg-0: #0a0a0f;
-    --color-bg-1: #0f0f17;
-    --color-bg-2: #12121a;
-    --color-bg-3: #18181f;
+    --color-bg-0: #06090e;
+    --color-bg-1: #0c1016;
+    --color-bg-2: #0e1319;
+    --color-bg-3: #141721;
 
-    --color-text-0: #e0e0e6;
-    --color-text-1: rgba(224, 224, 230, 0.68);
-    --color-text-2: rgba(224, 224, 230, 0.42);
+    --color-text-0: rgba(255, 255, 255, 0.87);
+    --color-text-1: rgba(255, 255, 255, 0.58);
+    --color-text-2: rgba(255, 255, 255, 0.32);
 
-    --color-accent: #7c8aff;
-    --color-accent-alpha: rgba(124, 138, 255, 0.22);
-    --color-accent-alpha-strong: rgba(124, 138, 255, 0.28);
+    --color-accent: #6e8fad;
+    --color-accent-alpha: rgba(110, 143, 173, 0.25);
+    --color-accent-alpha-strong: rgba(110, 143, 173, 0.32);
 
-    --color-glass-bg: rgba(224, 224, 230, 0.05);
-    --color-glass-bg-hover: rgba(224, 224, 230, 0.09);
-    --color-glass-bg-active: rgba(224, 224, 230, 0.04);
-    --color-glass-border: rgba(224, 224, 230, 0.09);
-    --color-glass-border-hover: rgba(224, 224, 230, 0.16);
+    --color-glass-bg: rgba(255, 255, 255, 0.025);
+    --color-glass-bg-hover: rgba(255, 255, 255, 0.06);
+    --color-glass-bg-active: rgba(255, 255, 255, 0.04);
+    --color-glass-border: rgba(255, 255, 255, 0.07);
+    --color-glass-border-hover: rgba(255, 255, 255, 0.14);
 
     --color-shadow-soft: rgba(0, 0, 0, 0.35);
     --color-shadow-elevated: rgba(0, 0, 0, 0.4);
-    --color-shadow-glow: rgba(124, 138, 255, 0.08);
-    --color-shadow-inset: rgba(224, 224, 230, 0.06);
-    --color-glass-highlight: rgba(224, 224, 230, 0.12);
-    --color-glass-highlight-soft: rgba(224, 224, 230, 0.03);
-    --color-glass-highlight-none: rgba(224, 224, 230, 0);
+    --color-shadow-glow: rgba(110, 143, 173, 0.08);
+    --color-shadow-inset: rgba(255, 255, 255, 0.06);
+    --color-glass-highlight: rgba(255, 255, 255, 0.12);
+    --color-glass-highlight-soft: rgba(255, 255, 255, 0.03);
+    --color-glass-highlight-none: rgba(255, 255, 255, 0);
     --color-glass-edge: rgba(5, 8, 18, 0.42);
 
     --space-100p: 100%;
@@ -68,7 +68,7 @@
     --space-font-size-5: 32px;
     --space-font-size-6: 36px;
 
-    --space-font-family-sans: 'Inter', 'Noto Sans SC', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --space-font-family-sans: 'Barlow', 'Noto Sans SC', system-ui, -apple-system, 'Segoe UI', sans-serif;
     --space-font-weight-regular: 300;
     --space-font-weight-medium: 400;
     --space-font-line-height-base: 1.8;
@@ -76,10 +76,10 @@
     --space-letter-spacing-base: 0.04em;
     --space-letter-spacing-title: 0.08em;
 
-    --color-bg-veil: rgba(10, 10, 15, 0.65);
-    --color-bg-blob-1: rgba(124, 138, 255, 0.12);
-    --color-bg-blob-2: rgba(124, 138, 255, 0.06);
-    --color-bg-blob-3: rgba(124, 138, 255, 0.04);
+    --color-bg-veil: rgba(6, 9, 14, 0.65);
+    --color-bg-blob-1: rgba(110, 143, 173, 0.12);
+    --color-bg-blob-2: rgba(110, 143, 173, 0.06);
+    --color-bg-blob-3: rgba(110, 143, 173, 0.04);
 
     --space-layout-container-max-width: 1200px;
     --space-layout-container-padding-x: var(--space-3);

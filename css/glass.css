@@ -32,10 +32,31 @@
   content: '';
   position: absolute;
   inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.06) 30%,
+    rgba(255, 255, 255, 0) 50%,
+    rgba(255, 255, 255, 0.06) 70%,
+    rgba(255, 255, 255, 0.18) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.glass-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 16%, rgba(255, 255, 255, 0) 42%),
-    radial-gradient(circle at top right, rgba(110, 143, 173, 0.14), transparent 46%);
-  opacity: 0.72;
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 16%, rgba(255, 255, 255, 0) 42%),
+    radial-gradient(circle at top right, rgba(110, 143, 173, 0.12), transparent 50%);
+  opacity: 0.6;
   pointer-events: none;
 }
 
@@ -80,10 +101,31 @@
   content: '';
   position: absolute;
   inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.07) 30%,
+    rgba(255, 255, 255, 0) 50%,
+    rgba(255, 255, 255, 0.07) 70%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.glass-card-lg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.03) 18%, rgba(255, 255, 255, 0) 48%),
-    radial-gradient(circle at top right, rgba(110, 143, 173, 0.16), transparent 42%);
-  opacity: 0.76;
+    linear-gradient(180deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.02) 18%, rgba(255, 255, 255, 0) 48%),
+    radial-gradient(circle at top right, rgba(110, 143, 173, 0.14), transparent 46%);
+  opacity: 0.6;
   pointer-events: none;
 }
 
@@ -147,8 +189,8 @@
   position: absolute;
   inset: 0 0 auto 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--glass-highlight), transparent);
-  opacity: 0.65;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  opacity: 0.5;
   pointer-events: none;
 }
 
@@ -158,34 +200,53 @@
    ============================================================ */
 
 .glass-btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--sp-xs);
-  padding: 10px 30px;
+  gap: 6px;
+  padding: 10px 28px;
   background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  border: none;
   border-radius: 999px;
-  font-family: var(--font-en), var(--font-cn), sans-serif;
-  font-weight: var(--font-weight);
-  font-size: 0.85rem;
-  letter-spacing: var(--ls-base);
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
   color: var(--text-secondary);
   cursor: pointer;
   transition:
     background var(--dur-fast) var(--ease-smooth),
-    border-color var(--dur-fast) var(--ease-smooth),
     color var(--dur-fast) var(--ease-smooth),
     transform var(--dur-fast) var(--ease-smooth),
     box-shadow var(--dur-fast) var(--ease-smooth);
 }
 
+.glass-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(255, 255, 255, 0.08) 35%,
+    rgba(255, 255, 255, 0) 50%,
+    rgba(255, 255, 255, 0.08) 65%,
+    rgba(255, 255, 255, 0.22) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
 .glass-btn:hover {
   background: var(--glass-bg-hover);
-  border-color: var(--accent-fog-blue-alpha);
   color: var(--text-primary);
   transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), 0 0 20px rgba(110, 143, 173, 0.06);
 }
 
 .glass-btn:active {

@@ -143,9 +143,14 @@ watch(
 }
 
 .music__title {
-  font-size: var(--space-font-size-6);
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  letter-spacing: -0.02em;
   color: var(--color-text-0);
   margin: var(--space-0);
+  line-height: 1;
 }
 
 .music__subtitle {

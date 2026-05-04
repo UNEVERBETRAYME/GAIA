@@ -195,9 +195,13 @@ onBeforeUnmount(() => {
 }
 
 .app-shell__brand-link {
-  font-size: var(--space-font-size-2);
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 1.3rem;
+  letter-spacing: 0.04em;
   color: var(--color-text-0);
-  transition: color var(--transition-fast);
+  transition: opacity var(--transition-fast);
 }
 
 .app-shell__brand-link:hover {

@@ -9,7 +9,7 @@
   通过 @import 从 Google Fonts 加载指定字重
   ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300&family=Noto+Sans+SC:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Barlow:wght@300;400;500;600&family=Josefin+Sans:wght@300&family=Noto+Sans+SC:wght@300&display=swap');
 
 /* ============================================================
    一、CSS 重置（现代方案）
@@ -84,16 +84,18 @@ strong {
 :root {
   /* ---- 颜色系统（深色低饱和主调） ---- */
 
-  /* 背景色层级 */
-  --bg-primary: #0a0a0f;                     /* 深空黑 - 最深底色 */
-  --bg-secondary: #0f0f17;                   /* 次级背景 */
-  --bg-tertiary: #161625;                    /* 卡片区域底色 */
+  /* 背景色层级 — 深空底色融入钢蓝色调 */
+  --bg-primary: #06090e;
+  --bg-secondary: #0c1016;
+  --bg-tertiary: #11151c;
 
   /* 液态玻璃 */
-  --glass-bg: rgba(255, 255, 255, 0.04);     /* 玻璃默认背景 */
-  --glass-bg-hover: rgba(255, 255, 255, 0.08); /* 玻璃悬浮背景 */
-  --glass-border: rgba(255, 255, 255, 0.08); /* 玻璃边框 */
-  --glass-border-hover: rgba(255, 255, 255, 0.16); /* 玻璃悬浮边框 */
+  --glass-bg: rgba(255, 255, 255, 0.025);
+  --glass-bg-hover: rgba(255, 255, 255, 0.06);
+  --glass-bg-strong: rgba(255, 255, 255, 0.01);
+  --glass-border: rgba(255, 255, 255, 0.07);
+  --glass-border-hover: rgba(255, 255, 255, 0.14);
+  --glass-border-strong: rgba(255, 255, 255, 0.22);
 
   /* 文字色彩层级 */
   --text-primary: rgba(255, 255, 255, 0.87);   /* 主文字 */
@@ -117,9 +119,11 @@ strong {
 
   /* ---- 字体系统 ---- */
 
+  --font-heading: 'Instrument Serif', serif;
+  --font-body: 'Barlow', 'Noto Sans SC', sans-serif;
   --font-en: 'Josefin Sans', sans-serif;
   --font-cn: 'Noto Sans SC', sans-serif;
-  --font-weight: 300;                        /* 全站统一字重 */
+  --font-weight: 300;
 
   /* 字间距 */
   --ls-base: 2px;                            /* 正文字间距 */
@@ -170,8 +174,8 @@ strong {
    ============================================================ */
 
 body {
-  font-family: var(--font-en), var(--font-cn), sans-serif;
-  font-weight: var(--font-weight);
+  font-family: var(--font-body);
+  font-weight: 300;
   letter-spacing: var(--ls-base);
   color: var(--text-primary);
   text-shadow: var(--ts-base);

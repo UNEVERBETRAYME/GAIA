@@ -83,7 +83,7 @@ html[data-page="music"] .fluid-bg__blob--4 {
   left: -5%;
   background: radial-gradient(
     circle,
-    rgba(110, 143, 173, 0.12) 0%,
+    rgba(110, 143, 173, 0.1) 0%,
     rgba(110, 143, 173, 0.04) 40%,
     transparent 70%
   );

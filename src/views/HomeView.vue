@@ -134,9 +134,14 @@ watch(
 }
 
 .home__title {
-  font-size: var(--space-font-size-6);
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  letter-spacing: -0.02em;
   color: var(--color-text-0);
   margin: var(--space-0);
+  line-height: 1;
 }
 
 .home__subtitle {

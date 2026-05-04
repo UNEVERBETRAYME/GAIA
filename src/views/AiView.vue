@@ -141,157 +141,383 @@ onMounted(() => {
 
 <template>
   <div class="chat">
-    <div class="chat__hero">
-      <h1 class="chat__title">RELIC</h1>
-      <p class="chat__subtitle" v-if="isGate">你嵌在手机里的芯片。说句暗号。</p>
-      <p class="chat__subtitle" v-else-if="mode === 'public'">
+    <div class="chat__hero anim-stagger-container">
+      <h1 class="chat__title anim-stagger">RELIC</h1>
+      <p class="chat__subtitle anim-stagger" v-if="isGate">你嵌在手机里的芯片。说句暗号。</p>
+      <p class="chat__subtitle anim-stagger" v-else-if="mode === 'public'">
         许杨玉琢在这里。但真正的那个人——只有他知道怎么进来。
       </p>
-      <p class="chat__subtitle" v-else>嗯。是你。</p>
+      <p class="chat__subtitle anim-stagger" v-else>嗯。是你。</p>
     </div>
 
     <div v-if="isGate" class="chat__gate">
-      <input
-        v-model="passInput"
-        class="chat__pass-input"
-        type="text"
-        placeholder="她知道该说什么"
-        @keydown="onKeydown"
-        autofocus
-      />
-      <button class="chat__pass-btn glass glass--interactive" @click="submitPassphrase">→</button>
+      <div class="chat__pass-card">
+        <div class="chat__pass-inner">
+          <input
+            v-model="passInput"
+            class="chat__pass-input"
+            type="text"
+            placeholder="她知道该说什么"
+            @keydown="onKeydown"
+            autofocus
+          />
+          <button class="chat__pass-btn" @click="submitPassphrase">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+      </div>
       <div class="chat__pass-skip" @click="skipToPublic">或者随便看看</div>
     </div>
 
-    <template v-else>
+    <div v-else class="chat__body">
       <div ref="messagesEl" class="chat__messages">
-        <template v-for="(m, i) in messages" :key="i">
-          <div class="chat__msg" :class="m.role === 'assistant' ? 'chat__msg--left' : 'chat__msg--right'">
-            {{ m.content }}
+        <div class="chat__messages-inner">
+          <template v-for="(m, i) in messages" :key="i">
+            <div class="chat__msg" :class="m.role === 'assistant' ? 'chat__msg--left' : 'chat__msg--right'">
+              {{ m.content }}
+            </div>
+          </template>
+          <div v-if="isLoading" class="chat__typing">
+            <span class="chat__dot"></span><span class="chat__dot"></span><span class="chat__dot"></span>
           </div>
-        </template>
-        <div v-if="isLoading" class="chat__typing">
-          <span class="chat__dot"></span><span class="chat__dot"></span><span class="chat__dot"></span>
         </div>
       </div>
 
-      <div class="chat__input-area">
-        <textarea
-          v-model="inputText"
-          class="chat__input"
-          rows="1"
-          :placeholder="mode === 'public' && dailyCount >= DAILY_LIMIT ? '今天说得够多了' : '说点什么...'"
-          :disabled="mode === 'public' && dailyCount >= DAILY_LIMIT"
-          @keydown="onKeydown"
-        ></textarea>
-        <button
-          class="chat__send"
-          :disabled="mode === 'public' && dailyCount >= DAILY_LIMIT"
-          @click="send"
-        >↑</button>
+      <div class="chat__input-wrap">
+        <div class="chat__input-card">
+          <textarea
+            v-model="inputText"
+            class="chat__input"
+            rows="1"
+            :placeholder="mode === 'public' && dailyCount >= DAILY_LIMIT ? '今天说得够多了' : '说点什么...'"
+            :disabled="mode === 'public' && dailyCount >= DAILY_LIMIT"
+            @keydown="onKeydown"
+          ></textarea>
+          <button
+            class="chat__send"
+            :disabled="mode === 'public' && dailyCount >= DAILY_LIMIT || !inputText.trim()"
+            @click="send"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="19" x2="12" y2="5"/>
+              <polyline points="5 12 12 5 19 12"/>
+            </svg>
+          </button>
+        </div>
       </div>
       <div class="chat__disclaimer">
         RELIC · 灵感来源于《赛博朋克 2077》Relic 芯片设定 · CD Projekt Red 持有其各自商标权益
       </div>
-    </template>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.chat { display: flex; flex-direction: column; height: calc(100vh - 72px); padding: 0 }
-
-.chat__hero { text-align: center; padding: 28px 16px 32px; flex-shrink: 0 }
-.chat__title {
-  font-family: var(--font-en), var(--font-cn), sans-serif;
-  font-weight: var(--font-weight);
-  font-size: clamp(1.4rem, 4vw, 2rem);
-  letter-spacing: var(--ls-hero);
-  color: var(--text-primary);
+.chat {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 72px);
 }
-.chat__subtitle { margin-top: 4px; font-size: 0.82rem; color: var(--text-secondary); letter-spacing: 0.06em }
 
-.chat__gate { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 0 32px 20px; flex-shrink: 0 }
-.chat__pass-input {
-  width: 100%; max-width: 280px;
+.chat__hero {
+  text-align: center;
+  padding: 48px 16px 40px;
+  flex-shrink: 0;
+}
+
+.chat__title {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(2rem, 6vw, 3.2rem);
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  line-height: 1;
+  margin-bottom: 12px;
+}
+
+.chat__subtitle {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  letter-spacing: 0.08em;
+}
+
+.chat__gate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 0 32px;
+  flex-shrink: 0;
+}
+
+.chat__pass-card {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
   background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-sm);
-  padding: 14px 18px;
+  backdrop-filter: blur(24px) saturate(1.15);
+  -webkit-backdrop-filter: blur(24px) saturate(1.15);
+  border-radius: 20px;
+  padding: 6px;
+}
+
+.chat__pass-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0.08) 35%,
+    rgba(255, 255, 255, 0) 50%,
+    rgba(255, 255, 255, 0.08) 65%,
+    rgba(255, 255, 255, 0.25) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.chat__pass-inner {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  padding: 4px;
+}
+
+.chat__pass-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 12px 16px;
   color: var(--text-primary);
   font-size: 0.92rem;
   font-family: inherit;
   text-align: center;
   outline: none;
-  min-height: 48px;
+  min-width: 0;
 }
-.chat__pass-input:focus { border-color: var(--accent-fog-blue); }
-.chat__pass-input::placeholder { color: var(--text-tertiary); }
-.chat__pass-btn { padding: 8px 24px; cursor: pointer; font-size: 1rem }
-.chat__pass-skip { font-size: 0.78rem; color: var(--text-tertiary); cursor: pointer; margin-top: 4px; opacity: 0.6 }
-.chat__pass-skip:hover { opacity: 1 }
 
-.chat__messages { flex: 1; overflow-y: auto; padding: 6px 18px 4px; display: flex; flex-direction: column; gap: 3px }
-.chat__msg {
-  max-width: 86%; padding: 9px 14px; border-radius: 16px;
-  font-size: 0.88rem; line-height: 1.8;
-  white-space: pre-wrap; word-break: break-word;
-  animation: relicFade 0.2s ease;
+.chat__pass-input::placeholder {
+  color: var(--text-tertiary);
 }
+
+.chat__pass-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.3s var(--ease-smooth), color 0.3s var(--ease-smooth);
+}
+
+.chat__pass-btn:hover {
+  background: rgba(110, 143, 173, 0.25);
+  color: var(--text-primary);
+}
+
+.chat__pass-skip {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+
+.chat__pass-skip:hover {
+  opacity: 0.85;
+}
+
+.chat__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.chat__messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 8px;
+}
+
+.chat__messages-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px 12px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.chat__msg {
+  max-width: 80%;
+  padding: 10px 16px;
+  border-radius: 18px;
+  font-size: 0.84rem;
+  line-height: 1.75;
+  white-space: pre-wrap;
+  word-break: break-word;
+  animation: relicFade 0.25s ease;
+}
+
 .chat__msg--left {
   align-self: flex-start;
-  background: var(--glass-bg);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-bottom-left-radius: 6px;
-  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
 }
+
 .chat__msg--right {
   align-self: flex-end;
-  background: var(--glass-bg-hover);
+  background: rgba(110, 143, 173, 0.12);
+  border: 1px solid rgba(110, 143, 173, 0.15);
   border-bottom-right-radius: 6px;
-  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
 }
-@keyframes relicFade { from { opacity: 0; transform: translateY(4px) } to { opacity: 1; transform: translateY(0) } }
 
-.chat__typing { padding: 4px 20px }
+@keyframes relicFade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chat__typing {
+  padding: 6px 20px;
+  display: flex;
+  gap: 4px;
+}
+
 .chat__dot {
-  display: inline-block; width: 5px; height: 5px; border-radius: 50%;
-  background: var(--text-tertiary); opacity: 0.4; margin-right: 3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+  opacity: 0.3;
   animation: relicBlink 1.2s infinite;
 }
-.chat__dot:nth-child(2) { animation-delay: 0.2s }
-.chat__dot:nth-child(3) { animation-delay: 0.4s }
-@keyframes relicBlink { 0%,100% { opacity: 0.2 } 50% { opacity: 0.7 } }
 
-.chat__input-area {
-  display: flex; align-items: flex-end; gap: 8px;
-  padding: 12px 16px 16px;
-  border-top: 1px solid var(--glass-border);
+.chat__dot:nth-child(2) { animation-delay: 0.2s; }
+.chat__dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes relicBlink {
+  0%, 100% { opacity: 0.15; transform: translateY(0); }
+  50% { opacity: 0.6; transform: translateY(-2px); }
 }
+
+.chat__input-wrap {
+  padding: 12px 8px 8px;
+  flex-shrink: 0;
+}
+
+.chat__input-card {
+  position: relative;
+  max-width: 720px;
+  margin: 0 auto;
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px) saturate(1.15);
+  -webkit-backdrop-filter: blur(24px) saturate(1.15);
+  border-radius: 22px;
+  padding: 4px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.chat__input-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.06) 40%,
+    rgba(255, 255, 255, 0) 50%,
+    rgba(255, 255, 255, 0.06) 60%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
 .chat__input {
   flex: 1;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 18px;
-  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  padding: 12px 16px;
   color: var(--text-primary);
-  font-size: 0.88rem; font-family: inherit;
-  resize: none; outline: none; max-height: 100px;
+  font-size: 0.84rem;
+  font-family: var(--font-body);
+  font-weight: 300;
+  resize: none;
+  outline: none;
+  max-height: 120px;
+  line-height: 1.6;
 }
-.chat__input:focus { border-color: var(--accent-fog-blue); }
-.chat__input::placeholder { color: var(--text-tertiary); }
-.chat__input:disabled { opacity: 0.4 }
+
+.chat__input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.chat__input:disabled {
+  opacity: 0.35;
+}
+
 .chat__send {
-  width: 38px; height: 38px; border-radius: 50%;
-  border: 1px solid var(--glass-border);
-  background: var(--glass-bg-hover);
+  width: 40px;
+  height: 40px;
+  border-radius: 18px;
+  border: none;
+  background: rgba(255, 255, 255, 0.06);
   color: var(--text-secondary);
-  font-size: 16px; cursor: pointer; flex-shrink: 0;
-  transition: background 0.3s var(--ease-smooth);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin: 2px;
+  transition: background 0.3s var(--ease-smooth), color 0.3s var(--ease-smooth);
 }
-.chat__send:hover { background: var(--accent-fog-blue-alpha); color: var(--text-primary); }
-.chat__send:disabled { opacity: 0.3; cursor: default }
+
+.chat__send:hover:not(:disabled) {
+  background: rgba(110, 143, 173, 0.28);
+  color: var(--text-primary);
+}
+
+.chat__send:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
 .chat__disclaimer {
-  text-align: center; padding: 4px 0 10px;
-  font-size: 10px; color: var(--text-tertiary);
-  letter-spacing: 0.04em; opacity: 0.5;
+  text-align: center;
+  padding: 8px 0 18px;
+  font-size: 10px;
+  color: var(--text-tertiary);
+  letter-spacing: 0.04em;
+  opacity: 0.4;
 }
 </style>
