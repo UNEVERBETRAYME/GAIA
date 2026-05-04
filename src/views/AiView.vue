@@ -218,7 +218,7 @@ onMounted(() => {
 .chat {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 72px);
+  height: calc(100vh - 80px);
 }
 
 .chat__hero {

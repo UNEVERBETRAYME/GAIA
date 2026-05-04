@@ -39,16 +39,16 @@
     --space-0: 0px;
     --space-0-125: 1px;
     --space-0-25: 2px;
-    --space-0-5: 4px;
-    --space-1: 8px;
-    --space-1-5: 12px;
-    --space-2: 16px;
-    --space-2-25: 18px;
-    --space-3: 28px;
-    --space-4: 48px;
-    --space-4-5: 56px;
-    --space-5: 80px;
-    --space-6: 120px;
+    --space-0-5: 6px;
+    --space-1: 16px;
+    --space-1-5: 24px;
+    --space-2: 32px;
+    --space-2-25: 36px;
+    --space-3: 56px;
+    --space-4: 96px;
+    --space-4-5: 112px;
+    --space-5: 160px;
+    --space-6: 200px;
 
     --radius-1: 12px;
     --radius-2: 16px;
@@ -82,13 +82,13 @@
     --color-bg-blob-2: rgba(110, 143, 173, 0.06);
     --color-bg-blob-3: rgba(110, 143, 173, 0.04);
 
-    --space-layout-container-max-width: 1200px;
+    --space-layout-container-max-width: 1400px;
     --space-layout-container-padding-x: var(--space-3);
     --space-layout-container-padding-y: var(--space-4);
-    --space-layout-nav-height: 72px;
-    --space-layout-subtitle-max-width: 680px;
+    --space-layout-nav-height: 80px;
+    --space-layout-subtitle-max-width: 800px;
     --space-layout-shell-col-min: 520px;
-    --space-layout-reading-max-width: 860px;
+    --space-layout-reading-max-width: 960px;
 
     --space-z-nav: 10;
 
