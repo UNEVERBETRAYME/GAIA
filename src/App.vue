@@ -13,6 +13,55 @@ const navItems = [
 const playerState = ref(getState())
 let unsubscribePlayer = null
 
+const isMinimized = ref(true)
+const playerPos = ref({ x: 0, y: 0 })
+const isDragging = ref(false)
+let dragStart = { x: 0, y: 0, left: 0, top: 0 }
+
+function toggleMinimized() {
+  isMinimized.value = !isMinimized.value
+}
+
+function onPlayerDragStart(e) {
+  if (e.target.closest('button') || e.target.closest('input')) return
+  isDragging.value = true
+  const rect = e.currentTarget.getBoundingClientRect()
+  dragStart = {
+    x: e.clientX,
+    y: e.clientY,
+    left: playerPos.value.x || rect.left,
+    top: playerPos.value.y || rect.top,
+  }
+  e.currentTarget.style.transition = 'none'
+}
+
+function onPlayerDragMove(e) {
+  if (!isDragging.value) return
+  const dx = e.clientX - dragStart.x
+  const dy = e.clientY - dragStart.y
+  playerPos.value = {
+    x: Math.max(0, Math.min(window.innerWidth - 300, dragStart.left + dx)),
+    y: Math.max(0, Math.min(window.innerHeight - 60, dragStart.top + dy)),
+  }
+}
+
+function onPlayerDragEnd(e) {
+  isDragging.value = false
+  e.currentTarget.style.transition = ''
+}
+
+const playerStyle = computed(() => {
+  if (playerPos.value.x || playerPos.value.y) {
+    return {
+      position: 'fixed',
+      left: playerPos.value.x + 'px',
+      top: playerPos.value.y + 'px',
+      bottom: 'auto',
+    }
+  }
+  return {}
+})
+
 const hasMiniPlayer = computed(() => !!playerState.value.song)
 const progressPercent = computed(() => {
   const d = playerState.value.duration || 0
@@ -84,43 +133,46 @@ onBeforeUnmount(() => {
       </div>
     </main>
 
-      <div v-if="hasMiniPlayer" class="mini-player">
-      <div class="mini-player__inner glass glass--surface">
-        <div class="mini-player__meta">
+      <div v-if="hasMiniPlayer" class="mini-player" :class="{ 'mini-player--minimized': isMinimized, 'mini-player--dragging': isDragging }" :style="playerStyle">
+      <div
+        class="mini-player__inner glass glass--liquid"
+        @mousedown="onPlayerDragStart"
+        @mousemove="onPlayerDragMove"
+        @mouseup="onPlayerDragEnd"
+        @mouseleave="onPlayerDragEnd"
+      >
+        <div class="mini-player__drag-handle"></div>
+
+        <div class="mini-player__meta" @dblclick="toggleMinimized">
           <div class="mini-player__title">{{ playerState.song?.name }}</div>
-          <div class="mini-player__sub">{{ playerState.song?.artist || playerState.playlistName }}</div>
+          <div class="mini-player__sub" v-if="!isMinimized">{{ playerState.song?.artist || playerState.playlistName }}</div>
         </div>
 
-        <div class="mini-player__controls" aria-label="播放器控制">
+        <div class="mini-player__controls" v-if="!isMinimized" aria-label="播放器控制">
           <button class="mini-player__btn glass" type="button" aria-label="上一首" @click="prevTrack">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M6 6v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-              <path d="M18 7l-8 5 8 5V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
-            </svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M18 7l-8 5 8 5V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
           </button>
-          <button
-            class="mini-player__btn mini-player__btn--primary glass"
-            type="button"
-            :aria-label="playerState.isPlaying ? '暂停' : '播放'"
-            @click="togglePlay"
-          >
-            <svg v-if="!playerState.isPlaying" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M9 7l10 5-10 5V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
-            </svg>
-            <svg v-else viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M9 7v10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-              <path d="M15 7v10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-            </svg>
+          <button class="mini-player__btn mini-player__btn--primary glass" type="button" :aria-label="playerState.isPlaying ? '暂停' : '播放'" @click="togglePlay">
+            <svg v-if="!playerState.isPlaying" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7l10 5-10 5V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+            <svg v-else viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7v10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M15 7v10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
           </button>
           <button class="mini-player__btn glass" type="button" aria-label="下一首" @click="nextTrack">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M18 6v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-              <path d="M6 7l8 5-8 5V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
-            </svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M6 7l8 5-8 5V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
           </button>
         </div>
 
-        <div class="mini-player__progress">
+        <button
+          class="mini-player__btn mini-player__btn--primary mini-player__btn--play glass"
+          type="button"
+          :aria-label="playerState.isPlaying ? '暂停' : '播放'"
+          @click="togglePlay"
+          v-if="isMinimized"
+        >
+          <svg v-if="!playerState.isPlaying" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7l10 5-10 5V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+          <svg v-else viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7v10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M15 7v10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+
+        <div class="mini-player__progress" v-if="!isMinimized">
           <div class="mini-player__time">{{ formatTime(playerState.currentTime) }}</div>
           <button class="mini-player__bar" type="button" aria-label="播放进度" @click="onSeekBarClick">
             <span class="mini-player__fill" :style="{ width: `${progressPercent}%` }" />
@@ -128,35 +180,14 @@ onBeforeUnmount(() => {
           <div class="mini-player__time">{{ formatTime(playerState.duration) }}</div>
         </div>
 
-        <div class="mini-player__volume">
-          <svg class="mini-player__volume-icon" viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              d="M11 5L6 9H2v6h4l5 4V5z"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M15.54 8.46a5 5 0 0 1 0 7.07"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-          <input
-            class="mini-player__volume-slider"
-            type="range"
-            min="0"
-            max="100"
-            :value="Math.round((playerState.volume || 0) * 100)"
-            aria-label="音量"
-            @input="onVolumeInput"
-          />
+        <div class="mini-player__volume" v-if="!isMinimized">
+          <svg class="mini-player__volume-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4V5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <input class="mini-player__volume-slider" type="range" min="0" max="100" :value="Math.round((playerState.volume || 0) * 100)" aria-label="音量" @input="onVolumeInput" />
         </div>
+
+        <button class="mini-player__toggle" type="button" :aria-label="isMinimized ? '展开' : '收起'" @click="toggleMinimized">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" :style="{ transform: isMinimized ? 'rotate(180deg)' : 'rotate(0)' }"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
       </div>
     </div>
   </div>
@@ -283,45 +314,74 @@ onBeforeUnmount(() => {
 }
 
 .mini-player {
-  position: sticky;
-  bottom: var(--space-0);
-  z-index: var(--space-z-nav);
-  padding: var(--space-2) var(--space-layout-container-padding-x);
-  padding-bottom: calc(var(--space-2) + env(safe-area-inset-bottom));
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 100;
+  transition: transform 0.3s var(--transition-fast);
+  max-width: 420px;
+}
+
+.mini-player--dragging {
+  opacity: 0.95;
 }
 
 .mini-player__inner {
-  max-width: var(--space-layout-reading-max-width);
-  margin: var(--space-0) auto;
-  display: grid;
-  grid-template-columns: minmax(var(--space-0), 1.4fr) auto minmax(var(--space-0), 1fr) auto;
-  gap: var(--space-2);
+  display: flex;
   align-items: center;
-  padding: var(--space-1-5) var(--space-2);
-  background: var(--color-bg-1);
-  border: var(--space-0-125) solid var(--color-glass-border);
-  border-radius: var(--radius-2-5);
-  backdrop-filter: blur(var(--space-glass-blur)) saturate(var(--space-glass-saturate));
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 20px;
+  cursor: grab;
+  user-select: none;
+}
+
+.mini-player__inner:active {
+  cursor: grabbing;
+}
+
+.mini-player--minimized .mini-player__inner {
+  padding: 6px 10px 6px 14px;
+  gap: 10px;
+  border-radius: 28px;
+}
+
+.mini-player__drag-handle {
+  display: none;
 }
 
 .mini-player__meta {
-  min-width: var(--space-0);
+  min-width: 0;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--space-0-25);
+  gap: 1px;
+  cursor: pointer;
+}
+
+.mini-player--minimized .mini-player__meta {
+  flex-direction: row;
+  align-items: center;
+  gap: 0;
 }
 
 .mini-player__title {
   color: var(--color-text-0);
-  font-size: var(--space-font-size-1);
+  font-size: 13px;
+  font-weight: 400;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  letter-spacing: 0.03em;
+}
+
+.mini-player--minimized .mini-player__title {
+  font-size: 12px;
 }
 
 .mini-player__sub {
   color: var(--color-text-2);
-  font-size: var(--space-font-size-0);
+  font-size: 11px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -330,101 +390,137 @@ onBeforeUnmount(() => {
 .mini-player__controls {
   display: flex;
   align-items: center;
-  gap: var(--space-1);
+  gap: 4px;
 }
 
 .mini-player__btn {
-  width: var(--space-4);
-  height: var(--space-4);
+  width: 32px;
+  height: 32px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-round);
-  color: var(--color-text-0);
-  transition: background var(--transition-fast), border-color var(--transition-fast);
+  border-radius: 999px;
+  color: var(--color-text-1);
+  transition: background var(--transition-fast), color var(--transition-fast);
+  flex-shrink: 0;
 }
 
 .mini-player__btn:hover {
   background: var(--color-glass-bg-hover);
-  border-color: var(--color-glass-border-hover);
+  color: var(--color-text-0);
 }
 
 .mini-player__btn--primary {
+  color: var(--color-text-0);
   background: var(--color-accent-alpha);
-  border-color: var(--color-glass-border-hover);
 }
 
 .mini-player__btn--primary:hover {
   background: var(--color-accent-alpha-strong);
-  border-color: var(--color-glass-border-hover);
-}
-
-.mini-player__btn--primary:active {
-  background: var(--color-glass-bg-active);
 }
 
 .mini-player__btn svg {
-  width: var(--space-2-25);
-  height: var(--space-2-25);
+  width: 16px;
+  height: 16px;
+}
+
+.mini-player__btn--play {
+  flex-shrink: 0;
 }
 
 .mini-player__progress {
   display: flex;
   align-items: center;
-  gap: var(--space-1);
-  min-width: var(--space-0);
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
 }
 
 .mini-player__time {
   color: var(--color-text-2);
-  font-size: var(--space-font-size-0);
-  min-width: var(--space-4);
+  font-size: 11px;
+  min-width: 36px;
   text-align: center;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
 }
 
 .mini-player__bar {
   position: relative;
   flex: 1;
-  border-radius: var(--radius-round);
-  padding: var(--space-1) var(--space-0);
+  height: 20px;
+  padding: 0;
   background: transparent;
-  border: var(--space-0-125) solid transparent;
-  transition: border-color var(--transition-fast), background var(--transition-fast);
+  border: none;
+  cursor: pointer;
 }
 
 .mini-player__bar::before {
   content: '';
   position: absolute;
-  left: var(--space-0);
-  right: var(--space-0);
+  left: 0;
+  right: 0;
   top: 50%;
-  height: var(--space-0-5);
+  height: 3px;
   transform: translateY(-50%);
-  border-radius: var(--radius-round);
+  border-radius: 2px;
   background: var(--color-glass-bg);
-  border: var(--space-0-125) solid var(--color-glass-border);
-  transition: border-color var(--transition-fast), background var(--transition-fast);
 }
 
 .mini-player__bar:hover::before {
   background: var(--color-glass-bg-hover);
-  border-color: var(--color-glass-border-hover);
 }
 
 .mini-player__fill {
   position: absolute;
   top: 50%;
-  left: var(--space-0);
-  height: var(--space-0-5);
+  left: 0;
+  height: 3px;
   transform: translateY(-50%);
-  border-radius: var(--radius-round);
+  border-radius: 2px;
   background: var(--color-accent-alpha);
+  pointer-events: none;
 }
 
 .mini-player__volume {
   display: flex;
   align-items: center;
-  gap: var(--space-1);
+  gap: 6px;
+}
+
+.mini-player__volume-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-2);
+  flex-shrink: 0;
+}
+
+.mini-player__volume-slider {
+  width: 60px;
+  accent-color: var(--color-accent);
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+.mini-player__toggle {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  color: var(--color-text-2);
+  opacity: 0.4;
+  flex-shrink: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.mini-player__toggle:hover {
+  opacity: 0.8;
+}
+
+.mini-player__toggle svg {
+  transition: transform 0.3s var(--transition-fast);
 }
 
 .mini-player__volume-icon {
