@@ -95,29 +95,29 @@ watch(
       <div class="home__mood-desc">{{ moodDesc }}</div>
     </section>
 
-    <section class="home__entrances">
-      <RouterLink class="home__card glass glass--liquid" :to="buildUrlWithMood('/ai', currentMood)">
+    <section class="home__entrances home__entrances--stagger">
+      <RouterLink class="home__card glass glass--liquid home__card--a" :to="buildUrlWithMood('/ai', currentMood)">
         <span class="home__card-icon">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
         </span>
         <span class="home__card-label">跟她说说话</span>
         <span class="home__card-arrow">→</span>
       </RouterLink>
-      <RouterLink class="home__card glass glass--liquid" :to="buildUrlWithMood('/translate', currentMood)">
+      <RouterLink class="home__card glass glass--liquid home__card--b" :to="buildUrlWithMood('/translate', currentMood)">
         <span class="home__card-icon">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         </span>
         <span class="home__card-label">把感受拆开</span>
         <span class="home__card-arrow">→</span>
       </RouterLink>
-      <RouterLink class="home__card glass glass--liquid" :to="buildUrlWithMood('/words', currentMood)">
+      <RouterLink class="home__card glass glass--liquid home__card--c" :to="buildUrlWithMood('/words', currentMood)">
         <span class="home__card-icon">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
         </span>
         <span class="home__card-label">被接住的瞬间</span>
         <span class="home__card-arrow">→</span>
       </RouterLink>
-      <RouterLink class="home__card glass glass--liquid" :to="buildUrlWithMood('/music', currentMood)">
+      <RouterLink class="home__card glass glass--liquid home__card--d" :to="buildUrlWithMood('/music', currentMood)">
         <span class="home__card-icon">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
         </span>
@@ -295,6 +295,31 @@ watch(
   gap: var(--space-2);
   width: 100%;
   max-width: 960px;
+}
+
+.home__entrances--stagger > .home__card {
+  opacity: 0;
+  transform: translateY(16px);
+  filter: blur(6px);
+  animation: homeCardIn 0.6s var(--transition-base) forwards;
+}
+
+.home__entrances--stagger > .home__card--a { animation-delay: 0.05s; }
+.home__entrances--stagger > .home__card--b { animation-delay: 0.18s; }
+.home__entrances--stagger > .home__card--c { animation-delay: 0.31s; }
+.home__entrances--stagger > .home__card--d { animation-delay: 0.44s; }
+
+@keyframes homeCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
 }
 
 .home__card {

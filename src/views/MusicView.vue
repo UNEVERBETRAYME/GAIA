@@ -41,6 +41,18 @@ const ambientStyle = computed(() => {
   return { '--music-now-ambient': gradient }
 })
 
+const stats = computed(() => {
+  const allSongs = playlistsData.flatMap(p => p.songs)
+  const uniqueArtists = new Set(allSongs.map(s => s.artist)).size
+  const uniqueMoods = new Set(allSongs.map(s => normalizeEmotionKey(s.mood)).filter(Boolean)).size
+  return {
+    tracks: allSongs.length,
+    artists: uniqueArtists,
+    playlists: playlistsData.length,
+    moods: uniqueMoods,
+  }
+})
+
 function setMood(nextMood) {
   router.replace({ query: buildQueryWithMood(route.query, nextMood) })
 }
@@ -84,6 +96,25 @@ watch(
       <div class="music__badge glass glass--liquid">找到对的旋律</div>
       <h1 class="music__title">情绪音乐</h1>
       <p class="music__subtitle">深夜的旋律，是情绪最柔软的容器。</p>
+    </section>
+
+    <section class="music__stats">
+      <div class="music__stat glass glass--liquid">
+        <div class="music__stat-num">{{ stats.tracks }}</div>
+        <div class="music__stat-label">首歌曲</div>
+      </div>
+      <div class="music__stat glass glass--liquid">
+        <div class="music__stat-num">{{ stats.playlists }}</div>
+        <div class="music__stat-label">个歌单</div>
+      </div>
+      <div class="music__stat glass glass--liquid">
+        <div class="music__stat-num">{{ stats.artists }}</div>
+        <div class="music__stat-label">位音乐人</div>
+      </div>
+      <div class="music__stat glass glass--liquid">
+        <div class="music__stat-num">{{ stats.moods }}</div>
+        <div class="music__stat-label">种情绪</div>
+      </div>
     </section>
 
     <section class="music__now glass glass--surface" :style="ambientStyle">
@@ -173,6 +204,41 @@ watch(
   margin: var(--space-1) var(--space-0) var(--space-0);
   max-width: var(--space-layout-subtitle-max-width);
   color: var(--color-text-1);
+}
+
+.music__stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-2);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.music__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-0-5);
+  padding: var(--space-2);
+  min-height: 100px;
+  text-align: center;
+}
+
+.music__stat-num {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  letter-spacing: -0.03em;
+  color: var(--color-text-0);
+  line-height: 1;
+}
+
+.music__stat-label {
+  font-size: var(--space-font-size-0);
+  color: var(--color-text-2);
+  letter-spacing: 0.04em;
 }
 
 .music__moods {
@@ -422,6 +488,10 @@ watch(
 }
 
 @media (max-width: 860px) {
+  .music__stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   .music__panel {
     padding: var(--space-3);
   }
