@@ -82,6 +82,19 @@ async function send() {
       body: JSON.stringify(body)
     })
     const data = await res.json()
+
+    if (mode.value === 'private' && data.authenticated === false) {
+      mode.value = 'public'
+      const fakeMsg = messages.value.find(m => m.content === '嗯。是你。' && m.role === 'assistant')
+      if (fakeMsg) {
+        fakeMsg.content = '不对。'
+      } else {
+        messages.value.push({ role: 'assistant', content: '不对。' })
+      }
+      isLoading.value = false
+      return
+    }
+
     const fullReply = data.ok
       ? data.content
       : data.status

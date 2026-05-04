@@ -157,7 +157,9 @@ export default async function handler(req, res) {
       keyTail: cleaned.length > 6 ? '...' + cleaned.slice(-4) : '',
       keyDiff: raw.length !== cleaned.length,
       model: process.env.DEEPSEEK_MODEL || 'deepseek-chat',
-      hasPassphrase: !!process.env.RELIC_PASSPHRASE
+      hasPassphrase: !!process.env.RELIC_PASSPHRASE,
+      passLen: (process.env.RELIC_PASSPHRASE || '').length,
+      passCleanedLen: (process.env.RELIC_PASSPHRASE || '').replace(/[^\x20-\x7E\u4e00-\u9fff]/g, '').trim().length
     }
 
     if (!cleaned) {
@@ -225,7 +227,7 @@ export default async function handler(req, res) {
       })
     }
 
-    res.status(200).json({ ok: true, content: data.choices?.[0]?.message?.content || '' })
+    res.status(200).json({ ok: true, content: data.choices?.[0]?.message?.content || '', authenticated: isAuthenticated })
   } catch (e) {
     res.status(502).json({ ok: false, error: e.message })
   }
