@@ -470,7 +470,7 @@ onMounted(() => {
   padding: 12px 16px;
   color: var(--text-primary);
   font-size: 0.84rem;
-  font-family: var(--font-body);
+  font-family: var(--space-font-family-sans);
   font-weight: 300;
   resize: none;
   outline: none;
