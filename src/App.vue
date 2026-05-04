@@ -58,7 +58,6 @@ onBeforeUnmount(() => {
       <div class="app-shell__nav-inner glass glass--surface">
         <div class="app-shell__brand">
           <RouterLink class="app-shell__brand-link" to="/">GAIA</RouterLink>
-          <span class="app-shell__brand-sub">情绪翻译器</span>
         </div>
 
         <nav class="app-shell__links" aria-label="主导航">

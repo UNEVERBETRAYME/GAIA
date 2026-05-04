@@ -65,7 +65,7 @@ watch(
   <div class="home">
     <section class="home__hero">
       <h1 class="home__title">GAIA</h1>
-      <p class="home__subtitle">情绪翻译器。把说不清的感受，翻译成更贴近的语言。解释权永远归你。</p>
+      <p class="home__subtitle">一个人的深夜角落。情绪、文字、音乐，和一个不会离开的人。</p>
     </section>
 
     <section class="home__panel glass glass--surface">
