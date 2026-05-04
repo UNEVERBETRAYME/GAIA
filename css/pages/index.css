@@ -1,4 +1,4 @@
-/**
+﻿/**
  * index.css - 首页专属样式
  * 用途：Hero 全屏区、板块入口卡片网格、底部 Footer
  * 不重复全局组件样式，仅定义首页布局与排版
@@ -35,18 +35,18 @@
 }
 
 .hero__title {
-  font-family: var(--font-en), var(--font-cn), sans-serif;
-  font-weight: var(--font-weight);
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-weight: 300;
   font-size: clamp(2.5rem, 6vw, 4.5rem);
-  letter-spacing: var(--ls-hero);
-  text-shadow: var(--ts-hero);
+  letter-spacing: -0.02em;
   color: var(--text-primary);
   line-height: 1.1;
 }
 
 /* 副标题 / Slogan */
 .hero__slogan {
-  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-family: 'Instrument Serif', serif; font-style: italic;
   font-weight: var(--font-weight);
   font-size: clamp(0.85rem, 2vw, 1.1rem);
   letter-spacing: 0.16em;
@@ -174,10 +174,11 @@
 
 .sections__title {
   text-align: center;
-  font-family: var(--font-en), var(--font-cn), sans-serif;
-  font-weight: var(--font-weight);
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-weight: 300;
   font-size: 1.5rem;
-  letter-spacing: var(--ls-title);
+  letter-spacing: -0.02em;
   color: var(--text-secondary);
   margin-bottom: var(--sp-xl);
 }
@@ -248,7 +249,7 @@
 }
 
 .section-card__name {
-  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-family: 'Instrument Serif', serif; font-style: italic;
   font-weight: var(--font-weight);
   font-size: 1.12rem;
   letter-spacing: 0.12em;

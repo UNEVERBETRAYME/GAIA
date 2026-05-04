@@ -1,4 +1,4 @@
-/**
+﻿/**
  * glass.css - 液态玻璃组件库
  * 用途：网站最核心的视觉系统，所有组件严格引用 global.css 中定义的 CSS 变量
  * 包含：卡片、导航、按钮、输入框、标签、分割线、弹窗等 10 个组件
@@ -176,7 +176,7 @@
   align-items: center;
   justify-content: center;
   padding: 0;
-  background: rgba(10, 10, 15, 0.65);
+  background: rgba(6, 9, 14, 0.65);
   backdrop-filter: blur(20px) saturate(1.2);
   -webkit-backdrop-filter: blur(20px) saturate(1.2);
   border-bottom: 1px solid var(--glass-border);

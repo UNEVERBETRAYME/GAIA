@@ -1,4 +1,4 @@
-/**
+﻿/**
  * words.css - 伤感文字板块专属样式
  * 用途：极简 Hero 打字机、短句卡片墙、随笔展开、沉浸阅读区
  * 整个页面最"静"的页面，大量留白
@@ -28,13 +28,12 @@
 }
 
 .page-hero__title--typewriter {
-  font-family: var(--font-en), var(--font-cn), sans-serif;
-  font-weight: var(--font-weight);
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-weight: 300;
   font-size: clamp(2rem, 5vw, 3.5rem);
-  letter-spacing: var(--ls-hero);
-  text-shadow: var(--ts-hero);
+  letter-spacing: -0.02em;
   color: var(--text-primary);
-  /* 打字机：无光标闪烁，由 JS 控制 */
   border-right: none;
   white-space: nowrap;
   overflow: hidden;
@@ -53,10 +52,11 @@
    ============================================================ */
 
 .words-section-title {
-  font-family: var(--font-en), var(--font-cn), sans-serif;
-  font-weight: var(--font-weight);
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-weight: 300;
   font-size: 1.25rem;
-  letter-spacing: var(--ls-title);
+  letter-spacing: -0.02em;
   color: var(--text-secondary);
   text-align: center;
   margin-bottom: var(--sp-lg);
@@ -140,11 +140,12 @@
 }
 
 .words-essay-card__title {
-  font-family: var(--font-en), var(--font-cn), sans-serif;
-  font-weight: var(--font-weight);
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-weight: 300;
   font-size: 1.15rem;
   color: var(--text-primary);
-  letter-spacing: var(--ls-base);
+  letter-spacing: -0.01em;
   margin-bottom: var(--sp-md);
 }
 
@@ -164,7 +165,7 @@
   left: 0;
   right: 0;
   height: 86px;
-  background: linear-gradient(180deg, rgba(10, 10, 15, 0) 0%, rgba(10, 10, 15, 0.18) 32%, rgba(10, 10, 15, 0.56) 70%, rgba(10, 10, 15, 0.82) 100%);
+  background: linear-gradient(180deg, rgba(6, 9, 14, 0) 0%, rgba(6, 9, 14, 0.18) 32%, rgba(6, 9, 14, 0.56) 70%, rgba(6, 9, 14, 0.82) 100%);
   pointer-events: none;
   transition: opacity 0.4s var(--ease-smooth);
 }

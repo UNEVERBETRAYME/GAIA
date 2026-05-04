@@ -1,4 +1,4 @@
-/**
+﻿/**
  * music.css - 情绪音乐板块专属样式
  * 用途：页面 Hero 区、播放器区域、歌单网格、心情推荐
  */
@@ -18,11 +18,11 @@
 }
 
 .page-hero__title {
-  font-family: var(--font-en), var(--font-cn), sans-serif;
-  font-weight: var(--font-weight);
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-weight: 300;
   font-size: clamp(2rem, 5vw, 3.5rem);
-  letter-spacing: var(--ls-hero);
-  text-shadow: var(--ts-hero);
+  letter-spacing: -0.02em;
   color: var(--text-primary);
   margin-bottom: var(--sp-sm);
 }
@@ -38,10 +38,11 @@
    ============================================================ */
 
 .music-section-title {
-  font-family: var(--font-en), var(--font-cn), sans-serif;
-  font-weight: var(--font-weight);
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-weight: 300;
   font-size: 1.25rem;
-  letter-spacing: var(--ls-title);
+  letter-spacing: -0.02em;
   color: var(--text-secondary);
   text-align: center;
   margin-bottom: var(--sp-lg);
@@ -131,10 +132,11 @@
 }
 
 .music-player__title {
-  font-family: var(--font-en), var(--font-cn), sans-serif;
-  font-weight: var(--font-weight);
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-weight: 300;
   font-size: 1.5rem;
-  letter-spacing: 0.14em;
+  letter-spacing: -0.01em;
   color: var(--text-primary);
   margin-bottom: 10px;
 }
@@ -331,7 +333,7 @@
 }
 
 .music-playlist-card__name {
-  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-family: 'Instrument Serif', serif; font-style: italic;
   font-weight: 700;
   font-size: 1rem;
   letter-spacing: var(--ls-base);

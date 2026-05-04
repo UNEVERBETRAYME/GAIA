@@ -1,4 +1,4 @@
-/**
+﻿/**
  * game-art.css - 第九艺术板块专属样式
  * 用途：Hero 暗化背景、瀑布流画廊、时间线布局、横向滚动角色卡
  */
@@ -15,7 +15,7 @@
   justify-content: center;
   /* 用渐变模拟暗化游戏截图背景 */
   background:
-    linear-gradient(135deg, rgba(10, 10, 15, 0.7), rgba(10, 10, 15, 0.5)),
+    linear-gradient(135deg, rgba(6, 9, 14, 0.7), rgba(6, 9, 14, 0.5)),
     linear-gradient(135deg, #1a2a3a, #2d1f3d, #1a1225);
   overflow: hidden;
 }
@@ -35,7 +35,7 @@
 }
 
 .page-hero__title {
-  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-family: 'Instrument Serif', serif; font-style: italic;
   font-weight: var(--font-weight);
   font-size: clamp(2rem, 5vw, 3.5rem);
   letter-spacing: var(--ls-hero);
@@ -55,7 +55,7 @@
    ============================================================ */
 
 .game-section-title {
-  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-family: 'Instrument Serif', serif; font-style: italic;
   font-weight: var(--font-weight);
   font-size: 1.25rem;
   letter-spacing: var(--ls-title);
@@ -118,7 +118,7 @@
 }
 
 .game-gallery-card__game {
-  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-family: 'Instrument Serif', serif; font-style: italic;
   font-weight: var(--font-weight);
   font-size: 0.88rem;
   color: var(--text-primary);
@@ -171,7 +171,7 @@
 }
 
 .game-gallery-modal__game {
-  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-family: 'Instrument Serif', serif; font-style: italic;
   font-weight: var(--font-weight);
   font-size: 1.1rem;
   color: var(--text-primary);
@@ -260,7 +260,7 @@
 }
 
 .game-journal-card__title {
-  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-family: 'Instrument Serif', serif; font-style: italic;
   font-weight: var(--font-weight);
   font-size: 1.1rem;
   color: var(--text-primary);
@@ -364,7 +364,7 @@
 }
 
 .game-character-card__name {
-  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-family: 'Instrument Serif', serif; font-style: italic;
   font-weight: var(--font-weight);
   font-size: 1rem;
   color: var(--text-primary);

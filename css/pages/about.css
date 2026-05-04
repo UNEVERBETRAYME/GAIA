@@ -1,4 +1,4 @@
-/**
+﻿/**
  * about.css - 关于页专属样式
  * 用途：极简个人介绍、头像、兴趣标签、联系方式、时间线
  * 整体居中排布，大量留白，视觉安静
@@ -18,7 +18,7 @@
 }
 
 .page-hero__title {
-  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-family: 'Instrument Serif', serif; font-style: italic;
   font-weight: var(--font-weight);
   font-size: clamp(2rem, 5vw, 3.5rem);
   letter-spacing: var(--ls-hero);
@@ -31,7 +31,7 @@
    ============================================================ */
 
 .about-section-title {
-  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-family: 'Instrument Serif', serif; font-style: italic;
   font-weight: var(--font-weight);
   font-size: 1.25rem;
   letter-spacing: var(--ls-title);
@@ -74,7 +74,7 @@
 }
 
 .about-intro__name {
-  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-family: 'Instrument Serif', serif; font-style: italic;
   font-weight: var(--font-weight);
   font-size: 1.35rem;
   letter-spacing: var(--ls-title);
@@ -189,7 +189,7 @@
 }
 
 .about-timeline__year {
-  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-family: 'Instrument Serif', serif; font-style: italic;
   font-weight: var(--font-weight);
   font-size: 0.88rem;
   color: var(--accent-fog-blue);

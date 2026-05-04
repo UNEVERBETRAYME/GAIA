@@ -1,4 +1,4 @@
-/**
+﻿/**
  * kook.css - 社区落地页专属样式
  * 用途：Hero 区 + 加入按钮、频道介绍卡片网格、社区守则、底部呼吁
  * 整体留白充足，呼吸感强
@@ -25,7 +25,7 @@
 }
 
 .kook-hero__title {
-  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-family: 'Instrument Serif', serif; font-style: italic;
   font-weight: var(--font-weight);
   font-size: clamp(2rem, 5vw, 3.5rem);
   letter-spacing: var(--ls-hero);
@@ -54,7 +54,7 @@
    ============================================================ */
 
 .kook-section-title {
-  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-family: 'Instrument Serif', serif; font-style: italic;
   font-weight: var(--font-weight);
   font-size: 1.25rem;
   letter-spacing: var(--ls-title);
@@ -163,7 +163,7 @@
 }
 
 .kook-channel-card__name {
-  font-family: var(--font-en), var(--font-cn), sans-serif;
+  font-family: 'Instrument Serif', serif; font-style: italic;
   font-weight: var(--font-weight);
   font-size: 1rem;
   color: var(--text-primary);
