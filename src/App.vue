@@ -18,6 +18,34 @@ const playerPos = ref({ x: 0, y: 0 })
 const isDragging = ref(false)
 let dragStart = { x: 0, y: 0, left: 0, top: 0 }
 
+let isSeekDragging = false
+
+function onSeekMouseDown(e) {
+  isSeekDragging = true
+  doSeek(e)
+  document.addEventListener('mousemove', onSeekMouseMove)
+  document.addEventListener('mouseup', onSeekMouseUp)
+}
+
+function onSeekMouseMove(e) {
+  if (!isSeekDragging) return
+  doSeek(e)
+}
+
+function onSeekMouseUp() {
+  isSeekDragging = false
+  document.removeEventListener('mousemove', onSeekMouseMove)
+  document.removeEventListener('mouseup', onSeekMouseUp)
+}
+
+function doSeek(e) {
+  const bar = document.querySelector('.mini-player__bar')
+  if (!bar) return
+  const rect = bar.getBoundingClientRect()
+  const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
+  seekToTime(percent * (playerState.value.duration || 1))
+}
+
 function toggleMinimized() {
   isMinimized.value = !isMinimized.value
 }
@@ -69,17 +97,6 @@ const progressPercent = computed(() => {
   if (!d) return 0
   return Math.max(0, Math.min(100, (t / d) * 100))
 })
-
-function onSeekBarClick(e) {
-  const el = e.currentTarget
-  if (!el) return
-  const state = playerState.value
-  if (!state.duration) return
-  const rect = el.getBoundingClientRect()
-  const percent = (e.clientX - rect.left) / rect.width
-  const nextTime = Math.max(0, Math.min(1, percent)) * state.duration
-  seekToTime(nextTime)
-}
 
 function onVolumeInput(e) {
   const v = Number(e.target?.value ?? 0)
@@ -179,7 +196,7 @@ onBeforeUnmount(() => {
         <div class="mini-player__bottom" v-if="!isMinimized">
           <div class="mini-player__progress">
             <span class="mini-player__time">{{ formatTime(playerState.currentTime) }}</span>
-            <button class="mini-player__bar" type="button" aria-label="播放进度" @click="onSeekBarClick">
+            <button class="mini-player__bar" type="button" aria-label="播放进度" @mousedown="onSeekMouseDown">
               <span class="mini-player__fill" :style="{ width: `${progressPercent}%` }" />
             </button>
             <span class="mini-player__time">{{ formatTime(playerState.duration) }}</span>
@@ -332,7 +349,7 @@ onBeforeUnmount(() => {
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  padding: 8px 10px;
+  padding: 8px 8px 8px 14px;
   border-radius: 18px;
   cursor: grab;
   user-select: none;
@@ -343,7 +360,7 @@ onBeforeUnmount(() => {
 }
 
 .mini-player--minimized .mini-player__inner {
-  padding: 5px 8px 5px 12px;
+  padding: 5px 8px 5px 14px;
   gap: 8px;
   border-radius: 24px;
   flex-wrap: nowrap;
@@ -443,15 +460,15 @@ onBeforeUnmount(() => {
 .mini-player__progress {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   min-width: 0;
   flex: 1;
 }
 
 .mini-player__time {
   color: var(--color-text-2);
-  font-size: 10px;
-  min-width: 32px;
+  font-size: 9px;
+  min-width: 28px;
   text-align: center;
   flex-shrink: 0;
   font-variant-numeric: tabular-nums;
@@ -497,21 +514,21 @@ onBeforeUnmount(() => {
 .mini-player__volume {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   flex-shrink: 0;
 }
 
 .mini-player__volume-icon {
-  width: 14px;
-  height: 14px;
+  width: 11px;
+  height: 11px;
   color: var(--color-text-2);
   flex-shrink: 0;
 }
 
 .mini-player__volume-slider {
-  width: 48px;
+  width: 40px;
   accent-color: var(--color-accent);
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: pointer;
 }
 
