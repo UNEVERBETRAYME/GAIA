@@ -293,6 +293,7 @@ async function copyField(text) {
 <template>
   <div class="et">
     <section class="et__hero">
+      <div class="et__badge glass glass--liquid">把感受拆开</div>
       <h1 class="et__title">情绪翻译</h1>
       <p class="et__subtitle">把说不清的感觉，翻译成更贴近的语言。解释权永远归你。</p>
     </section>
@@ -554,11 +555,30 @@ async function copyField(text) {
 .et__hero {
   max-width: var(--space-layout-container-max-width);
   margin: var(--space-0) auto;
-  padding: var(--space-4) var(--space-0) var(--space-3);
+  padding: var(--space-5) var(--space-0) var(--space-4);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.et__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-0-5) var(--space-1-5);
+  font-size: var(--space-font-size-0);
+  color: var(--color-text-2);
+  letter-spacing: 0.06em;
+  margin-bottom: var(--space-1);
 }
 
 .et__title {
-  font-size: var(--space-font-size-6);
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  letter-spacing: -0.03em;
   color: var(--color-text-0);
 }
 

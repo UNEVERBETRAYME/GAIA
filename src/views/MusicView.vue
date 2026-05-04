@@ -81,6 +81,7 @@ watch(
 <template>
   <div class="music">
     <section class="music__hero">
+      <div class="music__badge glass glass--liquid">找到对的旋律</div>
       <h1 class="music__title">情绪音乐</h1>
       <p class="music__subtitle">深夜的旋律，是情绪最柔软的容器。</p>
     </section>
@@ -139,15 +140,30 @@ watch(
 }
 
 .music__hero {
-  padding: var(--space-4) var(--space-0);
+  text-align: center;
+  padding: var(--space-5) var(--space-0) var(--space-3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.music__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-0-5) var(--space-1-5);
+  font-size: var(--space-font-size-0);
+  color: var(--color-text-2);
+  letter-spacing: 0.06em;
+  margin-bottom: var(--space-1);
 }
 
 .music__title {
   font-family: 'Instrument Serif', serif;
   font-style: italic;
   font-weight: 300;
-  font-size: clamp(2rem, 5vw, 3.2rem);
-  letter-spacing: -0.02em;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  letter-spacing: -0.03em;
   color: var(--color-text-0);
   margin: var(--space-0);
   line-height: 1;

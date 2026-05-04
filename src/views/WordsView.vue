@@ -427,6 +427,7 @@ onBeforeUnmount(() => {
 <template>
   <div class="words">
     <section class="words__hero words__reveal" :ref="registerReveal">
+      <div class="words__badge glass glass--liquid">被接住的瞬间</div>
       <h1 class="words__title">文字</h1>
       <p class="words__subtitle">把说不清的感受，交给一句更贴近的文字。</p>
     </section>
@@ -550,11 +551,30 @@ onBeforeUnmount(() => {
 }
 
 .words__hero {
-  padding: var(--space-4) var(--space-0);
+  padding: var(--space-5) var(--space-0) var(--space-3);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.words__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-0-5) var(--space-1-5);
+  font-size: var(--space-font-size-0);
+  color: var(--color-text-2);
+  letter-spacing: 0.06em;
+  margin-bottom: var(--space-1);
 }
 
 .words__title {
-  font-size: var(--space-font-size-6);
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  letter-spacing: -0.03em;
   color: var(--color-text-0);
   margin: var(--space-0);
 }
